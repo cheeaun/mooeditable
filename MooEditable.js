@@ -186,10 +186,6 @@ var MooEditable = new Class({
 		// Webkit cleanup
 		source.innerHTML = source.innerHTML.replace(/ class=\"Apple-style-span\"/gi, '');
 		source.innerHTML = source.innerHTML.replace(/<SPAN style=\"\">/gi, '');
-	},
-	
-	getOuput: function(doc){
-		
 	}
 });
 
