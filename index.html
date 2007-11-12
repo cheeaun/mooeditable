@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>MooEditable</title>
+		<style type="text/css">
+			body{
+				font-family: sans-serif;
+			}
+			#textarea-1{
+				width: 600px;
+				height: 100px;
+				margin: 20px;
+			}
+			#textarea-2{
+				width: 400px;
+				height: 200px;
+				padding: 10px;
+			}
+		</style>
+		<link rel="stylesheet" type="text/css" href="MooEditable.css" />
+		<script type="text/javascript" src="mootools.js"></script>
+		<script type="text/javascript" src="MooEditable.js"></script>
+		<script type="text/javascript">
+			window.addEvent('load', function(){
+				new MooEditable($$('.mooeditable'));
+			});
+		</script>
+	</head>
+	<body>
+		<h1>MooEditable.js</h1>
+		<textarea class="mooeditable" id="textarea-1">This is cool!</textarea>
+		<textarea class="mooeditable" id="textarea-2"></textarea>
+		<p>Tested on Firefox 2 and Safari 3 beta (Windows). View source for more. Ideas, opinions and help needed.</p>
+		<p>Project page: <a href="http://mooeditable.googlecode.com/">http://mooeditable.googlecode.com/</a></p>
+		<p>- Lim Chee Aun &lt;cheeaun@gmail.com&gt;</p>
+	</body>
+</html>

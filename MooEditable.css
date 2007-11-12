@@ -1,0 +1,92 @@
+.mooeditable{
+	clear: both;
+	border: 2px solid #ddd;
+}
+
+.mooeditable-toolbar{
+	color: inherit;
+	background-color: #eee;
+	padding: 2px;
+}
+
+.mooeditable-toolbar:after{
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.mooeditable-toolbar .toolbar-button{
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	padding: 4px;
+	margin: 2px;
+	float: left;
+	text-indent: -999em;
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 4px 4px;
+}
+
+.mooeditable-toolbar .toolbar-button:hover{
+	color: inherit;
+	background-color: #fff;
+}
+
+.mooeditable-toolbar .toolbar-button.disabled{
+	cursor: default;
+}
+
+.mooeditable-toolbar .toolbar-button.disabled:hover{
+	color: inherit;
+	background-color: transparent;
+}
+
+.mooeditable-toolbar .toolbar-separator{
+	width: 1px;
+	height: 24px;
+	margin: 2px;
+	float: left;
+	text-indent: -999em;
+	color: inherit;
+	background-color: #fafafa;
+}
+
+.mooeditable-toolbar .bold-button{
+	background-image: url(images/format-text-bold.png);
+}
+.mooeditable-toolbar .italic-button{
+	background-image: url(images/format-text-italic.png);
+}
+.mooeditable-toolbar .strikethrough-button{
+	background-image: url(images/format-text-strikethrough.png);
+}
+.mooeditable-toolbar .insertunorderedlist-button{
+	background-image: url(images/format-bullet-list.png);
+}
+.mooeditable-toolbar .insertorderedlist-button{
+	background-image: url(images/format-number-list.png);
+}
+.mooeditable-toolbar .indent-button{
+	background-image: url(images/format-indent-more.png);
+}
+.mooeditable-toolbar .outdent-button{
+	background-image: url(images/format-indent-less.png);
+}
+.mooeditable-toolbar .undo-button{
+	background-image: url(images/edit-undo.png);
+}
+.mooeditable-toolbar .redo-button{
+	background-image: url(images/edit-redo.png);
+}
+.mooeditable-toolbar .createlink-button{
+	background-image: url(images/format-add-link.png);
+}
+.mooeditable-toolbar .unlink-button{
+	background-image: url(images/format-remove-link.png);
+}
+.mooeditable-toolbar .toggleview-button{
+	background-image: url(images/action-toggle-view.png);
+}
