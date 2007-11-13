@@ -88,7 +88,6 @@ var MooEditable = new Class({
 		doc.designMode = 'on';
 		
 		if (this.options.toolbar) this.buildToolbar(el,iframe);
-		if (this.options.viewtabs) this.buildViewTabs(el,iframe);
 	},
 	
 	buildToolbar: function(el,iframe){
