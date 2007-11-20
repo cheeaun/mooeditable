@@ -6,6 +6,7 @@
 	color: inherit;
 	background-color: #eee;
 	padding: 2px;
+	height: 1%;
 }
 
 .mooeditable-toolbar:after{
@@ -18,9 +19,9 @@
 
 .mooeditable-toolbar .toolbar-button{
 	cursor: pointer;
-	width: 16px;
-	height: 16px;
-	padding: 4px;
+	border: 0;
+	width: 24px;
+	height: 24px;
 	margin: 2px;
 	float: left;
 	text-indent: -999em;
@@ -32,6 +33,9 @@
 .mooeditable-toolbar .toolbar-button:hover{
 	color: inherit;
 	background-color: #fff;
+}
+.mooeditable-toolbar .toolbar-button:focus{
+	outline: 0;
 }
 
 .mooeditable-toolbar .toolbar-button.disabled{

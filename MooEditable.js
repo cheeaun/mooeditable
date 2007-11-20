@@ -8,7 +8,17 @@ License:
 Author:
 	Lim Chee Aun <cheeaun@gmail.com>
 	
+Contributor:
+	Marc Fowler <marc.fowler@defraction.net>
+	
 Changelog:
+	0.3 (20 Nov 2007)
+		- Fixed formatting bugs with Internet Explorer 7
+		- Fixed IE bug with inherited margins on form elements
+		- Fixed error when cancelling hyperlink prompt dialog
+		- Fixed button hover for Internet Explorer 6
+		- Tweaked the PNG images to be a little friendlier for Internet Explorer 6
+		- Fixed <label> event to focus on iframe instead of textarea in design mode
 	0.2 (15 Nov 2007)
 		- Fixed padding of textareas and iframe's doc for Safari 3 beta
 		- Added instant update of content to textareas
@@ -25,12 +35,14 @@ Credits:
 	- Some ideas inspired by TinyMCE <http://tinymce.moxiecode.com/>
 	- Some functions inspired by Inviz's "Most tiny wysiwyg you ever seen" <http://forum.mootools.net/viewtopic.php?id=746>, <http://forum.mootools.net/viewtopic.php?id=5740>
 	- Some regex from Cameron Adams's widgEditor <http://themaninblue.com/experiment/widgEditor/>
+	- IE support referring Robert Bredlau's "Rich Text Editing" part 1 and 2 articles <http://www.rbredlau.com/drupal/node/6>
 	- Tango icons from the Tango Desktop Project <http://tango.freedesktop.org/>
 	- Additional tango icons from Tango OpenOffice set by Jimmacs <http://www.gnome-look.org/content/show.php/Tango+OpenOffice?content=54799>
-	- IE support referring Robert Bredlau's "Rich Text Editing" part 1 and 2 articles <http://www.rbredlau.com/drupal/node/6>
 */
 
 var MooEditable = new Class({
+
+//	Implements: [Events, Options],
 
 	options:{
 		toolbar: true,
@@ -56,147 +68,210 @@ var MooEditable = new Class({
 	initialize: function(elements,options){
 		this.setOptions(options);
 		$$(elements).each(this.build, this);
-		if (this.options.initialize) this.options.initialize.call(this);
 	},
 
 	build: function(el){
 		var id = el.className ? el.className : el.id ? el.id : 'mooeditable';
-		elStyles = el.getStyles('width','height','padding','margin','border');
+		var elStyles = el.getStyles('width','height','padding','margin','border','border-width');
+		var sides = ['top','right','bottom','left'];
+		for (var i = 0; i < sides.length; i++) {
+			elStyles['padding-' + sides[i]] = elStyles['padding'].split(' ')[i];
+			elStyles['border-' + sides[i] + '-width'] = elStyles['border-width'].split(' ')[i];
+		}
 
 		// Build the container
 		var container = new Element('div',{
 			'class': id + '-container',
 			'styles': {
-				'width': elStyles['width'].toInt() + elStyles['padding'].split(' ')[1].toInt() + elStyles['padding'].split(' ')[3].toInt(),
+				'width': elStyles['width'].toInt() + elStyles['padding-right'].toInt() + elStyles['padding-left'].toInt() + elStyles['border-right-width'].toInt() + elStyles['border-left-width'].toInt(),
 				'margin': elStyles['margin']
 			}
 		});
 		
 		// Put textarea inside container
-		container.injectBefore(el);
-		el.injectInside(container);
+		container.inject(el, 'before');
 		el.setStyles({
 			'margin': 0,
 			'display': 'none',
 			'resize': 'none', // disable resizable textareas in Safari
 			'outline': 'none' // disable focus ring in Safari
 		});
+//		if(Browser.Engine.trident){
+		if(window.ie){
+			// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
+			var span = new Element('span');
+			span.inject(container, 'bottom');
+			el.inject(span, 'bottom');
+		}
+		else el.inject(container, 'bottom');
 		
 		// Build the iframe
 		var iframe = new Element('iframe',{
 			'class': id + '-iframe',
 			'styles':{
-				'width': '100%',
-				'height': elStyles['height'].toInt() + elStyles['padding'].split(' ')[0].toInt() + elStyles['padding'].split(' ')[2].toInt(),
+				'width': elStyles['width'].toInt() + elStyles['padding-right'].toInt() + elStyles['padding-left'].toInt(),
+				'height': elStyles['height'].toInt() + elStyles['padding-top'].toInt() + elStyles['padding-bottom'].toInt(),
 				'border': elStyles['border']
 			}
 		});
-		iframe.injectBefore(el);
+		iframe.inject(container, 'top');
 
 		// Build the content of iframe
-		var w3c = iframe.contentDocument !== undefined ? true : false;
-		var doc = w3c ? iframe.contentDocument : iframe.contentWindow.document;
-		doc.open('text/html');
-		doc.write('<html style="cursor: text; height: 100%"><body id="editable" style="font-family: helvetica, arial, sans-serif; border: 0; margin: 1px; padding: '+ elStyles['padding'] +'">');
+		var doc = iframe.contentWindow.document;
+		doc.open();
+		doc.write('<html style="cursor: text; height: 100%">');
+		doc.write('<body id="editable" style="font-family: helvetica, arial, sans-serif; border: 0; margin: 1px; padding: '+ elStyles['padding'] +'">');
 		doc.write(el.innerHTML);
 		doc.write('</body></html>');
 		doc.close();
-		doc.designMode = 'on';
 		
-		if (this.options.toolbar) this.buildToolbar(el,iframe,id);
+		// Turn on Design Mode
+		doc.designMode = 'on';
 
-		// Ensures textarea content is always updated		
-		if(doc.addEventListener) doc.addEventListener('keyup', function(e){
-			el.value = this.cleanup(doc.getElementById('editable').innerHTML);
-		}.bind(this), false);
-		if(doc.addEventListener) doc.addEventListener('click', function(e){
-			el.value = this.cleanup(doc.getElementById('editable').innerHTML);
-		}.bind(this), false);
+		// Update the event for textarea's corresponding labels
+		if(el.id) $$('label[for="'+el.id+'"]').addEvent('click', function(e){
+			if(iframe.getStyle('display') != 'none'){
+				e = new Event(e).stop();
+				iframe.contentWindow.focus();
+			}
+		});
+
+		// Ensures textarea content is always updated
+		var events = ['mousedown', 'mouseup', 'mouseout', 'mouseover', 'click', 'keydown', 'keyup', 'keypress'];
+		for(var i = 0; i < events.length; i++){
+			if($type(document.addEventListener) == 'function'){
+				doc.addEventListener(events[i], function(oEvent){
+					el.value = this.cleanup(doc.getElementById('editable').innerHTML);
+				}.bind(this), false);
+			}
+			else{
+				doc.attachEvent('on' + events[i], function(){
+					el.value = this.cleanup(doc.getElementById('editable').innerHTML);
+				}.bind(this));
+			}
+		}
+		
+		if(this.options.toolbar) this.buildToolbar(el,iframe,id);
 	},
 	
 	buildToolbar: function(el,iframe,id){
 		var toolbar = new Element('div',{
-			'class': id + '-toolbar',
-			'styles': {
-				'width': '100%'
-			}
+			'class': id + '-toolbar'
 		});
-		toolbar.injectBefore(iframe);
+		toolbar.inject(iframe, 'before');
 		
 		var toolbarButtons = this.options.buttons.split(',');
 
 		for (var i=0 ; i<toolbarButtons.length ; i++){
 			var command = toolbarButtons[i];
-			var b = new Element('a',{
-				'class': (command == 'separator') ? 'toolbar-separator' : command+'-button toolbar-button',
-				'title': this.options.text[command]
-			});
+			var b;
+			if (command == 'separator'){
+				b = new Element('span',{
+					'class': 'toolbar-separator'
+				});
+			}
+			else{
+				b = new Element('button',{
+					'class': command+'-button toolbar-button',
+					'title': this.options.text[command]
+				});
+			}
+//			b.set('text', this.options.text[command]);
 			b.setText(this.options.text[command]);
-			b.injectInside(toolbar);
+			b.inject(toolbar, 'bottom');
 		}
 
 		toolbar.getElements('.toolbar-button').each(function(item){
-			item.addEvent('mousedown', function(e){
-				e = new Event(e);
-				if(!item.hasClass('disabled')){
+			item.addEvent('click', function(e){
+				e = new Event(e).stop();
+				if (!item.hasClass('disabled')){
 					var command = item.className.split(' ')[0].split('-')[0];
-					var w3c = iframe.contentDocument !== undefined ? true : false;
-					var doc = w3c ? iframe.contentDocument : iframe.contentWindow.document;
-					switch(command){
-						case 'createlink': 
-							var url = prompt('Enter URL','http://');
-							this.execute(el, doc, e, command, false, url);
-							break;
-						case 'toggleview':
-							this.toggle(el,iframe,toolbar);
-							break;
-						default:
-							if(!window.ie) this.execute(el, doc, e, 'styleWithCSS', false, this.options.styleWithCSS);
-							this.execute(el, doc, e, command, false, '');
+					this.action(command, el, iframe, toolbar);
+				}
+				iframe.contentWindow.focus();
+			}.bind(this));
+
+			// remove focus rings off the buttons in Firefox
+			item.addEvent('mousedown', function(e){ new Event(e).stop(); });
+
+			// add hover effect for IE6
+//			if(Browser.Engine.trident4) item.addEvents({
+			if(window.ie6) item.addEvents({
+				'mouseenter': function(e){ this.addClass('hover'); },
+				'mouseleave': function(e){ this.removeClass('hover'); }
+			});
+		}.bind(this));
+	},
+	
+	action: function(command, el, iframe, toolbar){
+		var win = iframe.contentWindow;
+		var doc = win.document;
+		var selection = '';
+		switch(command){
+			case 'createlink': 
+				if (doc.selection){
+					selection = doc.selection.createRange().text;
+					if (selection == ''){
+						alert("Please select the text you wish to hyperlink.");
+						break;
 					}
 				}
-			}.bind(this));
-		}.bind(this));
+				else{
+					selection = win.getSelection();
+					if (selection == ''){
+						alert("Please select the text you wish to hyperlink.");
+						break;
+					}
+				}
+				var url = prompt('Enter URL','http://');
+				if (url !== null) this.execute(el, doc, command, false, url);
+				break;
+			case 'toggleview':
+				this.toggle(el,iframe,toolbar);
+				break;
+			default:
+//				if (!Browser.Engine.trident) this.execute(el, doc, 'styleWithCSS', false, this.options.styleWithCSS);
+				if (!window.ie) this.execute(el, doc, 'styleWithCSS', false, this.options.styleWithCSS);
+				this.execute(el, doc, command, false, '');
+		}
+	},
+	
+	execute: function(el, doc, command, param1, param2){
+	    if (!this.busy){
+			this.busy = true;
+			doc.execCommand(command, param1, param2);
+			el.value = this.cleanup(doc.getElementById('editable').innerHTML);
+			this.busy = false;
+		}
+		return false;
 	},
 	
 	toggle: function(el,iframe,toolbar) {
 		if (iframe.getStyle('display') == 'none') {
 			iframe.setStyle('display', '');
-			var w3c = iframe.contentDocument !== undefined ? true : false;
-			var doc = w3c ? iframe.contentDocument : iframe.contentWindow.document;
+			var doc = iframe.contentWindow.document;
 			(function(){
 			doc.getElementById('editable').innerHTML = el.value;
 			}).delay(1); // dealing with Adobe AIR's webkit bug
 			toolbar.getElements('.toolbar-button').each(function(item){
 				item.removeClass('disabled');
+//				item.set('opacity', 1);
 				item.setOpacity(1);
 			});
 			el.setStyle('display', 'none');
-		}
-		else{
+		} else {
 			el.setStyle('display', '');
-			var w3c = iframe.contentDocument !== undefined ? true : false;
-			var doc = w3c ? iframe.contentDocument : iframe.contentWindow.document;
+			var doc = iframe.contentWindow.document;
 			el.value = this.cleanup(doc.getElementById('editable').innerHTML);
 			toolbar.getElements('.toolbar-button').each(function(item){
 				if (!item.hasClass('toggleview-button')) {
 					item.addClass('disabled');
+//					item.set('opacity', 0.4);
 					item.setOpacity(0.4);
 				}
 			});
 			iframe.setStyle('display', 'none');
 		}
-	},
-	
-	execute: function(el, doc, event, command, param1, param2){
-	    if (!this.busy){
-			this.busy = true;
-			doc.execCommand(command, param1, param2);
-			el.value = this.cleanup(doc.getElementById('editable').innerHTML);
-			event.preventDefault();
-			this.busy = false;
-		}
-		return false;
 	},
 	
 	cleanup: function(source){
@@ -225,7 +300,7 @@ var MooEditable = new Class({
 			match = match.replace(/ [^=]+=/g, function(match2){return match2.toLowerCase();});
 			return match;
 		});
-			
+		
 		// Put quotes around unquoted attributes
 		source = source.replace(/<[^>]*>/g, function(match){
 			match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
