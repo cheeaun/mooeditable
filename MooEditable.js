@@ -8,26 +8,8 @@ License:
 Author:
 	Lim Chee Aun <cheeaun@gmail.com>
 	
-Contributor:
+Contributor(s):
 	Marc Fowler <marc.fowler@defraction.net>
-	
-Changelog:
-	0.3 (20 Nov 2007)
-		- Fixed formatting bugs with Internet Explorer 7
-		- Fixed IE bug with inherited margins on form elements
-		- Fixed error when cancelling hyperlink prompt dialog
-		- Fixed button hover for Internet Explorer 6
-		- Tweaked the PNG images to be a little friendlier for Internet Explorer 6
-		- Fixed <label> event to focus on iframe instead of textarea in design mode
-	0.2 (15 Nov 2007)
-		- Fixed padding of textareas and iframe's doc for Safari 3 beta
-		- Added instant update of content to textareas
-		- Added compatibility for Internet Explorer 7
-		- Better compatibility with Adobe AIR's webkit
-		- More regex to cleanup the messy code made by Internet Explorer
-		- Removed 'mode' option, not very useful anyway
-	0.1 (12 Nov 2007)
-		- first initial release
 
 Credits:
 	- Most code is based on Stefan's work "Safari Supports Content Editing!" <http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html>
@@ -46,7 +28,6 @@ var MooEditable = new Class({
 
 	options:{
 		toolbar: true,
-		styleWithCSS: true,
 		buttons: 'bold,italic,strikethrough,separator,insertunorderedlist,insertorderedlist,indent,outdent,separator,undo,redo,separator,createlink,unlink,toggleview',
 		text: {
 			'bold': 'Bold',
@@ -121,7 +102,7 @@ var MooEditable = new Class({
 		doc.open();
 		doc.write('<html style="cursor: text; height: 100%">');
 		doc.write('<body id="editable" style="font-family: helvetica, arial, sans-serif; border: 0; margin: 1px; padding: '+ elStyles['padding'] +'">');
-		doc.write(el.innerHTML);
+		doc.write('<p>'+el.value+'</p>');
 		doc.write('</body></html>');
 		doc.close();
 		
@@ -145,8 +126,8 @@ var MooEditable = new Class({
 				}.bind(this), false);
 			}
 			else{
-				doc.attachEvent('on' + events[i], function(){
-					el.value = this.cleanup(doc.getElementById('editable').innerHTML);
+				iframe.contentWindow.document.attachEvent('on' + events[i], function(){
+					el.value = this.cleanup(iframe.contentWindow.document.getElementById('editable').innerHTML);
 				}.bind(this));
 			}
 		}
@@ -224,14 +205,14 @@ var MooEditable = new Class({
 					}
 				}
 				var url = prompt('Enter URL','http://');
-				if (url !== null) this.execute(el, doc, command, false, url);
+				if (url) this.execute(el, doc, command, false, url.trim());
 				break;
 			case 'toggleview':
 				this.toggle(el,iframe,toolbar);
 				break;
 			default:
 //				if (!Browser.Engine.trident) this.execute(el, doc, 'styleWithCSS', false, this.options.styleWithCSS);
-				if (!window.ie) this.execute(el, doc, 'styleWithCSS', false, this.options.styleWithCSS);
+				if (!window.ie) this.execute(el, doc, 'styleWithCSS', false, false);
 				this.execute(el, doc, command, false, '');
 		}
 	},
@@ -275,22 +256,39 @@ var MooEditable = new Class({
 	},
 	
 	cleanup: function(source){
-		// Remove leading and trailing whitespace
-		source = source.replace(/^\s+/, '');
-		source = source.replace(/\s+$/, '');
+		// Webkit cleanup
+		source = source.replace(/<br class\="webkit-block-placeholder">/gi, "<br />");
+		source = source.replace(/<span class="Apple-style-span">(.*)<\/span>/gi, '$1');
+		source = source.replace(/ class="Apple-style-span"/gi, '');
+		source = source.replace(/<span style="">/gi, '');
+		
+		// Remove padded paragraphs
+		source = source.replace(/<p>\s*<br \/>\s*<\/p>/gi, '<p>\u00a0</p>');
+		source = source.replace(/<p>(&nbsp;|\s)*<\/p>/gi, '<p>\u00a0</p>');
+		source = source.replace(/\s*<br \/>\s*<\/p>/gi, '</p>');
+
+		// Replace improper BRs
+		source = source.replace(/<br>/gi, "<br />");
 		
 		// Remove trailing BRs
-		source = source.replace(/<br>$/, '');
+		source = source.replace(/<br \/>$/gi, '');
+
+		// Remove useless BRs
+		source = source.replace(/><br \/>/gi, '>');
 
 		// Remove BRs right before the end of blocks
-		source = source.replace(/<br>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
+		source = source.replace(/<br \/>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
 		
 		// Remove empty tags
 		source = source.replace(/(<[^\/]>|<[^\/][^>]*[^\/]>)\s*<\/[^>]*>/gi, '');
-		
-		// Webkit cleanup
-		source = source.replace(/ class=\"Apple-style-span\"/gi, '');
-		source = source.replace(/<SPAN style=\"\">/gi, '');
+
+		// Semantic conversion
+		source = source.replace(/<span style="font-weight: bold;">(.*)<\/span>/gi, '<strong>$1</strong>');
+		source = source.replace(/<span style="font-style: italic;">(.*)<\/span>/gi, '<em>$1</em>');
+		source = source.replace(/<b(\s+|>)/g, "<strong$1");
+		source = source.replace(/<\/b(\s+|>)/g, "</strong$1");
+		source = source.replace(/<i(\s+|>)/g, "<em$1");
+		source = source.replace(/<\/i(\s+|>)/g, "</em$1");
 		
 		// Replace uppercase element names with lowercase
 		source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
@@ -306,6 +304,9 @@ var MooEditable = new Class({
 			match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
 			return match;
 		});
+		
+		// Final trim
+		source = source.trim();
 		
 		return source;
 	}
