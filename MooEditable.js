@@ -1,26 +1,58 @@
 /*
-Script: MooEditable.js
-	MooEditable class for contentEditable-capable browsers
+ *  $Id$
+ *
+ * The MIT License
+ *
+ * Copyright (c) 2007 Lim Chee Aun <cheeaun@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-License:
-	MIT-style license.
-
-Author:
-	Lim Chee Aun <cheeaun@gmail.com>
-	
-Contributor(s):
-	Marc Fowler <marc.fowler@defraction.net>
-
-Credits:
-	- Most code is based on Stefan's work "Safari Supports Content Editing!" <http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html>
-	- Main reference from Peter-Paul Koch's "execCommand compatibility" research <http://www.quirksmode.org/dom/execCommand.html>
-	- Some ideas inspired by TinyMCE <http://tinymce.moxiecode.com/>
-	- Some functions inspired by Inviz's "Most tiny wysiwyg you ever seen" <http://forum.mootools.net/viewtopic.php?id=746>, <http://forum.mootools.net/viewtopic.php?id=5740>
-	- Some regex from Cameron Adams's widgEditor <http://themaninblue.com/experiment/widgEditor/>
-	- IE support referring Robert Bredlau's "Rich Text Editing" part 1 and 2 articles <http://www.rbredlau.com/drupal/node/6>
-	- Tango icons from the Tango Desktop Project <http://tango.freedesktop.org/>
-	- Additional tango icons from Tango OpenOffice set by Jimmacs <http://www.gnome-look.org/content/show.php/Tango+OpenOffice?content=54799>
-*/
+/**
+ * MooEditable.js
+ * MooEditable class for contentEditable-capable browsers
+ *
+ * @package     MooEditable
+ * @subpackage  Core
+ * @author      Lim Chee Aun <cheeaun@gmail.com>
+ * @author      Marc Fowler <marc.fowler@defraction.net>
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT License
+ * @link        http://code.google.com/p/mooeditable/
+ * @since       1.0
+ * @version     $Revision: 8 $
+ * @credits     Most code is based on Stefan's work "Safari Supports Content Editing!"
+ *                  <http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html>
+ *              Main reference from Peter-Paul Koch's "execCommand compatibility" research
+ *                  <http://www.quirksmode.org/dom/execCommand.html>
+ *              Some ideas inspired by TinyMCE <http://tinymce.moxiecode.com/>
+ *              Some functions inspired by Inviz's "Most tiny wysiwyg you ever seen"
+ *                  <http://forum.mootools.net/viewtopic.php?id=746>,
+ *                  <http://forum.mootools.net/viewtopic.php?id=5740>
+ *              Some regex from Cameron Adams's widgEditor
+ *                  <http://themaninblue.com/experiment/widgEditor/>
+ *              IE support referring Robert Bredlau's "Rich Text Editing" part 1 and 2 articles
+ *                  <http://www.rbredlau.com/drupal/node/6>
+ *              Tango icons from the Tango Desktop Project
+ *                  <http://tango.freedesktop.org/>
+ *              Additional tango icons from Tango OpenOffice set by Jimmacs
+ *                  <http://www.gnome-look.org/content/show.php/Tango+OpenOffice?content=54799>
+ */
 
 var MooEditable = new Class({
 
@@ -68,7 +100,7 @@ var MooEditable = new Class({
 				'margin': elStyles['margin']
 			}
 		});
-		
+
 		// Put textarea inside container
 		container.inject(el, 'before');
 		el.setStyles({
@@ -85,7 +117,7 @@ var MooEditable = new Class({
 			el.inject(span, 'bottom');
 		}
 		else el.inject(container, 'bottom');
-		
+
 		// Build the iframe
 		var iframe = new Element('iframe',{
 			'class': id + '-iframe',
@@ -105,7 +137,7 @@ var MooEditable = new Class({
 		doc.write('<p>'+el.value+'</p>');
 		doc.write('</body></html>');
 		doc.close();
-		
+
 		// Turn on Design Mode
 		doc.designMode = 'on';
 
@@ -131,16 +163,16 @@ var MooEditable = new Class({
 				}.bind(this));
 			}
 		}
-		
+
 		if(this.options.toolbar) this.buildToolbar(el,iframe,id);
 	},
-	
+
 	buildToolbar: function(el,iframe,id){
 		var toolbar = new Element('div',{
 			'class': id + '-toolbar'
 		});
 		toolbar.inject(iframe, 'before');
-		
+
 		var toolbarButtons = this.options.buttons.split(',');
 
 		for (var i=0 ; i<toolbarButtons.length ; i++){
@@ -183,13 +215,13 @@ var MooEditable = new Class({
 			});
 		}.bind(this));
 	},
-	
+
 	action: function(command, el, iframe, toolbar){
 		var win = iframe.contentWindow;
 		var doc = win.document;
 		var selection = '';
 		switch(command){
-			case 'createlink': 
+			case 'createlink':
 				if (doc.selection){
 					selection = doc.selection.createRange().text;
 					if (selection == ''){
@@ -216,7 +248,7 @@ var MooEditable = new Class({
 				this.execute(el, doc, command, false, '');
 		}
 	},
-	
+
 	execute: function(el, doc, command, param1, param2){
 	    if (!this.busy){
 			this.busy = true;
@@ -226,7 +258,7 @@ var MooEditable = new Class({
 		}
 		return false;
 	},
-	
+
 	toggle: function(el,iframe,toolbar) {
 		if (iframe.getStyle('display') == 'none') {
 			iframe.setStyle('display', '');
@@ -254,14 +286,14 @@ var MooEditable = new Class({
 			iframe.setStyle('display', 'none');
 		}
 	},
-	
+
 	cleanup: function(source){
 		// Webkit cleanup
 		source = source.replace(/<br class\="webkit-block-placeholder">/gi, "<br />");
 		source = source.replace(/<span class="Apple-style-span">(.*)<\/span>/gi, '$1');
 		source = source.replace(/ class="Apple-style-span"/gi, '');
 		source = source.replace(/<span style="">/gi, '');
-		
+
 		// Remove padded paragraphs
 		source = source.replace(/<p>\s*<br \/>\s*<\/p>/gi, '<p>\u00a0</p>');
 		source = source.replace(/<p>(&nbsp;|\s)*<\/p>/gi, '<p>\u00a0</p>');
@@ -269,7 +301,7 @@ var MooEditable = new Class({
 
 		// Replace improper BRs
 		source = source.replace(/<br>/gi, "<br />");
-		
+
 		// Remove trailing BRs
 		source = source.replace(/<br \/>$/gi, '');
 
@@ -278,7 +310,7 @@ var MooEditable = new Class({
 
 		// Remove BRs right before the end of blocks
 		source = source.replace(/<br \/>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
-		
+
 		// Remove empty tags
 		source = source.replace(/(<[^\/]>|<[^\/][^>]*[^\/]>)\s*<\/[^>]*>/gi, '');
 
@@ -289,25 +321,25 @@ var MooEditable = new Class({
 		source = source.replace(/<\/b(\s+|>)/g, "</strong$1");
 		source = source.replace(/<i(\s+|>)/g, "<em$1");
 		source = source.replace(/<\/i(\s+|>)/g, "</em$1");
-		
+
 		// Replace uppercase element names with lowercase
 		source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
-	
+
 		// Replace uppercase attribute names with lowercase
 		source = source.replace(/<[^>]*>/g, function(match){
 			match = match.replace(/ [^=]+=/g, function(match2){return match2.toLowerCase();});
 			return match;
 		});
-		
+
 		// Put quotes around unquoted attributes
 		source = source.replace(/<[^>]*>/g, function(match){
 			match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
 			return match;
 		});
-		
+
 		// Final trim
 		source = source.trim();
-		
+
 		return source;
 	}
 });
