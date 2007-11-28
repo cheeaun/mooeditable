@@ -1,7 +1,3 @@
-.mooeditable{
-	clear: both;
-}
-
 .mooeditable-toolbar{
 	color: inherit;
 	background-color: #eee;
@@ -33,9 +29,6 @@
 .mooeditable-toolbar .toolbar-button:hover{
 	color: inherit;
 	background-color: #fff;
-}
-.mooeditable-toolbar .toolbar-button:focus{
-	outline: 0;
 }
 
 .mooeditable-toolbar .toolbar-button.disabled{

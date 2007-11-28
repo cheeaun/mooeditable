@@ -32,6 +32,7 @@
  * @subpackage  Core
  * @author      Lim Chee Aun <cheeaun@gmail.com>
  * @author      Marc Fowler <marc.fowler@defraction.net>
+ * @author      Radovan Lozej <xrado@email.si>
  * @license     http://www.opensource.org/licenses/mit-license.php MIT License
  * @link        http://code.google.com/p/mooeditable/
  * @since       1.0
@@ -56,7 +57,7 @@
 
 var MooEditable = new Class({
 
-//	Implements: [Events, Options],
+	Implements: [Events, Options],
 
 	options:{
 		toolbar: true,
@@ -78,100 +79,108 @@ var MooEditable = new Class({
 		}
 	},
 
-	initialize: function(elements,options){
+	initialize: function(el,options){
 		this.setOptions(options);
-		$$(elements).each(this.build, this);
+		this.area = el;
+		this.build();
 	},
 
-	build: function(el){
-		var id = el.className ? el.className : el.id ? el.id : 'mooeditable';
-		var elStyles = el.getStyles('width','height','padding','margin','border','border-width');
-		var sides = ['top','right','bottom','left'];
-		for (var i = 0; i < sides.length; i++) {
-			elStyles['padding-' + sides[i]] = elStyles['padding'].split(' ')[i];
-			elStyles['border-' + sides[i] + '-width'] = elStyles['border-width'].split(' ')[i];
-		}
-
+	build: function(){
 		// Build the container
-		var container = new Element('div',{
-			'class': id + '-container',
+		this.container = new Element('div',{
+			'id': (this.area.id) ? this.area.id+'-container' : null,
+			'class': 'mooeditable-container',
 			'styles': {
-				'width': elStyles['width'].toInt() + elStyles['padding-right'].toInt() + elStyles['padding-left'].toInt() + elStyles['border-right-width'].toInt() + elStyles['border-left-width'].toInt(),
-				'margin': elStyles['margin']
+				'width': this.area.getOffsetSize().x,
+				'margin': this.area.getStyle('margin')
 			}
 		});
 
 		// Put textarea inside container
-		container.inject(el, 'before');
-		el.setStyles({
+		this.container.wraps(this.area);
+
+		this.area.setStyles({
 			'margin': 0,
 			'display': 'none',
 			'resize': 'none', // disable resizable textareas in Safari
 			'outline': 'none' // disable focus ring in Safari
 		});
-//		if(Browser.Engine.trident){
-		if(window.ie){
-			// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
-			var span = new Element('span');
-			span.inject(container, 'bottom');
-			el.inject(span, 'bottom');
-		}
-		else el.inject(container, 'bottom');
+		
+		// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
+		if(Browser.Engine.trident) new Element('span').wraps(this.area);
 
 		// Build the iframe
-		var iframe = new Element('iframe',{
-			'class': id + '-iframe',
-			'styles':{
-				'width': elStyles['width'].toInt() + elStyles['padding-right'].toInt() + elStyles['padding-left'].toInt(),
-				'height': elStyles['height'].toInt() + elStyles['padding-top'].toInt() + elStyles['padding-bottom'].toInt(),
-				'border': elStyles['border']
+		var pads = this.area.getStyle('padding').split(' ');
+		pads = pads.map(function(p){ return (p == 'auto') ? 0 : p.toInt(); });
+
+		this.iframe = new IFrame({
+			'class': 'mooeditable-iframe',
+			'styles': {
+				'width': this.area.getStyle('width').toInt() + pads[1] + pads[3],
+				'height': this.area.getStyle('height').toInt() + pads[0] + pads[2],
+				'border-color': this.area.getStyle('border-color'),
+				'border-width': this.area.getStyle('border-width'),
+				'border-style': this.area.getStyle('border-style')
 			}
 		});
-		iframe.inject(container, 'top');
+		this.iframe.inject(this.container, 'top');
+
+		// contentWindow and document references
+		this.win = this.iframe.contentWindow;
+		this.doc = this.win.document;
 
 		// Build the content of iframe
-		var doc = iframe.contentWindow.document;
-		doc.open();
-		doc.write('<html style="cursor: text; height: 100%">');
-		doc.write('<body id="editable" style="font-family: helvetica, arial, sans-serif; border: 0; margin: 1px; padding: '+ elStyles['padding'] +'">');
-		doc.write('<p>'+el.value+'</p>');
-		doc.write('</body></html>');
-		doc.close();
-
+		var documentTemplate = '\
+			<html style="cursor: text; height: 100%">\
+				<body id=\"editable\" style="font-family: sans-serif; border: 0">'+
+				this.cleanup(this.area.value) +
+				'</body>\
+			</html>\
+		';
+		this.doc.open();
+		this.doc.write(documentTemplate);
+		this.doc.close();
+		
 		// Turn on Design Mode
-		doc.designMode = 'on';
+		this.doc.designMode = 'on';
+		
+		// In IE6, after designMode is on, it forgots what is this.doc. Weird.
+		if(Browser.Engine.trident4) this.doc = this.win.document;
+		
+		// Assign view mode
+		this.mode = 'iframe';
 
 		// Update the event for textarea's corresponding labels
-		if(el.id) $$('label[for="'+el.id+'"]').addEvent('click', function(e){
-			if(iframe.getStyle('display') != 'none'){
-				e = new Event(e).stop();
-				iframe.contentWindow.focus();
-			}
-		});
+		if(this.area.id && $$('label[for="'+this.area.id+'"]')){
+			$$('label[for="'+this.area.id+'"]').addEvent('click', function(e){
+				if(this.mode == 'iframe'){
+					e = new Event(e).stop();
+					this.win.focus();
+				}
+			}.bind(this));
+		}
 
 		// Ensures textarea content is always updated
 		var events = ['mousedown', 'mouseup', 'mouseout', 'mouseover', 'click', 'keydown', 'keyup', 'keypress'];
-		for(var i = 0; i < events.length; i++){
+		for(var i=0; i<events.length; i++){
 			if($type(document.addEventListener) == 'function'){
-				doc.addEventListener(events[i], function(oEvent){
-					el.value = this.cleanup(doc.getElementById('editable').innerHTML);
+				this.doc.addEventListener(events[i], function(e){
+					this.area.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
 				}.bind(this), false);
 			}
 			else{
-				iframe.contentWindow.document.attachEvent('on' + events[i], function(){
-					el.value = this.cleanup(iframe.contentWindow.document.getElementById('editable').innerHTML);
+				this.doc.attachEvent('on' + events[i], function(e){
+					this.area.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
 				}.bind(this));
 			}
 		}
 
-		if(this.options.toolbar) this.buildToolbar(el,iframe,id);
+		if(this.options.toolbar) this.buildToolbar();
 	},
 
-	buildToolbar: function(el,iframe,id){
-		var toolbar = new Element('div',{
-			'class': id + '-toolbar'
-		});
-		toolbar.inject(iframe, 'before');
+	buildToolbar: function(){
+		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' });
+		this.toolbar.inject(this.iframe, 'before');
 
 		var toolbarButtons = this.options.buttons.split(',');
 
@@ -179,9 +188,7 @@ var MooEditable = new Class({
 			var command = toolbarButtons[i];
 			var b;
 			if (command == 'separator'){
-				b = new Element('span',{
-					'class': 'toolbar-separator'
-				});
+				b = new Element('span',{ 'class': 'toolbar-separator' });
 			}
 			else{
 				b = new Element('button',{
@@ -189,101 +196,94 @@ var MooEditable = new Class({
 					'title': this.options.text[command]
 				});
 			}
-//			b.set('text', this.options.text[command]);
-			b.setText(this.options.text[command]);
-			b.inject(toolbar, 'bottom');
+			b.set('text', this.options.text[command]);
+			b.inject(this.toolbar, 'bottom');
 		}
 
-		toolbar.getElements('.toolbar-button').each(function(item){
+		this.toolbar.getElements('.toolbar-button').each(function(item){
 			item.addEvent('click', function(e){
 				e = new Event(e).stop();
 				if (!item.hasClass('disabled')){
 					var command = item.className.split(' ')[0].split('-')[0];
-					this.action(command, el, iframe, toolbar);
+					this.action(command);
 				}
-				iframe.contentWindow.focus();
+				this.win.focus();
 			}.bind(this));
 
 			// remove focus rings off the buttons in Firefox
 			item.addEvent('mousedown', function(e){ new Event(e).stop(); });
 
 			// add hover effect for IE6
-//			if(Browser.Engine.trident4) item.addEvents({
-			if(window.ie6) item.addEvents({
+			if(Browser.Engine.trident4) item.addEvents({
 				'mouseenter': function(e){ this.addClass('hover'); },
 				'mouseleave': function(e){ this.removeClass('hover'); }
 			});
 		}.bind(this));
 	},
 
-	action: function(command, el, iframe, toolbar){
-		var win = iframe.contentWindow;
-		var doc = win.document;
+	action: function(command){
 		var selection = '';
 		switch(command){
 			case 'createlink':
-				if (doc.selection){
-					selection = doc.selection.createRange().text;
+				if (this.doc.selection){
+					selection = this.doc.selection.createRange().text;
 					if (selection == ''){
 						alert("Please select the text you wish to hyperlink.");
 						break;
 					}
 				}
 				else{
-					selection = win.getSelection();
+					selection = this.win.getSelection();
 					if (selection == ''){
 						alert("Please select the text you wish to hyperlink.");
 						break;
 					}
 				}
 				var url = prompt('Enter URL','http://');
-				if (url) this.execute(el, doc, command, false, url.trim());
+				if (url) this.execute(command, false, url.trim());
 				break;
 			case 'toggleview':
-				this.toggle(el,iframe,toolbar);
+				this.toggleView();
 				break;
 			default:
-//				if (!Browser.Engine.trident) this.execute(el, doc, 'styleWithCSS', false, this.options.styleWithCSS);
-				if (!window.ie) this.execute(el, doc, 'styleWithCSS', false, false);
-				this.execute(el, doc, command, false, '');
+				if (!Browser.Engine.trident) this.execute('styleWithCSS', false, false);
+				this.execute(command, false, '');
 		}
 	},
 
-	execute: function(el, doc, command, param1, param2){
+	execute: function(command, param1, param2){
 	    if (!this.busy){
 			this.busy = true;
-			doc.execCommand(command, param1, param2);
-			el.value = this.cleanup(doc.getElementById('editable').innerHTML);
+			this.doc.execCommand(command, param1, param2);
+			this.area.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
 			this.busy = false;
 		}
 		return false;
 	},
 
-	toggle: function(el,iframe,toolbar) {
-		if (iframe.getStyle('display') == 'none') {
-			iframe.setStyle('display', '');
-			var doc = iframe.contentWindow.document;
+	toggleView: function() {
+		if (this.mode == 'area') {
+			this.mode = 'iframe';
+			this.iframe.setStyle('display', '');
 			(function(){
-			doc.getElementById('editable').innerHTML = el.value;
-			}).delay(1); // dealing with Adobe AIR's webkit bug
-			toolbar.getElements('.toolbar-button').each(function(item){
+				this.doc.getElementById('editable').innerHTML = this.area.value;
+			}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
+			this.toolbar.getElements('.toolbar-button').each(function(item){
 				item.removeClass('disabled');
-//				item.set('opacity', 1);
-				item.setOpacity(1);
+				item.set('opacity', 1);
 			});
-			el.setStyle('display', 'none');
+			this.area.setStyle('display', 'none');
 		} else {
-			el.setStyle('display', '');
-			var doc = iframe.contentWindow.document;
-			el.value = this.cleanup(doc.getElementById('editable').innerHTML);
-			toolbar.getElements('.toolbar-button').each(function(item){
+			this.mode = 'area';
+			this.area.setStyle('display', '');
+			this.area.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
+			this.toolbar.getElements('.toolbar-button').each(function(item){
 				if (!item.hasClass('toggleview-button')) {
 					item.addClass('disabled');
-//					item.set('opacity', 0.4);
-					item.setOpacity(0.4);
+					item.set('opacity', 0.4);
 				}
 			});
-			iframe.setStyle('display', 'none');
+			this.iframe.setStyle('display', 'none');
 		}
 	},
 
@@ -302,8 +302,9 @@ var MooEditable = new Class({
 		// Replace improper BRs
 		source = source.replace(/<br>/gi, "<br />");
 
-		// Remove trailing BRs
+		// Remove leading and trailing BRs
 		source = source.replace(/<br \/>$/gi, '');
+		source = source.replace(/^<br \/>/gi, '');
 
 		// Remove useless BRs
 		source = source.replace(/><br \/>/gi, '>');
@@ -343,5 +344,3 @@ var MooEditable = new Class({
 		return source;
 	}
 });
-
-MooEditable.implement(new Options, new Events);
