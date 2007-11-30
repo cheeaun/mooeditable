@@ -81,46 +81,46 @@ var MooEditable = new Class({
 
 	initialize: function(el,options){
 		this.setOptions(options);
-		this.area = el;
+		this.textarea = el;
 		this.build();
 	},
 
 	build: function(){
 		// Build the container
 		this.container = new Element('div',{
-			'id': (this.area.id) ? this.area.id+'-container' : null,
+			'id': (this.textarea.id) ? this.textarea.id+'-container' : null,
 			'class': 'mooeditable-container',
 			'styles': {
-				'width': this.area.getOffsetSize().x,
-				'margin': this.area.getStyle('margin')
+				'width': this.textarea.getOffsetSize().x,
+				'margin': this.textarea.getStyle('margin')
 			}
 		});
 
 		// Put textarea inside container
-		this.container.wraps(this.area);
+		this.container.wraps(this.textarea);
 
-		this.area.setStyles({
+		this.textarea.setStyles({
 			'margin': 0,
 			'display': 'none',
 			'resize': 'none', // disable resizable textareas in Safari
 			'outline': 'none' // disable focus ring in Safari
 		});
-		
+
 		// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
-		if(Browser.Engine.trident) new Element('span').wraps(this.area);
+		if(Browser.Engine.trident) new Element('span').wraps(this.textarea);
 
 		// Build the iframe
-		var pads = this.area.getStyle('padding').split(' ');
+		var pads = this.textarea.getStyle('padding').split(' ');
 		pads = pads.map(function(p){ return (p == 'auto') ? 0 : p.toInt(); });
 
 		this.iframe = new IFrame({
 			'class': 'mooeditable-iframe',
 			'styles': {
-				'width': this.area.getStyle('width').toInt() + pads[1] + pads[3],
-				'height': this.area.getStyle('height').toInt() + pads[0] + pads[2],
-				'border-color': this.area.getStyle('border-color'),
-				'border-width': this.area.getStyle('border-width'),
-				'border-style': this.area.getStyle('border-style')
+				'width': this.textarea.getStyle('width').toInt() + pads[1] + pads[3],
+				'height': this.textarea.getStyle('height').toInt() + pads[0] + pads[2],
+				'border-color': this.textarea.getStyle('border-color'),
+				'border-width': this.textarea.getStyle('border-width'),
+				'border-style': this.textarea.getStyle('border-style')
 			}
 		});
 		this.iframe.inject(this.container, 'top');
@@ -133,26 +133,26 @@ var MooEditable = new Class({
 		var documentTemplate = '\
 			<html style="cursor: text; height: 100%">\
 				<body id=\"editable\" style="font-family: sans-serif; border: 0">'+
-				this.cleanup(this.area.value) +
+				this.cleanup(this.textarea.value) +
 				'</body>\
 			</html>\
 		';
 		this.doc.open();
 		this.doc.write(documentTemplate);
 		this.doc.close();
-		
+
 		// Turn on Design Mode
 		this.doc.designMode = 'on';
-		
+
 		// In IE6, after designMode is on, it forgots what is this.doc. Weird.
 		if(Browser.Engine.trident4) this.doc = this.win.document;
-		
+
 		// Assign view mode
 		this.mode = 'iframe';
 
 		// Update the event for textarea's corresponding labels
-		if(this.area.id && $$('label[for="'+this.area.id+'"]')){
-			$$('label[for="'+this.area.id+'"]').addEvent('click', function(e){
+		if(this.textarea.id && $$('label[for="'+this.textarea.id+'"]')){
+			$$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
 				if(this.mode == 'iframe'){
 					e = new Event(e).stop();
 					this.win.focus();
@@ -160,22 +160,16 @@ var MooEditable = new Class({
 			}.bind(this));
 		}
 
-		// Ensures textarea content is always updated
-		var events = ['mousedown', 'mouseup', 'mouseout', 'mouseover', 'click', 'keydown', 'keyup', 'keypress'];
-		for(var i=0; i<events.length; i++){
-			if($type(document.addEventListener) == 'function'){
-				this.doc.addEventListener(events[i], function(e){
-					this.area.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
-				}.bind(this), false);
-			}
-			else{
-				this.doc.attachEvent('on' + events[i], function(e){
-					this.area.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
-				}.bind(this));
-			}
-		}
+		// Update & cleanup content befour submit
+		this.textarea.form.addEvent('submit',function(){ 
+			this.updateContent();
+		}.bind(this));
 
 		if(this.options.toolbar) this.buildToolbar();
+	},
+
+	updateContent: function(){
+		if(this.mode=='iframe') this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
 	},
 
 	buildToolbar: function(){
@@ -255,28 +249,28 @@ var MooEditable = new Class({
 	    if (!this.busy){
 			this.busy = true;
 			this.doc.execCommand(command, param1, param2);
-			this.area.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
+			this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
 			this.busy = false;
 		}
 		return false;
 	},
 
 	toggleView: function() {
-		if (this.mode == 'area') {
+		if (this.mode == 'textarea') {
 			this.mode = 'iframe';
 			this.iframe.setStyle('display', '');
 			(function(){
-				this.doc.getElementById('editable').innerHTML = this.area.value;
+				this.doc.getElementById('editable').innerHTML = this.textarea.value;
 			}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
 			this.toolbar.getElements('.toolbar-button').each(function(item){
 				item.removeClass('disabled');
 				item.set('opacity', 1);
 			});
-			this.area.setStyle('display', 'none');
+			this.textarea.setStyle('display', 'none');
 		} else {
-			this.mode = 'area';
-			this.area.setStyle('display', '');
-			this.area.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
+			this.mode = 'textarea';
+			this.textarea.setStyle('display', '');
+			this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
 			this.toolbar.getElements('.toolbar-button').each(function(item){
 				if (!item.hasClass('toggleview-button')) {
 					item.addClass('disabled');

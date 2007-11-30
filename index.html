@@ -25,28 +25,28 @@
 		<script type="text/javascript" src="mootools.js"></script>
 		<script type="text/javascript" src="MooEditable.js"></script>
 		<script type="text/javascript">
+			var mooeditables = []
 			window.addEvent('load', function(){
-				$$('.mooeditable').each(function(el){ new MooEditable(el); } );
-
-				// alerting the contents of textarea
-				$('theForm').addEvent('submit', function(e){
-					e = new Event(e).stop();
-					alert('Textarea 1 : ' + $('textarea-1').value);
-					alert('Textarea 2 : ' + $('textarea-2').value);
-					return false;
-				});
+				$$('.mooeditable').each(function(el){ mooeditables.push(new MooEditable(el)); } );
 			});
+
+			function updateContent(){
+					mooeditables.each(function(el){
+						el.updateContent();
+					});
+			}
 		</script>
 	</head>
 	<body>
 		<h1>MooEditable</h1>
-		<form id="theForm">
+		<form id="theForm" method="post" action="http://xrado.hopto.org/post.php">
 		<label for="textarea-1">Textarea 1</label>
-		<textarea class="mooeditable" id="textarea-1">&lt;strong&gt;This&lt;/strong&gt; is cool!</textarea>
+		<textarea class="mooeditable" id="textarea-1" name="editable1">&lt;strong&gt;This&lt;/strong&gt; is cool!</textarea>
 		<label for="textarea-2">Textarea 2</label>
-		<textarea class="mooeditable" id="textarea-2"></textarea>
-		<input type="submit" />
+		<textarea class="mooeditable" id="textarea-2" name="editable2"></textarea>
+		<input type="submit" /> <input type="button" onclick="updateContent(); new Request.HTML({url:'../post.php',data:$('theForm'),update:$('data')}).send()" value="ajax submit" />
 		</form>
+		<div id="data"></div>
 		<p>Tested on Firefox 2, Safari 3 beta (Windows) and Internet Explorer 6/7. View source for more. Ideas, opinions and help needed.</p>
 		<p>Project page: <a href="http://mooeditable.googlecode.com/">http://mooeditable.googlecode.com/</a></p>
 	</body>

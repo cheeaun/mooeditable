@@ -56,6 +56,9 @@
 .mooeditable-toolbar .italic-button{
 	background-image: url(images/format-text-italic.png);
 }
+.mooeditable-toolbar .underline-button{
+	background-image: url(images/format-text-underline.png);
+}
 .mooeditable-toolbar .strikethrough-button{
 	background-image: url(images/format-text-strikethrough.png);
 }
