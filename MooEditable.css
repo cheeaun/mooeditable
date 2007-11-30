@@ -86,6 +86,9 @@
 .mooeditable-toolbar .unlink-button{
 	background-image: url(images/format-remove-link.png);
 }
+.mooeditable-toolbar .urlimage-button{
+	background-image: url(images/image-x-generic.png);
+}
 .mooeditable-toolbar .toggleview-button{
 	background-image: url(images/action-toggle-view.png);
 }
