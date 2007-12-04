@@ -61,10 +61,12 @@ var MooEditable = new Class({
 
 	options:{
 		toolbar: true,
-		buttons: 'bold,italic,strikethrough,separator,insertunorderedlist,insertorderedlist,indent,outdent,separator,undo,redo,separator,createlink,unlink,toggleview',
+		buttons: 'bold,italic,underline,strikethrough,separator,insertunorderedlist,insertorderedlist,indent,outdent,separator,undo,redo,separator,\
+					createlink,unlink,separator,urlimage,separator,toggleview',
 		text: {
 			'bold': 'Bold',
 			'italic': 'Italic',
+			'underline': 'Underline',
 			'strikethrough': 'Strikethrough',
 			'insertunorderedlist': 'Unordered List',
 			'insertorderedlist': 'Ordered List',
@@ -74,6 +76,7 @@ var MooEditable = new Class({
 			'redo': 'Redo',
 			'createlink': 'Add Hyperlink',
 			'unlink': 'Remove Hyperlink',
+			'urlimage': 'Add image from URL',
 			'separator': '|',
 			'toggleview': 'Toggle View'
 		}
@@ -236,6 +239,10 @@ var MooEditable = new Class({
 				}
 				var url = prompt('Enter URL','http://');
 				if (url) this.execute(command, false, url.trim());
+				break;
+			case 'urlimage':
+				var url = prompt("Enter Image URL","http://");
+				if (url) this.execute("insertImage", false, url.trim());
 				break;
 			case 'toggleview':
 				this.toggleView();
