@@ -102,13 +102,6 @@ var MooEditable = new Class({
 		// Put textarea inside container
 		this.container.wraps(this.textarea);
 
-		this.textarea.setStyles({
-			'margin': 0,
-			'display': 'none',
-			'resize': 'none', // disable resizable textareas in Safari
-			'outline': 'none' // disable focus ring in Safari
-		});
-
 		// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
 		if(Browser.Engine.trident) new Element('span').wraps(this.textarea);
 
@@ -126,6 +119,14 @@ var MooEditable = new Class({
 				'border-style': this.textarea.getStyle('border-style')
 			}
 		});
+
+		this.textarea.setStyles({
+			'margin': 0,
+			'display': 'none',
+			'resize': 'none', // disable resizable textareas in Safari
+			'outline': 'none' // disable focus ring in Safari
+		});
+
 		this.iframe.inject(this.container, 'top');
 
 		// contentWindow and document references
