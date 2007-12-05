@@ -249,7 +249,8 @@ var MooEditable = new Class({
 				this.toggleView();
 				break;
 			default:
-				if (!Browser.Engine.trident) this.execute('styleWithCSS', false, false);
+				// not supported in IE and Opera
+				if (!Browser.Engine.trident && !Browser.Engine.presto) this.execute('styleWithCSS', false, false);
 				this.execute(command, false, '');
 		}
 	},
