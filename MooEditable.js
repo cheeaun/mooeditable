@@ -191,7 +191,6 @@ var MooEditable = new Class({
 				b = new Element('button',{
 					'class': command+'-button toolbar-button',
 					'title': this.options.text[command],
-					'text': this.options.text[command],
 					'events': {
 						'click': function(e) {
 							e.stop();
@@ -209,6 +208,7 @@ var MooEditable = new Class({
 				});
 			}
 			
+			b.set('text', this.options.text[command]);
 			b.inject(this.toolbar);
 		}.bind(this));
 	},
