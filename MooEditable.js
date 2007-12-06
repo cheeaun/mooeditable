@@ -61,8 +61,8 @@ var MooEditable = new Class({
 
 	options:{
 		toolbar: true,
-		buttons: 'bold,italic,underline,strikethrough,separator,insertunorderedlist,insertorderedlist,indent,outdent,separator,undo,redo,separator,\
-					createlink,unlink,separator,urlimage,separator,toggleview',
+		buttons: 'bold,italic,underline,strikethrough,separator,insertunorderedlist,insertorderedlist,indent,outdent,separator,undo,redo,separator,'+
+					'createlink,unlink,separator,urlimage,separator,toggleview',
 		text: {
 			'bold': 'Bold',
 			'italic': 'Italic',
@@ -151,6 +151,9 @@ var MooEditable = new Class({
 		// In IE6, after designMode is on, it forgots what is this.doc. Weird.
 		if(Browser.Engine.trident4) this.doc = this.win.document;
 
+		// styleWithCSS, not supported in IE and Opera
+		if (!Browser.Engine.trident && !Browser.Engine.presto) this.execute('styleWithCSS', false, false);
+
 		// Assign view mode
 		this.mode = 'iframe';
 
@@ -164,17 +167,13 @@ var MooEditable = new Class({
 			}.bind(this));
 		}
 
-		// Update & cleanup content befour submit
+		// Update & cleanup content before submit
 		this.form = this.textarea.getParent('form');
 		if(this.form) this.form.addEvent('submit',function(){
-			this.updateContent();
+			if(this.mode=='iframe') this.updateContent();
 		}.bind(this));
 
 		if(this.options.toolbar) this.buildToolbar();
-	},
-
-	updateContent: function(){
-		if(this.mode=='iframe') this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
 	},
 
 	buildToolbar: function(){
@@ -182,41 +181,35 @@ var MooEditable = new Class({
 		this.toolbar.inject(this.iframe, 'before');
 
 		var toolbarButtons = this.options.buttons.split(',');
-
-		for (var i=0 ; i<toolbarButtons.length ; i++){
-			var command = toolbarButtons[i];
+		toolbarButtons.each(function(command, idx) {
 			var b;
+			var klass = this;
 			if (command == 'separator'){
 				b = new Element('span',{ 'class': 'toolbar-separator' });
 			}
 			else{
 				b = new Element('button',{
 					'class': command+'-button toolbar-button',
-					'title': this.options.text[command]
+					'title': this.options.text[command],
+					'text': this.options.text[command],
+					'events': {
+						'click': function(e) {
+							e.stop();
+							if(!this.hasClass('disabled')) klass.action(command);
+							klass.win.focus();
+						},
+						'mousedown': function(e) { e.stop(); }
+					}
+				});
+				
+				// add hover effect for IE6
+				if(Browser.Engine.trident4) b.addEvents({
+					'mouseenter': function(e){ this.addClass('hover'); },
+					'mouseleave': function(e){ this.removeClass('hover'); }
 				});
 			}
-			b.set('text', this.options.text[command]);
-			b.inject(this.toolbar, 'bottom');
-		}
-
-		this.toolbar.getElements('.toolbar-button').each(function(item){
-			item.addEvent('click', function(e){
-				e = new Event(e).stop();
-				if (!item.hasClass('disabled')){
-					var command = item.className.split(' ')[0].split('-')[0];
-					this.action(command);
-				}
-				this.win.focus();
-			}.bind(this));
-
-			// remove focus rings off the buttons in Firefox
-			item.addEvent('mousedown', function(e){ new Event(e).stop(); });
-
-			// add hover effect for IE6
-			if(Browser.Engine.trident4) item.addEvents({
-				'mouseenter': function(e){ this.addClass('hover'); },
-				'mouseleave': function(e){ this.removeClass('hover'); }
-			});
+			
+			b.inject(this.toolbar);
 		}.bind(this));
 	},
 
@@ -224,22 +217,13 @@ var MooEditable = new Class({
 		var selection = '';
 		switch(command){
 			case 'createlink':
-				if (this.doc.selection){
-					selection = this.doc.selection.createRange().text;
-					if (selection == ''){
-						alert("Please select the text you wish to hyperlink.");
-						break;
-					}
+				selection = (this.doc.selection) ? this.doc.selection.createRange().text : this.win.getSelection();
+				if (selection == '')
+					alert("Please select the text you wish to hyperlink.");
+				else {
+					var url = prompt('Enter URL','http://');
+					if (url) this.execute(command, false, url.trim());
 				}
-				else{
-					selection = this.win.getSelection();
-					if (selection == ''){
-						alert("Please select the text you wish to hyperlink.");
-						break;
-					}
-				}
-				var url = prompt('Enter URL','http://');
-				if (url) this.execute(command, false, url.trim());
 				break;
 			case 'urlimage':
 				var url = prompt("Enter Image URL","http://");
@@ -249,8 +233,6 @@ var MooEditable = new Class({
 				this.toggleView();
 				break;
 			default:
-				// not supported in IE and Opera
-				if (!Browser.Engine.trident && !Browser.Engine.presto) this.execute('styleWithCSS', false, false);
 				this.execute(command, false, '');
 		}
 	},
@@ -259,7 +241,7 @@ var MooEditable = new Class({
 	    if (!this.busy){
 			this.busy = true;
 			this.doc.execCommand(command, param1, param2);
-			this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
+			this.updateContent();
 			this.busy = false;
 		}
 		return false;
@@ -280,7 +262,7 @@ var MooEditable = new Class({
 		} else {
 			this.mode = 'textarea';
 			this.textarea.setStyle('display', '');
-			this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
+			this.updateContent();
 			this.toolbar.getElements('.toolbar-button').each(function(item){
 				if (!item.hasClass('toggleview-button')) {
 					item.addClass('disabled');
@@ -289,6 +271,10 @@ var MooEditable = new Class({
 			});
 			this.iframe.setStyle('display', 'none');
 		}
+	},
+
+	updateContent: function(){
+		this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
 	},
 
 	cleanup: function(source){
@@ -322,10 +308,12 @@ var MooEditable = new Class({
 		// Semantic conversion
 		source = source.replace(/<span style="font-weight: bold;">(.*)<\/span>/gi, '<strong>$1</strong>');
 		source = source.replace(/<span style="font-style: italic;">(.*)<\/span>/gi, '<em>$1</em>');
-		source = source.replace(/<b(\s+|>)/g, "<strong$1");
-		source = source.replace(/<\/b(\s+|>)/g, "</strong$1");
-		source = source.replace(/<i(\s+|>)/g, "<em$1");
-		source = source.replace(/<\/i(\s+|>)/g, "</em$1");
+		source = source.replace(/<b(\s+|>)/g, '<strong$1');
+		source = source.replace(/<\/b(\s+|>)/g, '</strong$1');
+		source = source.replace(/<i(\s+|>)/g, '<em$1');
+		source = source.replace(/<\/i(\s+|>)/g, '</em$1');
+		source = source.replace(/<u(\s+|>)/g, '<span style="text-decoration: underline;"$1');
+		source = source.replace(/<\/u(\s+|>)/g, "</span$1");
 
 		// Replace uppercase element names with lowercase
 		source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});

@@ -26,7 +26,8 @@
 	background-position: 4px 4px;
 }
 
-.mooeditable-toolbar .toolbar-button:hover{
+.mooeditable-toolbar .toolbar-button:hover,
+.mooeditable-toolbar .toolbar-button.hover{
 	color: inherit;
 	background-color: #fff;
 }

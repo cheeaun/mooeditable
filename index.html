@@ -1,8 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>MooEditable</title>
+		
 		<style type="text/css">
 			body{
 				font-family: sans-serif;
@@ -21,36 +22,56 @@
 				margin: 20px;
 			}
 		</style>
+		
 		<link rel="stylesheet" type="text/css" href="MooEditable.css" />
 		<script type="text/javascript" src="mootools.js"></script>
 		<script type="text/javascript" src="MooEditable.js"></script>
+
 		<script type="text/javascript">
-			// init mooeditables
-			var mooeditables = []
+			// Init mooeditables
+			var mooeditables = [];
 			window.addEvent('load', function(){
 				$$('.mooeditable').each(function(el){ mooeditables.push(new MooEditable(el)); } );
+				
+				// Post submit
+				$('theForm').addEvent('submit', function(e){
+					alert($('textarea-1').value);
+					alert($('textarea-2').value);
+					return true;
+				});
 			});
-			// required for ajax submit
+			
+			// Ajax submit
 			function updateContent(){
 				mooeditables.each(function(el){ el.updateContent(); });
 			}
 		</script>
+		
 	</head>
 	<body>
+	
 		<h1>MooEditable</h1>
+		
 		<form id="theForm" method="post" action="http://xrado.hopto.org/post.php">
-		<label for="textarea-1">Textarea 1</label>
-		<textarea class="mooeditable" id="textarea-1" name="editable1">
-		&lt;img src="http://www.zenwalk.org/images/screenshots-zenwalk-4.8/screenshot-zenwalk-4.8-desktop-thumb.png"&gt;
-		&lt;strong&gt;This&lt;/strong&gt; is cool!aaa
-		</textarea>
-		<label for="textarea-2">Textarea 2</label>
-		<textarea class="mooeditable" id="textarea-2" name="editable2"></textarea>
-		<input type="submit" />
-		<input type="button" onclick="updateContent(); new Request.HTML({url:'../post.php',data:$('theForm'),update:$('data')}).send()" value="Ajax submit" />
+
+			<label for="textarea-1">Textarea 1</label>
+			<textarea class="mooeditable" id="textarea-1" name="editable1">
+			&lt;p&gt;&lt;strong&gt;This&lt;/strong&gt; is cool!&lt;/p&gt;
+			</textarea>
+
+			<label for="textarea-2">Textarea 2</label>
+			<textarea class="mooeditable" id="textarea-2" name="editable2"></textarea>
+
+			<input type="submit" />
+
+			<input type="button" onclick="updateContent(); new Request.HTML({url:'../post.php',data:$('theForm'),update:$('data')}).send()" value="Ajax submit" />
+			
 		</form>
+		
 		<div id="data"></div>
+		
 		<p>Tested on Firefox 2, Safari 3 beta (Windows) and Internet Explorer 6/7. View source for more. Ideas, opinions and help needed.</p>
 		<p>Project page: <a href="http://mooeditable.googlecode.com/">http://mooeditable.googlecode.com/</a></p>
+		
 	</body>
 </html>
