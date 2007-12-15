@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>MooEditable</title>
-		
+
 		<style type="text/css">
 			body{
 				font-family: sans-serif;
@@ -22,7 +22,7 @@
 				margin: 20px;
 			}
 		</style>
-		
+
 		<link rel="stylesheet" type="text/css" href="MooEditable.css" />
 		<script type="text/javascript" src="mootools.js"></script>
 		<script type="text/javascript" src="MooEditable.js"></script>
@@ -32,7 +32,7 @@
 			var mooeditables = [];
 			window.addEvent('load', function(){
 				$$('.mooeditable').each(function(el){ mooeditables.push(new MooEditable(el)); } );
-				
+
 				// Post submit
 				$('theForm').addEvent('submit', function(e){
 					alert($('textarea-1').value);
@@ -40,18 +40,18 @@
 					return true;
 				});
 			});
-			
+
 			// Ajax submit
 			function updateContent(){
 				mooeditables.each(function(el){ el.updateContent(); });
 			}
 		</script>
-		
+
 	</head>
 	<body>
-	
+
 		<h1>MooEditable</h1>
-		
+
 		<form id="theForm" method="post" action="http://xrado.hopto.org/post.php">
 
 			<label for="textarea-1">Textarea 1</label>
@@ -64,14 +64,14 @@
 
 			<input type="submit" />
 
-			<input type="button" onclick="updateContent(); new Request.HTML({url:'../post.php',data:$('theForm'),update:$('data')}).send()" value="Ajax submit" />
-			
+			<input type="button" onclick="updateContent(); new Request.HTML({url:'http://xrado.hopto.org/post.php',data:$('theForm'),update:$('data')}).send()" value="Ajax submit" />
+
 		</form>
-		
+
 		<div id="data"></div>
-		
+
 		<p>Tested on Firefox 2, Safari 3 beta (Windows) and Internet Explorer 6/7. View source for more. Ideas, opinions and help needed.</p>
 		<p>Project page: <a href="http://mooeditable.googlecode.com/">http://mooeditable.googlecode.com/</a></p>
-		
+
 	</body>
 </html>

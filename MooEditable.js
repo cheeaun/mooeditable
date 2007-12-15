@@ -63,23 +63,24 @@ var MooEditable = new Class({
 		toolbar: true,
 		buttons: 'bold,italic,underline,strikethrough,separator,insertunorderedlist,insertorderedlist,indent,outdent,separator,undo,redo,separator,'+
 					'createlink,unlink,separator,urlimage,separator,toggleview',
-		text: {
-			'bold': 'Bold',
-			'italic': 'Italic',
-			'underline': 'Underline',
-			'strikethrough': 'Strikethrough',
-			'insertunorderedlist': 'Unordered List',
-			'insertorderedlist': 'Ordered List',
-			'indent': 'Indent',
-			'outdent': 'Outdent',
-			'undo': 'Undo',
-			'redo': 'Redo',
-			'createlink': 'Add Hyperlink',
-			'unlink': 'Remove Hyperlink',
-			'urlimage': 'Add image from URL',
-			'separator': '|',
-			'toggleview': 'Toggle View'
+		actions: {
+			'bold': {'title':'Bold', 'shortcut':'b'},
+			'italic': {'title':'Italic', 'shortcut':'i'},
+			'underline': {'title':'Underline', 'shortcut':'u'},
+			'strikethrough': {'title':'Strikethrough', 'shortcut':'s'},
+			'insertunorderedlist': {'title':'Unordered List', 'shortcut':''},
+			'insertorderedlist': {'title':'Ordered List', 'shortcut':''},
+			'indent': {'title':'Indent', 'shortcut':''},
+			'outdent': {'title':'Outdent', 'shortcut':''},
+			'undo': {'title':'Undo', 'shortcut':'z'},
+			'redo': {'title':'Redo', 'shortcut':'y'},
+			'createlink': {'title':'Add Hyperlink', 'shortcut':'l'},
+			'unlink': {'title':'Remove Hyperlink', 'shortcut':''},
+			'urlimage': {'title':'Add image from URL', 'shortcut':'m'},
+			'separator': {'title':'|'},
+			'toggleview': {'title':'Toggle View', 'shortcut':'t'}
 		}
+
 	},
 
 	initialize: function(el,options){
@@ -173,12 +174,26 @@ var MooEditable = new Class({
 			if(this.mode=='iframe') this.updateContent();
 		}.bind(this));
 
+		// Keyboard shortcuts
+		if (this.doc.addEventListener) this.doc.addEventListener('keypress',  this.keyListener.bind(this), true);
+		else this.doc.attachEvent('onkeypress',  this.keyListener.bind(this));
+		this.textarea.addEvent('keypress', this.keyListener.bind(this));
+
 		if(this.options.toolbar) this.buildToolbar();
+	},
+
+	keyListener: function(event) {
+		var event = new Event(event);
+		if (!event.control) return;
+		event.stop();
+		if (this.keys[event.key]) this.keys[event.key].fireEvent('click',event);
 	},
 
 	buildToolbar: function(){
 		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' });
 		this.toolbar.inject(this.iframe, 'before');
+
+		this.keys = [];
 
 		var toolbarButtons = this.options.buttons.split(',');
 		toolbarButtons.each(function(command, idx) {
@@ -190,7 +205,7 @@ var MooEditable = new Class({
 			else{
 				b = new Element('button',{
 					'class': command+'-button toolbar-button',
-					'title': this.options.text[command],
+					'title': this.options.actions[command]['title'],
 					'events': {
 						'click': function(e) {
 							e.stop();
@@ -200,15 +215,18 @@ var MooEditable = new Class({
 						'mousedown': function(e) { e.stop(); }
 					}
 				});
-				
+
 				// add hover effect for IE6
 				if(Browser.Engine.trident4) b.addEvents({
 					'mouseenter': function(e){ this.addClass('hover'); },
 					'mouseleave': function(e){ this.removeClass('hover'); }
 				});
 			}
-			
-			b.set('text', this.options.text[command]);
+			// shortcuts
+			var key = this.options.actions[command]['shortcut'];
+			if (key) this.keys[key] = b;
+
+			b.set('text', this.options.actions[command]['title']);
 			b.inject(this.toolbar);
 		}.bind(this));
 	},
@@ -271,6 +289,8 @@ var MooEditable = new Class({
 			});
 			this.iframe.setStyle('display', 'none');
 		}
+		// toggling from textarea to iframe needs the delay to get focus working
+		(function(){ (this.mode=='iframe' ? this.win : this.textarea).focus(); }).bind(this).delay(10);
 	},
 
 	updateContent: function(){
