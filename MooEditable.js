@@ -32,7 +32,8 @@
  * @subpackage  Core
  * @author      Lim Chee Aun <cheeaun@gmail.com>
  * @author      Marc Fowler <marc.fowler@defraction.net>
- * @author      Radovan Lozej <xrado@email.si>
+ * @author      Radovan Lozej <http://xrado.hopto.org/>
+ * @author      mindplay.dk <http://www.mindplay.dk/>
  * @license     http://www.opensource.org/licenses/mit-license.php MIT License
  * @link        http://code.google.com/p/mooeditable/
  * @since       1.0
@@ -61,26 +62,7 @@ var MooEditable = new Class({
 
 	options:{
 		toolbar: true,
-		buttons: 'bold,italic,underline,strikethrough,separator,insertunorderedlist,insertorderedlist,indent,outdent,separator,undo,redo,separator,'+
-					'createlink,unlink,separator,urlimage,separator,toggleview',
-		actions: {
-			'bold': {'title':'Bold', 'shortcut':'b'},
-			'italic': {'title':'Italic', 'shortcut':'i'},
-			'underline': {'title':'Underline', 'shortcut':'u'},
-			'strikethrough': {'title':'Strikethrough', 'shortcut':'s'},
-			'insertunorderedlist': {'title':'Unordered List', 'shortcut':''},
-			'insertorderedlist': {'title':'Ordered List', 'shortcut':''},
-			'indent': {'title':'Indent', 'shortcut':''},
-			'outdent': {'title':'Outdent', 'shortcut':''},
-			'undo': {'title':'Undo', 'shortcut':'z'},
-			'redo': {'title':'Redo', 'shortcut':'y'},
-			'createlink': {'title':'Add Hyperlink', 'shortcut':'l'},
-			'unlink': {'title':'Remove Hyperlink', 'shortcut':''},
-			'urlimage': {'title':'Add image from URL', 'shortcut':'m'},
-			'separator': {'title':'|'},
-			'toggleview': {'title':'Toggle View', 'shortcut':'t'}
-		}
-
+		buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview'
 	},
 
 	initialize: function(el,options){
@@ -179,7 +161,7 @@ var MooEditable = new Class({
 		else this.doc.attachEvent('onkeypress',  this.keyListener.bind(this));
 		this.textarea.addEvent('keypress', this.keyListener.bind(this));
 
-		if(this.options.toolbar) this.buildToolbar();
+		this.buildToolbar();
 	},
 
 	keyListener: function(event) {
@@ -191,21 +173,17 @@ var MooEditable = new Class({
 
 	buildToolbar: function(){
 		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' });
-		this.toolbar.inject(this.iframe, 'before');
-
+		if(this.options.toolbar) this.toolbar.inject(this.iframe, 'before');
 		this.keys = [];
-
 		var toolbarButtons = this.options.buttons.split(',');
 		toolbarButtons.each(function(command, idx) {
 			var b;
 			var klass = this;
-			if (command == 'separator'){
-				b = new Element('span',{ 'class': 'toolbar-separator' });
-			}
+			if (command == '|') b = new Element('span',{ 'class': 'toolbar-separator' });
 			else{
 				b = new Element('button',{
 					'class': command+'-button toolbar-button',
-					'title': this.options.actions[command]['title'],
+					'title': MooEditable.Actions[command]['title'],
 					'events': {
 						'click': function(e) {
 							e.stop();
@@ -221,38 +199,24 @@ var MooEditable = new Class({
 					'mouseenter': function(e){ this.addClass('hover'); },
 					'mouseleave': function(e){ this.removeClass('hover'); }
 				});
-			}
-			// shortcuts
-			var key = this.options.actions[command]['shortcut'];
-			if (key) this.keys[key] = b;
+				// shortcuts
+				var key = MooEditable.Actions[command]['shortcut'];
+				if (key) this.keys[key] = b;
 
-			b.set('text', this.options.actions[command]['title']);
+				b.set('text', MooEditable.Actions[command]['title']);
+			}
 			b.inject(this.toolbar);
 		}.bind(this));
 	},
 
+	selection: function(){
+		if (Browser.Engine.trident) return this.doc.selection.createRange().text;
+		return this.win.getSelection();
+	},
+
 	action: function(command){
-		var selection = '';
-		switch(command){
-			case 'createlink':
-				selection = (this.doc.selection) ? this.doc.selection.createRange().text : this.win.getSelection();
-				if (selection == '')
-					alert("Please select the text you wish to hyperlink.");
-				else {
-					var url = prompt('Enter URL','http://');
-					if (url) this.execute(command, false, url.trim());
-				}
-				break;
-			case 'urlimage':
-				var url = prompt("Enter Image URL","http://");
-				if (url) this.execute("insertImage", false, url.trim());
-				break;
-			case 'toggleview':
-				this.toggleView();
-				break;
-			default:
-				this.execute(command, false, '');
-		}
+		var action = MooEditable.Actions[command];
+		action.command ? action.command(this) : this.execute(command, false, '');
 	},
 
 	execute: function(command, param1, param2){
@@ -355,4 +319,48 @@ var MooEditable = new Class({
 
 		return source;
 	}
+});
+
+MooEditable.Actions = new Hash({
+
+	bold: {'title':'Bold', 'shortcut':'b'},
+	italic: {'title':'Italic', 'shortcut':'i'},
+	underline: {'title':'Underline', 'shortcut':'u'},
+	strikethrough: {'title':'Strikethrough', 'shortcut':'s'},
+	insertunorderedlist: {'title':'Unordered List', 'shortcut':''},
+	insertorderedlist: {'title':'Ordered List', 'shortcut':''},
+	indent: {'title':'Indent', 'shortcut':''},
+	outdent: {'title':'Outdent', 'shortcut':''},
+	undo: {'title':'Undo', 'shortcut':'z'},
+	redo: {'title':'Redo', 'shortcut':'y'},
+	unlink: {'title':'Remove Hyperlink', 'shortcut':''},
+
+	createlink: {
+		title: 'add hyperlink',
+		shortcut: 'l',
+		command: function(me) {
+			var selection = me.selection();
+			if (selection == '') alert("please select the text you wish to hyperlink.");
+			else {
+				var url = prompt('enter url','http://');
+				if (url) me.execute('createlink', false, url.trim());
+			}
+		}
+	},
+
+	urlimage: {
+		title: 'add image from url',
+		shortcut: 'm',
+		command: function(me) {
+			var url = prompt("enter image url","http://");
+			if (url) me.execute("insertimage", false, url.trim());
+		}
+	},
+
+	toggleview: {
+		title: 'toggle view',
+		shortcut: 't',
+		command: function(me) { me.toggleView(); }
+	}
+
 });
