@@ -24,6 +24,7 @@
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-position: 4px 4px;
+	overflow: hidden;
 }
 
 .mooeditable-toolbar .toolbar-button:hover,

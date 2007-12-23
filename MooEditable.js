@@ -183,7 +183,7 @@ var MooEditable = new Class({
 			else{
 				b = new Element('button',{
 					'class': command+'-button toolbar-button',
-					'title': MooEditable.Actions[command]['title'],
+					'title': MooEditable.Actions[command]['title'] + ((MooEditable.Actions[command]['shortcut']) ? ' ( Ctrl+' + MooEditable.Actions[command]['shortcut'].toUpperCase() + ' )' : ''),
 					'events': {
 						'click': function(e) {
 							e.stop();
@@ -336,11 +336,10 @@ MooEditable.Actions = new Hash({
 	unlink: {'title':'Remove Hyperlink', 'shortcut':''},
 
 	createlink: {
-		title: 'add hyperlink',
+		title: 'Add Hyperlink',
 		shortcut: 'l',
 		command: function(me) {
-			var selection = me.selection();
-			if (selection == '') alert("please select the text you wish to hyperlink.");
+			if (me.selection() == '') alert("please select the text you wish to hyperlink.");
 			else {
 				var url = prompt('enter url','http://');
 				if (url) me.execute('createlink', false, url.trim());
@@ -349,7 +348,7 @@ MooEditable.Actions = new Hash({
 	},
 
 	urlimage: {
-		title: 'add image from url',
+		title: 'Add Image',
 		shortcut: 'm',
 		command: function(me) {
 			var url = prompt("enter image url","http://");
@@ -358,7 +357,7 @@ MooEditable.Actions = new Hash({
 	},
 
 	toggleview: {
-		title: 'toggle view',
+		title: 'Toggle View',
 		shortcut: 't',
 		command: function(me) { me.toggleView(); }
 	}
