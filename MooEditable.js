@@ -77,7 +77,7 @@ var MooEditable = new Class({
 			'id': (this.textarea.id) ? this.textarea.id+'-container' : null,
 			'class': 'mooeditable-container',
 			'styles': {
-				'width': this.textarea.getOffsetSize().x,
+				'width': this.textarea.getSize().x,
 				'margin': this.textarea.getStyle('margin')
 			}
 		});
