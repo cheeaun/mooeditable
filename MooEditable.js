@@ -169,7 +169,7 @@ var MooEditable = new Class({
 		// Update & cleanup content before submit
 		this.form = this.textarea.getParent('form');
 		if(this.form) this.form.addEvent('submit',function() {
-			if(this.mode=='iframe') this.updateContent();
+			if(this.mode=='iframe') this.saveContent();
 		}.bind(this));
 		
 		// Mootoolize document and body
