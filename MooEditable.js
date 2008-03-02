@@ -3,7 +3,7 @@
  *
  * The MIT License
  *
- * Copyright (c) 2007 Lim Chee Aun <cheeaun@gmail.com>
+ * Copyright (c) 2007, 2008 Lim Chee Aun <cheeaun@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,9 @@
  *                  <http://forum.mootools.net/viewtopic.php?id=5740>
  *              Some regex from Cameron Adams's widgEditor
  *                  <http://themaninblue.com/experiment/widgEditor/>
+ *              Some code from Juan M Martinez's jwysiwyg, the WYSIWYG jQuery Plugin
+ *                  <http://private.tietokone.com.ar/jquery.wysiwyg/>,
+ *                  <http://code.google.com/p/jwysiwyg/>
  *              IE support referring Robert Bredlau's "Rich Text Editing" part 1 and 2 articles
  *                  <http://www.rbredlau.com/drupal/node/6>
  *              Tango icons from the Tango Desktop Project
@@ -62,16 +65,17 @@ var MooEditable = new Class({
 
 	options:{
 		toolbar: true,
+		cleanup: false,
 		buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview'
 	},
 
-	initialize: function(el,options){
+	initialize: function(el,options) {
 		this.setOptions(options);
 		this.textarea = el;
 		this.build();
 	},
 
-	build: function(){
+	build: function() {
 		// Build the container
 		this.container = new Element('div',{
 			'id': (this.textarea.id) ? this.textarea.id+'-container' : null,
@@ -90,7 +94,7 @@ var MooEditable = new Class({
 
 		// Build the iframe
 		var pads = this.textarea.getStyle('padding').split(' ');
-		pads = pads.map(function(p){ return (p == 'auto') ? 0 : p.toInt(); });
+		pads = pads.map(function(p) { return (p == 'auto') ? 0 : p.toInt(); });
 
 		this.iframe = new IFrame({
 			'class': 'mooeditable-iframe',
@@ -120,7 +124,7 @@ var MooEditable = new Class({
 		var documentTemplate = '\
 			<html style="cursor: text; height: 100%">\
 				<body id=\"editable\" style="font-family: sans-serif; border: 0">'+
-				this.cleanup(this.textarea.value) +
+				this.cleanup(this.textarea.get('value')) +
 				'</body>\
 			</html>\
 		';
@@ -129,21 +133,33 @@ var MooEditable = new Class({
 		this.doc.close();
 
 		// Turn on Design Mode
-		this.doc.designMode = 'on';
+		this.doc_designMode = false;
+		try {
+			this.doc.designMode = 'on';
+			this.doc_designMode = true;
+		} catch(e) {
+			// Will fail on Gecko if the editor is placed in an hidden container element
+			// The design mode will be set ones the editor is focused
+			$(this.doc).addEvent('focus', function() {
+				if (!this.doc_designMode) {
+					try {
+						this.doc.designMode = 'on';
+						this.doc_designMode = true;
+					} catch(e) {}
+				}
+			}.bind(this));
+		}
 
 		// In IE6, after designMode is on, it forgots what is this.doc. Weird.
 		if(Browser.Engine.trident4) this.doc = this.win.document;
-
-		// styleWithCSS, not supported in IE and Opera
-		if (!Browser.Engine.trident && !Browser.Engine.presto) this.execute('styleWithCSS', false, false);
 
 		// Assign view mode
 		this.mode = 'iframe';
 
 		// Update the event for textarea's corresponding labels
-		if(this.textarea.id && $$('label[for="'+this.textarea.id+'"]')){
-			$$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
-				if(this.mode == 'iframe'){
+		if(this.textarea.id && $$('label[for="'+this.textarea.id+'"]')) {
+			$$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e) {
+				if(this.mode == 'iframe') {
 					e = new Event(e).stop();
 					this.win.focus();
 				}
@@ -152,26 +168,32 @@ var MooEditable = new Class({
 
 		// Update & cleanup content before submit
 		this.form = this.textarea.getParent('form');
-		if(this.form) this.form.addEvent('submit',function(){
+		if(this.form) this.form.addEvent('submit',function() {
 			if(this.mode=='iframe') this.updateContent();
 		}.bind(this));
+		
+		// Mootoolize document and body
+		if (!this.doc.$family) this.doc = new Document(this.doc);
+		$(this.doc.body);
 
-		// Keyboard shortcuts
-		if (this.doc.addEventListener) this.doc.addEventListener('keypress',  this.keyListener.bind(this), true);
-		else this.doc.attachEvent('onkeypress',  this.keyListener.bind(this));
+		this.doc.addEvents({
+			'keypress': this.keyListener.bind(this),
+			'focus': this.checkStates.bind(this),
+			'click': this.checkStates.bind(this),
+			'keyup': this.checkStates.bind(this)
+		});
+
 		this.textarea.addEvent('keypress', this.keyListener.bind(this));
+
+		this.iframe.addEvent('load', function() {
+			// styleWithCSS, not supported in IE and Opera
+			if (!Browser.Engine.trident && !Browser.Engine.presto) this.execute('styleWithCSS', false, false);
+		}.bind(this));
 
 		this.buildToolbar();
 	},
 
-	keyListener: function(event) {
-		var event = new Event(event);
-		if (!event.control) return;
-		event.stop();
-		if (this.keys[event.key]) this.keys[event.key].fireEvent('click',event);
-	},
-
-	buildToolbar: function(){
+	buildToolbar: function() {
 		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' });
 		if(this.options.toolbar) this.toolbar.inject(this.iframe, 'before');
 		this.keys = [];
@@ -187,8 +209,11 @@ var MooEditable = new Class({
 					'events': {
 						'click': function(e) {
 							e.stop();
-							if(!this.hasClass('disabled')) klass.action(command);
-							klass.win.focus();
+							if (!this.hasClass('disabled')) {
+								klass.win.focus();
+								klass.action(command);
+								if (this.mode == 'iframe') klass.checkStates();
+							}
 						},
 						'mousedown': function(e) { e.stop(); }
 					}
@@ -196,8 +221,8 @@ var MooEditable = new Class({
 
 				// add hover effect for IE6
 				if(Browser.Engine.trident4) b.addEvents({
-					'mouseenter': function(e){ this.addClass('hover'); },
-					'mouseleave': function(e){ this.removeClass('hover'); }
+					'mouseenter': function(e) { this.addClass('hover'); },
+					'mouseleave': function(e) { this.removeClass('hover'); }
 				});
 				// shortcuts
 				var key = MooEditable.Actions[command]['shortcut'];
@@ -209,21 +234,23 @@ var MooEditable = new Class({
 		}.bind(this));
 	},
 
-	selection: function(){
-		if (Browser.Engine.trident) return this.doc.selection.createRange().text;
-		return this.win.getSelection();
+	keyListener: function(event) {
+		var event = new Event(event);
+		if (!event.control) return;
+		event.stop();
+		if (this.keys[event.key]) this.keys[event.key].fireEvent('click',event);
 	},
 
-	action: function(command){
+	action: function(command) {
 		var action = MooEditable.Actions[command];
 		action.command ? action.command(this) : this.execute(command, false, '');
 	},
 
-	execute: function(command, param1, param2){
-	    if (!this.busy){
+	execute: function(command, param1, param2) {
+		if (!this.busy) {
 			this.busy = true;
 			this.doc.execCommand(command, param1, param2);
-			this.updateContent();
+			this.saveContent();
 			this.busy = false;
 		}
 		return false;
@@ -233,35 +260,105 @@ var MooEditable = new Class({
 		if (this.mode == 'textarea') {
 			this.mode = 'iframe';
 			this.iframe.setStyle('display', '');
-			(function(){
-				this.doc.getElementById('editable').innerHTML = this.textarea.value;
-			}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
-			this.toolbar.getElements('.toolbar-button').each(function(item){
-				item.removeClass('disabled');
-				item.set('opacity', 1);
-			});
+			this.setContent(this.textarea.value);
+			this.enableToolbar();
 			this.textarea.setStyle('display', 'none');
 		} else {
 			this.mode = 'textarea';
 			this.textarea.setStyle('display', '');
-			this.updateContent();
-			this.toolbar.getElements('.toolbar-button').each(function(item){
-				if (!item.hasClass('toggleview-button')) {
-					item.addClass('disabled');
-					item.set('opacity', 0.4);
-				}
-			});
+			this.saveContent();
+			this.disableToolbar('toggleview');
 			this.iframe.setStyle('display', 'none');
 		}
 		// toggling from textarea to iframe needs the delay to get focus working
-		(function(){ (this.mode=='iframe' ? this.win : this.textarea).focus(); }).bind(this).delay(10);
+		(function() {
+			(this.mode=='iframe' ? this.win : this.textarea).focus();
+		}).bind(this).delay(10);
+	},
+	
+	disableToolbar: function(b) {
+		this.toolbar.getElements('.toolbar-button').each(function(item) {
+			if (!item.hasClass(b+'-button')) {
+				item.addClass('disabled');
+				item.removeClass('active');
+				item.set('opacity', 0.4);
+			}
+		});
+
+		this.toolbar.getElement('.'+b+'-button').addClass('onActive');
+	},
+	
+	enableToolbar: function() {
+		this.toolbar.getElements('.toolbar-button').each(function(item) {
+			item.removeClass('disabled');
+			item.removeClass('onActive');
+			item.set('opacity', 1);
+		});
+	},
+	
+	getContent: function() {
+		return this.cleanup(this.doc.getElementById('editable').get('html'));
+	},
+	
+	setContent: function(newContent) {
+		(function() {
+			this.doc.getElementById('editable').set('html', newContent);
+		}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
 	},
 
-	updateContent: function(){
-		this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
+	saveContent: function() {
+		this.textarea.set('value', this.getContent());
 	},
 
-	cleanup: function(source){
+	getSelection: function() {
+		if (Browser.Engine.trident) return this.doc.selection.createRange().text;
+		return this.win.getSelection();
+	},
+
+	getSelectedNode: function() {
+		var parentNode = null;
+
+		if (Browser.Engine.trident) parentNode = this.doc.selection.createRange().parentElement();
+		else parentNode = this.win.getSelection().anchorNode.parentNode;
+		
+		while (parentNode.nodeType == 3) parentNode = parentNode.parentNode; // 3 = textNode
+
+		return parentNode;
+	},
+	
+	checkStates: function() {
+		MooEditable.Actions.each(function(action, command) {
+			var button = this.toolbar.getElement('.' + command + '-button');
+			button.removeClass('active');
+			
+			if (action.tags) {
+				var el = this.getSelectedNode();
+
+				do {
+					if (el.nodeType != 1) break;
+					if (action.tags.contains(el.tagName.toLowerCase()))
+						button.addClass('active');
+				}
+				while (el = el.parentNode);
+			}
+			
+			if(action.css) {
+				var el = this.getSelectedNode();
+
+				do {
+					if (el.nodeType != 1) break;
+					for (var prop in action.css)
+						if ($(el).getStyle(prop) == action.css[prop])
+							button.addClass('active');
+				}
+				while (el = el.parentNode);
+			}
+		}.bind(this));
+	},
+
+	cleanup: function(source) {
+		if(!this.options.cleanup) return source.trim();
+		
 		// Webkit cleanup
 		source = source.replace(/<br class\="webkit-block-placeholder">/gi, "<br />");
 		source = source.replace(/<span class="Apple-style-span">(.*)<\/span>/gi, '$1');
@@ -300,16 +397,16 @@ var MooEditable = new Class({
 		source = source.replace(/<\/u(\s+|>)/g, "</span$1");
 
 		// Replace uppercase element names with lowercase
-		source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
+		source = source.replace(/<[^> ]*/g, function(match) { return match.toLowerCase(); });
 
 		// Replace uppercase attribute names with lowercase
-		source = source.replace(/<[^>]*>/g, function(match){
-			match = match.replace(/ [^=]+=/g, function(match2){return match2.toLowerCase();});
+		source = source.replace(/<[^>]*>/g, function(match) {
+			match = match.replace(/ [^=]+=/g, function(match2) { return match2.toLowerCase(); });
 			return match;
 		});
 
 		// Put quotes around unquoted attributes
-		source = source.replace(/<[^>]*>/g, function(match){
+		source = source.replace(/<[^>]*>/g, function(match) {
 			match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
 			return match;
 		});
@@ -323,25 +420,26 @@ var MooEditable = new Class({
 
 MooEditable.Actions = new Hash({
 
-	bold: {'title':'Bold', 'shortcut':'b'},
-	italic: {'title':'Italic', 'shortcut':'i'},
-	underline: {'title':'Underline', 'shortcut':'u'},
-	strikethrough: {'title':'Strikethrough', 'shortcut':'s'},
-	insertunorderedlist: {'title':'Unordered List', 'shortcut':''},
-	insertorderedlist: {'title':'Ordered List', 'shortcut':''},
-	indent: {'title':'Indent', 'shortcut':''},
-	outdent: {'title':'Outdent', 'shortcut':''},
-	undo: {'title':'Undo', 'shortcut':'z'},
-	redo: {'title':'Redo', 'shortcut':'y'},
-	unlink: {'title':'Remove Hyperlink', 'shortcut':''},
+	bold: { title: 'Bold', shortcut: 'b', tags: ['b','strong'], css: {'font-weight':'bold'} },
+	italic: { title: 'Italic', shortcut: 'i', tags: ['i','em'], css: {'font-style':'italic'} },
+	underline: { title: 'Underline', shortcut: 'u', tags: ['u'], css: {'text-decoration':'underline'} },
+	strikethrough: { title: 'Strikethrough', shortcut: 's', tags: ['s','strike'], css: {'font-style':'line-through'} },
+	insertunorderedlist: { title: 'Unordered List', tags: ['ul'] },
+	insertorderedlist: { title: 'Ordered List', tags: ['ol'] },
+	indent: { title: 'Indent', tags: ['blockquote'] },
+	outdent: { title: 'Outdent' },
+	undo: { title: 'Undo', shortcut: 'z' },
+	redo: { title: 'Redo', shortcut: 'y' },
+	unlink: { title: 'Remove Hyperlink' },
 
 	createlink: {
 		title: 'Add Hyperlink',
 		shortcut: 'l',
+		tags: ['a'],
 		command: function(me) {
 			if (me.selection() == '') alert("please select the text you wish to hyperlink.");
 			else {
-				var url = prompt('enter url','http://');
+				var url = prompt('Enter url','http://');
 				if (url) me.execute('createlink', false, url.trim());
 			}
 		}
@@ -351,7 +449,7 @@ MooEditable.Actions = new Hash({
 		title: 'Add Image',
 		shortcut: 'm',
 		command: function(me) {
-			var url = prompt("enter image url","http://");
+			var url = prompt("Enter image url","http://");
 			if (url) me.execute("insertimage", false, url.trim());
 		}
 	},
@@ -362,4 +460,114 @@ MooEditable.Actions = new Hash({
 		command: function(me) { me.toggleView(); }
 	}
 
+});
+
+// Custom dialogs plugin
+
+MooEditable.Actions.createlink.command = function(me) {
+	if (me.getSelection() == '')
+		MooEditable.Dialogs.alert(me, 'createlink', 'Please select the text you wish to hyperlink.');
+	else
+		MooEditable.Dialogs.prompt(me, 'createlink', 'Enter url','http://', function(url) {
+			me.execute('createlink', false, url.trim());
+		});
+}
+
+MooEditable.Actions.urlimage.command = function(me) {
+	MooEditable.Dialogs.prompt(me, 'urlimage', 'Enter image url','http://', function(url) {
+		me.execute("insertimage", false, url.trim());
+	});
+}
+
+MooEditable.Dialogs = new Hash({
+
+	alert: function(me, el, str) {
+		// Adds the alert bar
+		if (!me.alertbar) {
+			me.alertbar = new Element('div', { 'class': 'alertbar dialog-toolbar' });
+			me.alertbar.inject(me.toolbar, 'after');
+			
+			me.alertbar.strLabel = new Element('span', { 'class': 'alertbar-label' });
+
+			me.alertbar.okButton = new Element('button', {
+				'class': 'alertbar-ok input-button',
+				'text': 'OK',
+				'events': {
+					'click': function(e) {
+						e.stop();
+						me.alertbar.setStyle('display','none');
+						me.enableToolbar();
+						me.doc.removeEvents('mousedown');
+					}
+				}
+			});
+			
+			new Element('div').adopt(me.alertbar.strLabel, me.alertbar.okButton).inject(me.alertbar);
+		}
+		else if (me.alertbar.getStyle('display') == 'none') me.alertbar.setStyle('display', '');
+		
+		me.alertbar.strLabel.set('text', str);
+		me.alertbar.okButton.focus();
+		
+		me.doc.addEvent('mousedown', function(e) { e.stop(); });
+		me.disableToolbar(el);
+	},
+	
+	prompt: function(me, el, q, a, fn) {
+		// Adds the prompt bar
+		if (!me.promptbar) {
+			me.promptbar = new Element('div', { 'class': 'promptbar dialog-toolbar' });
+			me.promptbar.inject(me.toolbar, 'after');
+			
+			me.promptbar.qLabel = new Element('label', {
+				'class': 'promptbar-label',
+				'for': 'promptbar-'+me.container.uid
+			});
+			
+			me.promptbar.aInput = new Element('input', {
+				'class': 'promptbar-input input-text',
+				'id': 'promptbar-'+me.container.uid,
+				'type': 'text'
+			});
+			
+			me.promptbar.okButton = new Element('button', {
+				'class': 'promptbar-ok input-button',
+				'text': 'OK',
+				'events': {
+					'click': function(e) {
+						e.stop();
+						fn.run(me.promptbar.aInput.value);
+						me.promptbar.setStyle('display','none');
+						me.enableToolbar();
+						me.doc.removeEvents('mousedown');
+					}
+				}
+			});
+
+			me.promptbar.cancelButton = new Element('button', {
+				'class': 'promptbar-cancel input-button',
+				'text': 'Cancel',
+				'events': {
+					'click': function(e) {
+						e.stop();
+						me.promptbar.setStyle('display','none');
+						me.enableToolbar();
+						me.doc.removeEvents('mousedown');
+					}
+				}
+			});
+			
+			new Element('div').adopt(me.promptbar.qLabel, me.promptbar.aInput, me.promptbar.okButton, me.promptbar.cancelButton).inject(me.promptbar);
+		}
+		else if (me.promptbar.getStyle('display') == 'none') me.promptbar.setStyle('display', '');
+		
+		// Set the label and input
+		me.promptbar.qLabel.set('text', q);
+		me.promptbar.aInput.set('value', a);
+		me.promptbar.aInput.focus();
+		
+		// Disables iframe and toolbar
+		me.doc.addEvent('mousedown', function(e) { e.stop(); });
+		me.disableToolbar(el);
+	}
 });

@@ -1,3 +1,7 @@
+.mooeditable-container{
+	position: relative;
+}
+
 .mooeditable-toolbar{
 	color: inherit;
 	background-color: #eee;
@@ -21,10 +25,17 @@
 	margin: 2px;
 	float: left;
 	text-indent: -999em;
+	color: inherit;
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-position: 4px 4px;
 	overflow: hidden;
+}
+
+.mooeditable-toolbar .toolbar-button.active,
+.mooeditable-toolbar .toolbar-button.onActive{
+	color: inherit;
+	background-color: #ddd;
 }
 
 .mooeditable-toolbar .toolbar-button:hover,
@@ -93,4 +104,27 @@
 }
 .mooeditable-toolbar .toggleview-button{
 	background-image: url(images/action-toggle-view.png);
+}
+
+.dialog-toolbar{
+	color: inherit;
+	background-color: #ddd;
+	position: absolute;
+	display: block;
+	cursor: default;
+	font-size: 12px;
+	z-index: 100;
+	width: 100%;
+}
+
+.dialog-toolbar div{
+	padding: 4px 10px;
+}
+
+.dialog-toolbar input{
+	margin: 0 8px;
+}
+
+.dialog-toolbar .input-text{
+	width: 300px;
 }
