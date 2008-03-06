@@ -297,7 +297,7 @@ var MooEditable = new Class({
 	},
 	
 	getContent: function() {
-		return this.cleanup(this.doc.getElementById('editable').get('html'));
+		return this.cleanup(this.doc.getElementById('editable').innerHTML);
 	},
 	
 	setContent: function(newContent) {
@@ -329,6 +329,7 @@ var MooEditable = new Class({
 	checkStates: function() {
 		MooEditable.Actions.each(function(action, command) {
 			var button = this.toolbar.getElement('.' + command + '-button');
+			if (!button) return;
 			button.removeClass('active');
 			
 			if (action.tags) {
@@ -437,11 +438,12 @@ MooEditable.Actions = new Hash({
 		shortcut: 'l',
 		tags: ['a'],
 		command: function(me) {
-			if (me.selection() == '') alert("please select the text you wish to hyperlink.");
-			else {
-				var url = prompt('Enter url','http://');
-				if (url) me.execute('createlink', false, url.trim());
-			}
+			if (me.getSelection() == '')
+				MooEditable.Dialogs.alert(me, 'createlink', 'Please select the text you wish to hyperlink.');
+			else
+				MooEditable.Dialogs.prompt(me, 'createlink', 'Enter url','http://', function(url) {
+					me.execute('createlink', false, url.trim());
+				});
 		}
 	},
 
@@ -449,8 +451,9 @@ MooEditable.Actions = new Hash({
 		title: 'Add Image',
 		shortcut: 'm',
 		command: function(me) {
-			var url = prompt("Enter image url","http://");
-			if (url) me.execute("insertimage", false, url.trim());
+			MooEditable.Dialogs.prompt(me, 'urlimage', 'Enter image url','http://', function(url) {
+				me.execute("insertimage", false, url.trim());
+			});
 		}
 	},
 
@@ -461,23 +464,6 @@ MooEditable.Actions = new Hash({
 	}
 
 });
-
-// Custom dialogs plugin
-
-MooEditable.Actions.createlink.command = function(me) {
-	if (me.getSelection() == '')
-		MooEditable.Dialogs.alert(me, 'createlink', 'Please select the text you wish to hyperlink.');
-	else
-		MooEditable.Dialogs.prompt(me, 'createlink', 'Enter url','http://', function(url) {
-			me.execute('createlink', false, url.trim());
-		});
-}
-
-MooEditable.Actions.urlimage.command = function(me) {
-	MooEditable.Dialogs.prompt(me, 'urlimage', 'Enter image url','http://', function(url) {
-		me.execute("insertimage", false, url.trim());
-	});
-}
 
 MooEditable.Dialogs = new Hash({
 
