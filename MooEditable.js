@@ -326,6 +326,32 @@ var MooEditable = new Class({
 		return parentNode;
 	},
 	
+	createRange: function() {
+		if (Browser.Engine.trident) return this.doc.selection.createRange();
+		else {
+			var sel = this.win.getSelection();
+			if ($type(sel)) {
+				try {
+					return sel.getRangeAt(0);
+				} catch(e) {
+					return this.doc.createRange();
+				}
+			}
+			else return this.doc.createRange();
+		}
+	},
+	
+	addRange: function(range) {
+		if(range.select) range.select();
+		else {
+			var s = this.getSelection();
+			if (s.removeAllRanges && s.addRange) {
+				s.removeAllRanges();
+				s.addRange(range);
+			}
+		}
+	},
+	
 	checkStates: function() {
 		MooEditable.Actions.each(function(action, command) {
 			var button = this.toolbar.getElement('.' + command + '-button');
@@ -500,6 +526,8 @@ MooEditable.Dialogs = new Hash({
 	},
 	
 	prompt: function(me, el, q, a, fn) {
+		me.range = me.createRange(); // store the range
+		
 		// Adds the prompt bar
 		if (!me.promptbar) {
 			me.promptbar = new Element('div', { 'class': 'promptbar dialog-toolbar' });
@@ -522,11 +550,12 @@ MooEditable.Dialogs = new Hash({
 				'events': {
 					'click': function(e) {
 						e.stop();
+						me.addRange(me.range);
 						fn.run(me.promptbar.aInput.value);
 						me.promptbar.setStyle('display','none');
 						me.enableToolbar();
 						me.doc.removeEvents('mousedown');
-					}
+					}.bind(this)
 				}
 			});
 
