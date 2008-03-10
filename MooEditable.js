@@ -555,7 +555,7 @@ MooEditable.Dialogs = new Hash({
 						me.promptbar.setStyle('display','none');
 						me.enableToolbar();
 						me.doc.removeEvents('mousedown');
-					}.bind(this)
+					}
 				}
 			});
 
