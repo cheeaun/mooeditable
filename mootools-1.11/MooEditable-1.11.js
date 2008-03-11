@@ -1,3 +1,67 @@
+/*
+ *  $Id$
+ *
+ * The MIT License
+ *
+ * Copyright (c) 2007, 2008 Lim Chee Aun <cheeaun@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+/**
+ * MooEditable.js
+ * MooEditable class for contentEditable-capable browsers
+ *
+ * @package     MooEditable
+ * @subpackage  Core
+ * @author      Lim Chee Aun <cheeaun@gmail.com>
+ * @author      Marc Fowler <marc.fowler@defraction.net>
+ * @author      Radovan Lozej <http://xrado.hopto.org/>
+ * @author      mindplay.dk <http://www.mindplay.dk/>
+ * @license     http://www.opensource.org/licenses/mit-license.php MIT License
+ * @link        http://code.google.com/p/mooeditable/
+ * @since       1.0
+ * @version     $Revision: 8 $
+ * @credits     Most code is based on Stefan's work "Safari Supports Content Editing!"
+ *                  <http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html>
+ *              Main reference from Peter-Paul Koch's "execCommand compatibility" research
+ *                  <http://www.quirksmode.org/dom/execCommand.html>
+ *              Some ideas inspired by TinyMCE <http://tinymce.moxiecode.com/>
+ *              Some functions inspired by Inviz's "Most tiny wysiwyg you ever seen"
+ *                  <http://forum.mootools.net/viewtopic.php?id=746>,
+ *                  <http://forum.mootools.net/viewtopic.php?id=5740>
+ *              Some regex from Cameron Adams's widgEditor
+ *                  <http://themaninblue.com/experiment/widgEditor/>
+ *              Some code from Juan M Martinez's jwysiwyg, the WYSIWYG jQuery Plugin
+ *                  <http://private.tietokone.com.ar/jquery.wysiwyg/>,
+ *                  <http://code.google.com/p/jwysiwyg/>
+ *              IE support referring Robert Bredlau's "Rich Text Editing" part 1 and 2 articles
+ *                  <http://www.rbredlau.com/drupal/node/6>
+ *              Tango icons from the Tango Desktop Project
+ *                  <http://tango.freedesktop.org/>
+ *              Additional tango icons from Tango OpenOffice set by Jimmacs
+ *                  <http://www.gnome-look.org/content/show.php/Tango+OpenOffice?content=54799>
+ */
+
+
+
+
 /* Backport to mootools 1.11 by T.J. Leahy <tjleahy.jr [at] gmail [dot] com>*/
 /*        Requires Hash.js plugin for 1.11                                  */
 
