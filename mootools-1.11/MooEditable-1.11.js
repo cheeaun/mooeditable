@@ -78,7 +78,8 @@ var MooEditable = new Class({
     options:{
            toolbar: true,
            buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview',
-           xhtml : true
+           xhtml : true,
+           semantics : false
     },
 
     initialize: function(el,options){
@@ -320,36 +321,38 @@ var MooEditable = new Class({
            source = source.replace(/<p>(&nbsp;|\s)*<\/p>/gi, '<p>\u00a0</p>');
            source = source.replace(/\s*<br ?\/?>\s*<\/p>/gi, '</p>');
 
+           
            // Replace improper BRs (only if XHTML : true)
            if (this.options.xhtml) {
                 source = source.replace(/<br>/gi, "<br />");
            }
            
-           //fix webkit/safari
-           if (window.webkit) {
-                source = source.replace(/<div>\s?(?!<(?:ol|ul)>)(.+?)<\/div>/g, '<p>$1</p>');
-                source = source.replace(/<div>\s?(.+?)<\/div>/g, '$1');
-                source = source.replace(/<span([^>]*)>/ig, '<p>');
-                source = source.replace(/<\/span[^>]*>/ig, '<\/p>');
-                source = source.replace(/^(\w.*?)(<(?:p|ol|ul)>|$)/, '<p>$1</p>$2');
+           if (this.options.semantics) {
+               //fix webkit/safari
+               if (window.webkit) {
+                    source = source.replace(/<div>\s?(?!<(?:ol|ul)>)(.+?)<\/div>/g, '<p>$1</p>');
+                    source = source.replace(/<div>\s?(.+?)<\/div>/g, '$1');
+                    source = source.replace(/<span([^>]*)>/ig, '<p>');
+                    source = source.replace(/<\/span[^>]*>/ig, '<\/p>');
+                    source = source.replace(/^(\w.*?)(<(?:p|ol|ul)>|$)/, '<p>$1</p>$2');
+               }
+               
+               //make Opera and Firefox(Mozilla)  use <p> tags opposed to the default <br> that is used
+               if (window.gecko || window.opera) {
+                    source = source.replace(/(.+?)<br ?\/?>/g, '<p>$1</p>');
+               }
+               
+               //fix <br> tags in opera
+               if (window.opera) {
+                    source = source.replace(/<p>(.*[^<])<br>(.*[^<])<\/p>/g, '$1</p><p>$2');
+               }
+               
+               //fixes a problem where a paragraph may not be wrapped
+               if (window.gecko || window.opera || window.webkit) {
+                    source = source.replace(/(^|<\/(?:ol|ul|p)>)([^<]*\w.+?)(<(?:ol|ul|p)>|$)/g, '$1<p>$2</p>$3');
+               }
+               
            }
-           
-           //make Opera and Firefox(Mozilla)  use <p> tags opposed to the default <br> that is used
-           if (window.gecko || window.opera) {
-                source = source.replace(/(.+?)<br ?\/?>/g, '<p>$1</p>');
-           }
-           
-           //fix <br> tags in opera
-           if (window.opera) {
-                source = source.replace(/<p>(.*[^<])<br>(.*[^<])<\/p>/g, '$1</p><p>$2');
-           }
-           
-           //fixes a problem where a paragraph may not be wrapped
-           if (window.gecko || window.opera || window.webkit) {
-                source = source.replace(/(^|<\/(?:ol|ul|p)>)([^<]*\w.+?)(<(?:ol|ul|p)>|$)/g, '$1<p>$2</p>$3');
-           }
-           
-
            
            // Remove leading and trailing BRs
            source = source.replace(/<br ?\/?>$/gi, '');
