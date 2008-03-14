@@ -236,9 +236,10 @@ var MooEditable = new Class({
 
 	keyListener: function(event) {
 		var event = new Event(event);
-		if (!event.control) return;
-		event.stop();
-		if (this.keys[event.key]) this.keys[event.key].fireEvent('click',event);
+		if (event.control && this.keys[event.key]) {
+			event.stop();
+			this.keys[event.key].fireEvent('click',event);
+		}
 	},
 
 	action: function(command) {
