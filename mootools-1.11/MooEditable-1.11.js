@@ -85,6 +85,18 @@ var MooEditable = new Class({
     initialize: function(el,options){
            this.setOptions(options);
            this.textarea = el;
+           this.originalContent = this.textarea.value;
+           
+           //if semantics is enabled, add a button to toggle it
+           if (this.options.semantics && !options.buttons) {
+                this.options.buttons += ',safemode';
+           }
+           
+           //if there is content at creation time, add in the restorecontent button by default           
+           if (this.originalContent.match(/\w+/) !== null && !options.buttons) {
+                this.options.buttons += ',restorecontent';
+           }
+           
            this.build();
            this.buildToolbar();
     },
@@ -105,7 +117,7 @@ var MooEditable = new Class({
             'styles': {
                 'width': tWidth,
                 'margin': tMargin
-            }   
+            }
         });
 
         this.container.injectBefore(this.textarea);
@@ -212,8 +224,12 @@ var MooEditable = new Class({
 
     keyListener: function(event) {
            var event = new Event(event);
+           
+//           if (event.key == 'enter') {
+//                this.updateIframe();
+//           }
            if (!event.control) return;           
-           if (this.keys[event.key]) {
+           else if (this.keys[event.key]) {
                 event.stop();
                 this.keys[event.key].fireEvent('click',event);
            }
@@ -308,8 +324,14 @@ var MooEditable = new Class({
     updateContent: function(){
            this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
     },
-
+    
+    updateIframe: function() {
+            this.updateContent();
+            this.doc.getElementById('editable').innerHTML = this.textarea.value;
+    },
+    
     cleanup: function(source){
+//            console.log(source)
            // Webkit cleanup
            source = source.replace(/<br class\="webkit-block-placeholder">/gi, "<br />");
            source = source.replace(/<span class="Apple-style-span">(.*)<\/span>/gi, '$1');
@@ -328,28 +350,26 @@ var MooEditable = new Class({
            }
            
            if (this.options.semantics) {
-               //fix webkit/safari
-               if (window.webkit) {
-                    source = source.replace(/<div>\s?(?!<(?:ol|ul)>)(.+?)<\/div>/g, '<p>$1</p>');
-                    source = source.replace(/<div>\s?(.+?)<\/div>/g, '$1');
-                    source = source.replace(/<span([^>]*)>/ig, '<p>');
-                    source = source.replace(/<\/span[^>]*>/ig, '<\/p>');
-                    source = source.replace(/^(\w.*?)(<(?:p|ol|ul)>|$)/, '<p>$1</p>$2');
-               }
                
-               //make Opera and Firefox(Mozilla)  use <p> tags opposed to the default <br> that is used
                if (window.gecko || window.opera) {
-                    source = source.replace(/(.+?)<br ?\/?>/g, '<p>$1</p>');
+                    //make Opera and Firefox(Mozilla)  use <p> tags opposed to the default <br> that is used
+                    source = source.replace(/(.+?)<br ?\/?>(?!\s*<\/li>)/g, '<p>$1</p>');
+                    source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/g, '$1\n');
+                    source = source.replace(/<p>\s*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/g, '$1<p>$2</p>');
+                    
+                    //make the source code clean to read
+                    source = source.replace(/<p>(?!\n)/g, '<p>\n');
+                    source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '\n</$1>\n');
+                    source = source.replace(/><li>/g, '>\n\t<li>');
+                    source = source.replace(/<\/li>(?!\n)<\/(ol|ul)>/g, '</li>\n</$1>');
                }
                
-               //fix <br> tags in opera
-               if (window.opera) {
-                    source = source.replace(/<p>(.*[^<])<br>(.*[^<])<\/p>/g, '$1</p><p>$2');
-               }
-               
-               //fixes a problem where a paragraph may not be wrapped
-               if (window.gecko || window.opera || window.webkit) {
-                    source = source.replace(/(^|<\/(?:ol|ul|p)>)([^<]*\w.+?)(<(?:ol|ul|p)>|$)/g, '$1<p>$2</p>$3');
+               //not tested in IE8 yet
+               if (window.ie6 || window.ie7) {
+                    source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n');
+                    source = source.replace(/\n<li>/ig, '\n\t<li>');
+                    source = source.replace(/<\/li>(?!\n)<\/(ol|ul)>/ig, '</li>\n</$1>');
+                    source = source.replace(/([^\n])<img/ig, '$1\n<img');
                }
                
            }
@@ -364,18 +384,17 @@ var MooEditable = new Class({
            // Remove BRs right before the end of blocks
            source = source.replace(/<br ?\/?>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
 
-           // Remove empty tags
-           source = source.replace(/(<[^\/]>|<[^\/][^>]*[^\/]>)\s*<\/[^>]*>/gi, '');
+
 
            // Semantic conversion
            source = source.replace(/<span style="font-weight: bold;">(.*)<\/span>/gi, '<strong>$1</strong>');
            source = source.replace(/<span style="font-style: italic;">(.*)<\/span>/gi, '<em>$1</em>');
-           source = source.replace(/<b(\s+|>)/g, '<strong$1');
-           source = source.replace(/<\/b(\s+|>)/g, '</strong$1');
-           source = source.replace(/<i(\s+|>)/g, '<em$1');
-           source = source.replace(/<\/i(\s+|>)/g, '</em$1');
-           source = source.replace(/<u(\s+|>)/g, '<span style="text-decoration: underline;"$1');
-           source = source.replace(/<\/u(\s+|>)/g, "</span$1");
+           source = source.replace(/<b(?!r)[^>]*>(.*?)<\/b[^>]*>/gi, '<strong>$1</strong>')
+           source = source.replace(/<i[^>]*>(.*?)<\/i[^>]*>/gi, '<em>$1</em>')
+           source = source.replace(/<u(?!l)[^>]*>(.*?)<\/u[^>]*>/gi, '<span style="text-decoration: underline;">$1</span>')
+
+           
+
 
            // Replace uppercase element names with lowercase
            source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
@@ -399,8 +418,8 @@ var MooEditable = new Class({
            
            //remove double <p> tags and empty <p> tags
             source = source.replace(/<p><p>/g, '<p>');
-            source = source.replace(/<\/p><\/p>/g, '</p>');
-//            source = source.replace(/<p>\W*<\/p>/g, '');
+            source = source.replace(/<\/p>\s*<\/p>/g, '</p>');
+            source = source.replace(/<p>\W*<\/p>/g, '');
             
             
            // Final trim
@@ -451,8 +470,43 @@ MooEditable.Actions = new Hash({
            title: 'Toggle View',
            shortcut: 't',
            command: function(me) { me.toggleView(); }
+    },
+    
+    safemode: {
+        title: 'Safe Mode',
+        command: function(me) {
+            me.options.semantics = !me.options.semantics ;
+        }
+    },
+    
+    restorecontent: {
+        title: 'Restore Original Content',
+        command: function(me) {
+            if (confirm("Restore Original Content.\n\nYou will lost any changes made.  This cannot be undone.  Hit 'Ok' to continue or 'Cancel' to cancel.")) {
+                me.doc.getElementById('editable').innerHTML = me.originalContent;
+                me.updateContent();
+            }
+        }
     }
 
 });
 
 MooEditable.implement(new Options, new Events);
+
+
+
+//---------------------------------------------------------------------
+//  BUGGY
+//---------------------------------------------------------------------
+
+// Remove empty tags
+//           source = source.replace(/(<[^\/]>|<[^\/][^>]*[^\/]>)\s*<\/[^>]*>/gi, '');
+
+
+//           source = source.replace(/<u(\s+|>)/g, '<span style="text-decoration: underline;"$1');
+//           source = source.replace(/<\/u(\s+|>)/g, "</span$1");
+//           source = source.replace(/<b(\s+|>)/g, '<strong$1');
+//           source = source.replace(/<\/b(\s+|>)/g, '</strong$1');
+//           source = source.replace(/<i(\s+|>)/g, '<em$1');
+//           source = source.replace(/<\/i(\s+|>)/g, '</em$1');
+           
