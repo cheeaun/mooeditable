@@ -77,7 +77,7 @@ var MooEditable = new Class({
 
     options:{
            toolbar: true,
-           buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview',
+           buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview,refreshiframe',
            xhtml : true,
            semantics : false
     },
@@ -86,15 +86,14 @@ var MooEditable = new Class({
            this.setOptions(options);
            this.textarea = el;
            this.originalContent = this.textarea.value;
-           
            //if semantics is enabled, add a button to toggle it
            if (this.options.semantics && !options.buttons) {
-                this.options.buttons += ',safemode';
+                this.options.buttons += ',|,safemode';
            }
            
            //if there is content at creation time, add in the restorecontent button by default           
            if (this.originalContent.match(/\w+/) !== null && !options.buttons) {
-                this.options.buttons += ',restorecontent';
+                this.options.buttons += ',|,restorecontent';
            }
            
            this.build();
@@ -221,20 +220,6 @@ var MooEditable = new Class({
         
     },
 
-
-    keyListener: function(event) {
-           var event = new Event(event);
-           
-//           if (event.key == 'enter') {
-//                this.updateIframe();
-//           }
-           if (!event.control) return;           
-           else if (this.keys[event.key]) {
-                event.stop();
-                this.keys[event.key].fireEvent('click',event);
-           }
-    },
-
     buildToolbar: function() {
            this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' });
            if(this.options.toolbar) this.toolbar.injectBefore(this.iframe);
@@ -272,6 +257,18 @@ var MooEditable = new Class({
                    b.injectInside(this.toolbar);
            }.bind(this));
     },
+    
+    
+    
+    keyListener: function(event) {
+           var event = new Event(event);
+           if (event.control && this.keys[event.key]) {
+                event.stop();
+                this.keys[event.key].fireEvent('click',event);
+           } 
+           
+    },    
+    
 
     selection: function(){
            if (window.ie) return this.doc.selection.createRange().text;
@@ -322,7 +319,7 @@ var MooEditable = new Class({
     },
 
     updateContent: function(){
-           this.textarea.value = this.cleanup(this.doc.getElementById('editable').innerHTML);
+           this.textarea.value = this.cleanup(this.cleanup(this.doc.getElementById('editable').innerHTML));
     },
     
     updateIframe: function() {
@@ -352,25 +349,31 @@ var MooEditable = new Class({
            if (this.options.semantics) {
                
                if (window.gecko || window.opera) {
-                    //make Opera and Firefox(Mozilla)  use <p> tags opposed to the default <br> that is used
-                    source = source.replace(/(.+?)<br ?\/?>(?!\s*<\/li>)/g, '<p>$1</p>');
-                    source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/g, '$1\n');
-                    source = source.replace(/<p>\s*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/g, '$1<p>$2</p>');
-                    
-                    //make the source code clean to read
-                    source = source.replace(/<p>(?!\n)/g, '<p>\n');
-                    source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '\n</$1>\n');
-                    source = source.replace(/><li>/g, '>\n\t<li>');
-                    source = source.replace(/<\/li>(?!\n)<\/(ol|ul)>/g, '</li>\n</$1>');
+                    source = source.replace(/(.+?)<br ?\/?>(?!\s*<\/li>)/g, '<p>$1</p>'); //replace .+<br> with <p>.+</p>
                }
                
-               //not tested in IE8 yet
-               if (window.ie6 || window.ie7) {
-                    source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n');
-                    source = source.replace(/\n<li>/ig, '\n\t<li>');
-                    source = source.replace(/<\/li>(?!\n)<\/(ol|ul)>/ig, '</li>\n</$1>');
-                    source = source.replace(/([^\n])<img/ig, '$1\n<img');
+               
+               if (window.webkit) {
+                    source = source.replace(/^([\w\s]+.*?)<div>/i, '<p>$1</p><div>');
+                    source = source.replace(/<div>(.+?)<\/div>/ig, '<p>$1</p>');
                }
+               
+               
+               if (window.gecko || window.safari || window.opera) {
+                    //not working properly in safari
+                    source = source.replace(/<p>[\s\n]*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/ig, '$1<p>$2</p>'); //<p> tags around a list will get moved to after the list
+               }
+               
+               
+               source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n'); //if a <p> only contains <img>, remove the <p> tags
+               
+           
+                //format the source
+                source = source.replace(/<p>(?!\n)/g, '<p>\n');  //break after <p> tags
+                source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '</$1>\n'); //break after </p></ol></ul> tags
+                source = source.replace(/><li>/g, '>\n\t<li>'); //break and indent <li>
+                source = source.replace(/([^\n])<\/(ol|ul|p)>/g, '$1\n</$2>');  //break before </p></ol></ul> tags
+                source = source.replace(/([^\n])<img/ig, '$1\n<img'); //move images to their own line
                
            }
            
@@ -472,6 +475,15 @@ MooEditable.Actions = new Hash({
            command: function(me) { me.toggleView(); }
     },
     
+    refreshiframe: {
+            title: 'Refresh Content',
+            shortcut: 'enter',
+            command: function(me) {
+                me.updateIframe();
+            }
+    
+    },
+    
     safemode: {
         title: 'Safe Mode',
         command: function(me) {
@@ -482,7 +494,7 @@ MooEditable.Actions = new Hash({
     restorecontent: {
         title: 'Restore Original Content',
         command: function(me) {
-            if (confirm("Restore Original Content.\n\nYou will lost any changes made.  This cannot be undone.  Hit 'Ok' to continue or 'Cancel' to cancel.")) {
+            if (confirm("Restore Original Content.\n\nYou will lose any changes made.  This cannot be undone.  Hit 'OK' to continue or 'Cancel' to cancel.")) {
                 me.doc.getElementById('editable').innerHTML = me.originalContent;
                 me.updateContent();
             }
