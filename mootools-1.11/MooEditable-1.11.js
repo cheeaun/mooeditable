@@ -34,6 +34,7 @@
  * @author      Marc Fowler <marc.fowler@defraction.net>
  * @author      Radovan Lozej <http://xrado.hopto.org/>
  * @author      mindplay.dk <http://www.mindplay.dk/>
+ * @author      T.J. Leahy <tjleahy.jr [at] gmail [dot] com>
  * @license     http://www.opensource.org/licenses/mit-license.php MIT License
  * @link        http://code.google.com/p/mooeditable/
  * @since       1.0
@@ -62,14 +63,12 @@
 
 
 
-/* Backport to mootools 1.11 by T.J. Leahy <tjleahy.jr [at] gmail [dot] com>*/
-/*        Requires Hash.js plugin for 1.11                                  */
 
 /*
 *
 *
 *   The restructured MooEditable Class
-*
+*   Requires Hash.js plugin for 1.11 
 *
 */
 
@@ -79,23 +78,12 @@ var MooEditable = new Class({
            toolbar: true,
            buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview,refreshiframe',
            xhtml : true,
-           semantics : false
+           semantics : true
     },
 
     initialize: function(el,options){
            this.setOptions(options);
            this.textarea = el;
-           this.originalContent = this.textarea.value;
-           //if semantics is enabled, add a button to toggle it
-           if (this.options.semantics && !options.buttons) {
-                this.options.buttons += ',|,safemode';
-           }
-           
-           //if there is content at creation time, add in the restorecontent button by default           
-           if (this.originalContent.match(/\w+/) !== null && !options.buttons) {
-                this.options.buttons += ',|,restorecontent';
-           }
-           
            this.build();
            this.buildToolbar();
     },
@@ -482,43 +470,8 @@ MooEditable.Actions = new Hash({
                 me.updateIframe();
             }
     
-    },
-    
-    safemode: {
-        title: 'Safe Mode',
-        command: function(me) {
-            me.options.semantics = !me.options.semantics ;
-        }
-    },
-    
-    restorecontent: {
-        title: 'Restore Original Content',
-        command: function(me) {
-            if (confirm("Restore Original Content.\n\nYou will lose any changes made.  This cannot be undone.  Hit 'OK' to continue or 'Cancel' to cancel.")) {
-                me.doc.getElementById('editable').innerHTML = me.originalContent;
-                me.updateContent();
-            }
-        }
     }
 
 });
 
-MooEditable.implement(new Options, new Events);
-
-
-
-//---------------------------------------------------------------------
-//  BUGGY
-//---------------------------------------------------------------------
-
-// Remove empty tags
-//           source = source.replace(/(<[^\/]>|<[^\/][^>]*[^\/]>)\s*<\/[^>]*>/gi, '');
-
-
-//           source = source.replace(/<u(\s+|>)/g, '<span style="text-decoration: underline;"$1');
-//           source = source.replace(/<\/u(\s+|>)/g, "</span$1");
-//           source = source.replace(/<b(\s+|>)/g, '<strong$1');
-//           source = source.replace(/<\/b(\s+|>)/g, '</strong$1');
-//           source = source.replace(/<i(\s+|>)/g, '<em$1');
-//           source = source.replace(/<\/i(\s+|>)/g, '</em$1');
-           
+MooEditable.implement(new Options, new Events);           
