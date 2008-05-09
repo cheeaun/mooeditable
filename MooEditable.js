@@ -547,17 +547,7 @@ MooEditable.Dialogs = new Hash({
 			
 			me.promptbar.okButton = new Element('button', {
 				'class': 'promptbar-ok input-button',
-				'text': 'OK',
-				'events': {
-					'click': function(e) {
-						e.stop();
-						me.addRange(me.range);
-						fn.run(me.promptbar.aInput.value);
-						me.promptbar.setStyle('display','none');
-						me.enableToolbar();
-						me.doc.removeEvents('mousedown');
-					}
-				}
+				'text': 'OK'
 			});
 
 			me.promptbar.cancelButton = new Element('button', {
@@ -577,6 +567,17 @@ MooEditable.Dialogs = new Hash({
 		}
 		else if (me.promptbar.getStyle('display') == 'none') me.promptbar.setStyle('display', '');
 		
+		// Update the fn for the OK button event (memory leak?)
+		me.promptbar.okButton.addEvent('click', function(e){
+			e.stop();
+			me.addRange(me.range);
+			fn(me.promptbar.aInput.value);
+			me.promptbar.setStyle('display','none');
+			me.enableToolbar();
+			me.doc.removeEvents('mousedown');
+			this.removeEvents('click');
+		});
+		
 		// Set the label and input
 		me.promptbar.qLabel.set('text', q);
 		me.promptbar.aInput.set('value', a);
@@ -585,5 +586,11 @@ MooEditable.Dialogs = new Hash({
 		// Disables iframe and toolbar
 		me.doc.addEvent('mousedown', function(e) { e.stop(); });
 		me.disableToolbar(el);
+	}
+});
+
+Element.implement({
+	mooEditable: function(options) {
+		return new MooEditable(this, options);
 	}
 });
