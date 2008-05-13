@@ -161,7 +161,7 @@ var MooEditable = new Class({
 			$$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e) {
 				if(this.mode == 'iframe') {
 					e = new Event(e).stop();
-					this.win.focus();
+					this.focus();
 				}
 			}.bind(this));
 		}
@@ -210,7 +210,7 @@ var MooEditable = new Class({
 						'click': function(e) {
 							e.stop();
 							if (!this.hasClass('disabled')) {
-								klass.win.focus();
+								klass.focus();
 								klass.action(command);
 								if (this.mode == 'iframe') klass.checkStates();
 							}
@@ -241,6 +241,10 @@ var MooEditable = new Class({
 			this.keys[event.key].fireEvent('click',event);
 		}
 	},
+	
+	focus: function() {
+		(this.mode=='iframe' ? this.win : this.textarea).focus();
+	},
 
 	action: function(command) {
 		var action = MooEditable.Actions[command];
@@ -265,16 +269,14 @@ var MooEditable = new Class({
 			this.enableToolbar();
 			this.textarea.setStyle('display', 'none');
 		} else {
+			this.saveContent();
 			this.mode = 'textarea';
 			this.textarea.setStyle('display', '');
-			this.saveContent();
 			this.disableToolbar('toggleview');
 			this.iframe.setStyle('display', 'none');
 		}
 		// toggling from textarea to iframe needs the delay to get focus working
-		(function() {
-			(this.mode=='iframe' ? this.win : this.textarea).focus();
-		}).bind(this).delay(10);
+		(function() { this.focus(); }).bind(this).delay(10);
 	},
 	
 	disableToolbar: function(b) {
@@ -303,12 +305,12 @@ var MooEditable = new Class({
 	
 	setContent: function(newContent) {
 		(function() {
-			this.doc.getElementById('editable').set('html', newContent);
+			$(this.doc.getElementById('editable')).set('html', newContent);
 		}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
 	},
 
 	saveContent: function() {
-		this.textarea.set('value', this.getContent());
+		if(this.mode == 'iframe') this.textarea.set('value', this.getContent());
 	},
 
 	getSelection: function() {
