@@ -123,7 +123,8 @@ var MooEditable = new Class({
 		// Build the content of iframe
 		var documentTemplate = '\
 			<html style="cursor: text; height: 100%">\
-				<body id=\"editable\" style="font-family: sans-serif; border: 0">'+
+				<head>' + (this.options.cssPath ? "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.options.cssPath + "\" />" : "") + '</head>\
+				<body id=\"editable\"' + (this.options.cssClass ? " class=\"" + this.options.cssClass + "\"" : "") + ' style="font-family: sans-serif; border: 0">'+
 				this.cleanup(this.textarea.get('value')) +
 				'</body>\
 			</html>\
