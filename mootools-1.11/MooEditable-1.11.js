@@ -76,7 +76,7 @@ var MooEditable = new Class({
 
     options:{
            toolbar: true,
-           buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview,refreshiframe',
+           buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview',
            xhtml : true,
            semantics : true
     },
@@ -98,11 +98,17 @@ var MooEditable = new Class({
         var tBorderStyle = this.textarea.getStyle('border-style');
         var tBorderWidth = this.textarea.getStyle('border-width');
         
+        var pads = this.textarea.getStyle('padding').split(' ');
+        pads = pads.map(function(p){ 
+            return (p == 'auto') ? 0 : p.toInt(); 
+        });
+        
+        
         this.container = new Element('div',{
             'id': tId,
             'class': 'mooeditable-container',
             'styles': {
-                'width': tWidth,
+                'width':  tWidth + pads[1] + pads[3],
                 'margin': tMargin
             }
         });
@@ -118,11 +124,6 @@ var MooEditable = new Class({
         }
 
         // Build the iframe
-        var pads = this.textarea.getStyle('padding').split(' ');
-        pads = pads.map(function(p){ 
-            return (p == 'auto') ? 0 : p.toInt(); 
-        });
-        
         this.iframe = new Element('iframe', {
                 'class': 'mooeditable-iframe',
                 'id': 'mooeditable-iframe',
@@ -209,42 +210,58 @@ var MooEditable = new Class({
     },
 
     buildToolbar: function() {
-           this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' });
-           if(this.options.toolbar) this.toolbar.injectBefore(this.iframe);
-           this.keys = [];
-           var toolbarButtons = this.options.buttons.split(',');
-           toolbarButtons.each(function(command, idx) {
-                   var b;
-                   var klass = this;
-                   if (command == '|') b = new Element('span',{ 'class': 'toolbar-separator' });
-                   else {
-                           b = new Element('button', {
-                                   'class': command+'-button toolbar-button',
-                                   'title': MooEditable.Actions.get(command).title + ((MooEditable.Actions.get(command).shortcut) ? ' ( Ctrl+' + MooEditable.Actions.get(command).shortcut.toUpperCase() + ' )' : ''),
-                                   'events': {
-                                           'click': function(e) {
-                                                    e = new Event(e).stop()
-                                                    if(!this.hasClass('disabled')) klass.action(command);
-                                                    klass.win.focus();
-                                           },
-                                           'mousedown': function(e) { e = new Event(e).stop(); }
-                                   }
-                           });
-                           
-                           // add hover effect for IE6
-                           if(window.ie6) b.addEvents({
-                                   'mouseenter': function(e){ this.addClass('hover'); },
-                                   'mouseleave': function(e){ this.removeClass('hover'); }
-                           });
-                           // shortcuts
-                           var key = MooEditable.Actions.get(command).shortcut;
-                           if (key) this.keys[key] = b;
+    	var tBorderColor = this.textarea.getStyle('border-color');
+	    var tBorderStyle = this.textarea.getStyle('border-style');
+	    var tBorderWidth = this.textarea.getStyle('border-width');
+	    var tWidth = this.iframe.getStyle('width').toInt();
+    	
+		this.toolbar = new Element('div',{ 
+			'class' : 'mooeditable-toolbar',
+			'styles' : {
+				'width':  tWidth,
+				'padding-left':  0,
+				'padding-right':  0,
+				'border-color': tBorderColor,
+               	'border-width': tBorderWidth,
+               	'border-style': tBorderStyle
+			}
+		});
+		this.toolbar.setStyle('border-bottom', 'none');
+		if(this.options.toolbar) this.toolbar.injectBefore(this.iframe);
+		this.keys = [];
+		var toolbarButtons = this.options.buttons.split(',');
+		toolbarButtons.each(function(command, idx) {
+			   var b;
+			   var klass = this;
+			   if (command == '|') b = new Element('span',{ 'class': 'toolbar-separator' });
+			   else {
+			           b = new Element('button', {
+			                   'class': command+'-button toolbar-button',
+			                   'title': MooEditable.Actions.get(command).title + ((MooEditable.Actions.get(command).shortcut) ? ' ( Ctrl+' + MooEditable.Actions.get(command).shortcut.toUpperCase() + ' )' : ''),
+			                   'events': {
+			                           'click': function(e) {
+			                                    e = new Event(e).stop()
+			                                    if(!this.hasClass('disabled')) klass.action(command);
+			                                    klass.win.focus();
+			                           },
+			                           'mousedown': function(e) { e = new Event(e).stop(); }
+			                   }
+			           });
+			           
+			           // add hover effect for IE6
+			           if(window.ie6) b.addEvents({
+			                   'mouseenter': function(e){ this.addClass('hover'); },
+			                   'mouseleave': function(e){ this.removeClass('hover'); }
+			           });
+			           // shortcuts
+			           var key = MooEditable.Actions.get(command).shortcut;
+			           if (key) this.keys[key] = b;
 
-                           b.setText(MooEditable.Actions.get(command['title']));
-                   }
-                   b.injectInside(this.toolbar);
-           }.bind(this));
-    },
+			           b.setText(MooEditable.Actions.get(command['title']));
+			   }
+			   b.injectInside(this.toolbar);
+		}.bind(this));
+	},
     
     
     
