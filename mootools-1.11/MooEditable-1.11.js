@@ -491,4 +491,11 @@ MooEditable.Actions = new Hash({
 
 });
 
-MooEditable.implement(new Options, new Events);           
+MooEditable.implement(new Options, new Events);
+
+
+Element.extend({
+	mooEditable: function(options) {
+		return new MooEditable(this, options);
+	}
+});
