@@ -76,7 +76,7 @@ var MooEditable = new Class({
 
     options:{
            toolbar: true,
-           buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview',
+           buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview,refreshiframe',
            xhtml : true,
            semantics : true
     },
