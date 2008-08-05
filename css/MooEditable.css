@@ -24,12 +24,22 @@
 	height: 24px;
 	margin: 2px;
 	float: left;
-	text-indent: -999em;
 	color: inherit;
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-position: 4px 4px;
 	overflow: hidden;
+	text-indent: -999em;
+}
+.mooeditable-toolbar .text{
+	text-indent: 0;
+	width: auto;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+.mooeditable-toolbar .icons-text{
+	text-indent: 16px;
+	width: auto;
 }
 
 .mooeditable-toolbar .toolbar-button.active,

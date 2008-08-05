@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>MooEditable example with additional buttons</title>
+
+		<style type="text/css">
+			body{
+				font-family: sans-serif;
+				font-size: .9em;
+			}
+			.mooeditable{
+				border: 2px solid #ddd;
+			}
+			#textarea-1{
+				width: 700px;
+				height: 200px;
+				padding: 10px;
+			}
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../css/MooEditable.css" />
+		<script type="text/javascript" src="../js/mootools-1.2-core-built.js"></script>
+		<script type="text/javascript" src="../js/MooEditable.js"></script>
+
+		<script type="text/javascript">
+			MooEditable.Actions.extend({
+				'h1' : {
+					title: 'H1',
+					tags: ['h1'],
+					arguments: '<h1>',
+					command: 'formatBlock',
+					mode: 'text'
+				},
+				'h2' : {
+					title: 'H2',
+					tags: ['h2'],
+					arguments: '<h2>',
+					command: 'formatBlock',
+					mode: 'text'
+				},
+				'h3' : {
+					title: 'H3',
+					tags: ['h3'],
+					arguments: '<h3>',
+					command: 'formatBlock',
+					mode: 'text'
+				},
+				'p' : {
+					title: 'P',
+					tags: ['p'],
+					arguments: '<p>',
+					command: 'formatBlock',
+					mode: 'text'
+				}
+			});
+			
+			window.addEvent('load', function(){
+				$('textarea-1').mooEditable({
+					buttons: 'bold,italic,underline,strikethrough,|,h1,h2,h3,p,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview'
+				});
+
+				// Post submit
+				$('theForm').addEvent('submit', function(e){
+					alert($('textarea-1').value);
+					return true;
+				});
+			});
+		</script>
+
+	</head>
+	<body>
+
+		<h1>MooEditable example with additional buttons</h1>
+
+		<form id="theForm" method="post" action="http://xrado.hopto.org/post.php">
+
+			<label for="textarea-1">Textarea 1</label>
+			<textarea class="mooeditable" id="textarea-1" name="editable1">
+			&lt;p&gt;&lt;strong&gt;This&lt;/strong&gt; is cool!&lt;/p&gt;
+			</textarea>
+
+			<input type="submit" />
+
+		</form>
+
+		<div id="data"></div>
+
+	</body>
+</html>

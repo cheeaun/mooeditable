@@ -66,7 +66,8 @@ var MooEditable = new Class({
 	options:{
 		toolbar: true,
 		cleanup: false,
-		buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview'
+		buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview',
+		mode: 'icons'
 	},
 
 	initialize: function(el,options) {
@@ -219,9 +220,11 @@ var MooEditable = new Class({
 						'mousedown': function(e) { e.stop(); }
 					}
 				});
+				// apply toolbar mode
+				b.addClass(MooEditable.Actions[command]['mode'] || this.options.mode);
 
 				// add hover effect for IE6
-				if(Browser.Engine.trident4) b.addEvents({
+				if(Browser.Engine.trident) b.addEvents({
 					'mouseenter': function(e) { this.addClass('hover'); },
 					'mouseleave': function(e) { this.removeClass('hover'); }
 				});
@@ -249,7 +252,11 @@ var MooEditable = new Class({
 
 	action: function(command) {
 		var action = MooEditable.Actions[command];
-		action.command ? action.command(this) : this.execute(command, false, '');
+		var args = action.arguments || [];
+		if(action.command)
+			($type(action.command) == 'function') ? action.command(this) : this.execute(action.command, false, args);
+		else
+			this.execute(command, false, args);
 	},
 
 	execute: function(command, param1, param2) {
