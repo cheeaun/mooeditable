@@ -34,6 +34,7 @@
  * @author      Marc Fowler <marc.fowler@defraction.net>
  * @author      Radovan Lozej <http://xrado.hopto.org/>
  * @author      mindplay.dk <http://www.mindplay.dk/>
+ * @author      T.J. Leahy <tjleahy.jr [at] gmail [dot] com>
  * @license     http://www.opensource.org/licenses/mit-license.php MIT License
  * @link        http://code.google.com/p/mooeditable/
  * @since       1.0
@@ -65,7 +66,9 @@ var MooEditable = new Class({
 
 	options:{
 		toolbar: true,
-		cleanup: false,
+		cleanup: true,
+		xhtml : true,
+		semantics : true,
 		buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview',
 		mode: 'icons'
 	},
@@ -189,7 +192,7 @@ var MooEditable = new Class({
 
 		this.iframe.addEvent('load', function() {
 			// styleWithCSS, not supported in IE and Opera
-			if (!Browser.Engine.trident && !Browser.Engine.presto) this.execute('styleWithCSS', false, false);
+			if (!['trident', 'presto'].contains(Browser.Engine.name)) this.execute('styleWithCSS', false, false);
 		}.bind(this));
 
 		this.buildToolbar();
@@ -202,7 +205,7 @@ var MooEditable = new Class({
 		var toolbarButtons = this.options.buttons.split(',');
 		toolbarButtons.each(function(command, idx) {
 			var b;
-			var klass = this;
+			var self = this;
 			if (command == '|') b = new Element('span',{ 'class': 'toolbar-separator' });
 			else{
 				b = new Element('button',{
@@ -212,9 +215,9 @@ var MooEditable = new Class({
 						'click': function(e) {
 							e.stop();
 							if (!this.hasClass('disabled')) {
-								klass.focus();
-								klass.action(command);
-								if (this.mode == 'iframe') klass.checkStates();
+								self.focus();
+								self.action(command);
+								if (self.mode == 'iframe') self.checkStates();
 							}
 						},
 						'mousedown': function(e) { e.stop(); }
@@ -223,7 +226,7 @@ var MooEditable = new Class({
 				// apply toolbar mode
 				b.addClass(MooEditable.Actions[command]['mode'] || this.options.mode);
 
-				// add hover effect for IE6
+				// add hover effect for IE
 				if(Browser.Engine.trident) b.addEvents({
 					'mouseenter': function(e) { this.addClass('hover'); },
 					'mouseleave': function(e) { this.removeClass('hover'); }
@@ -289,22 +292,15 @@ var MooEditable = new Class({
 	
 	disableToolbar: function(b) {
 		this.toolbar.getElements('.toolbar-button').each(function(item) {
-			if (!item.hasClass(b+'-button')) {
-				item.addClass('disabled');
-				item.removeClass('active');
-				item.set('opacity', 0.4);
-			}
+			if (!item.hasClass(b+'-button'))
+				item.addClass('disabled').removeClass('active').set('opacity', 0.4);
+			else
+				item.addClass('onActive');
 		});
-
-		this.toolbar.getElement('.'+b+'-button').addClass('onActive');
 	},
 	
 	enableToolbar: function() {
-		this.toolbar.getElements('.toolbar-button').each(function(item) {
-			item.removeClass('disabled');
-			item.removeClass('onActive');
-			item.set('opacity', 1);
-		});
+		this.toolbar.getElements('.toolbar-button').removeClass('disabled').removeClass('onActive').set('opacity', 1);
 	},
 	
 	getContent: function() {
@@ -322,15 +318,18 @@ var MooEditable = new Class({
 	},
 
 	getSelection: function() {
-		if (Browser.Engine.trident) return this.doc.selection.createRange().text;
-		return this.win.getSelection();
+		return (Browser.Engine.trident) ? this.doc.selection.createRange().text : this.win.getSelection();
 	},
 
 	getSelectedNode: function() {
 		var parentNode = null;
 
 		if (Browser.Engine.trident) parentNode = this.doc.selection.createRange().parentElement();
-		else parentNode = this.win.getSelection().anchorNode.parentNode;
+		else {
+			var sel = this.win.getSelection();
+			if (!sel) return false;
+			parentNode = sel.anchorNode.parentNode;
+		}
 		
 		while (parentNode.nodeType == 3) parentNode = parentNode.parentNode; // 3 = textNode
 
@@ -386,7 +385,7 @@ var MooEditable = new Class({
 				do {
 					if (el.nodeType != 1) break;
 					for (var prop in action.css)
-						if ($(el).getStyle(prop) == action.css[prop])
+						if ($(el).getStyle(prop).contains(action.css[prop]))
 							button.addClass('active');
 				}
 				while (el = el.parentNode);
@@ -396,7 +395,7 @@ var MooEditable = new Class({
 
 	cleanup: function(source) {
 		if(!this.options.cleanup) return source.trim();
-		
+
 		// Webkit cleanup
 		source = source.replace(/<br class\="webkit-block-placeholder">/gi, "<br />");
 		source = source.replace(/<span class="Apple-style-span">(.*)<\/span>/gi, '$1');
@@ -404,50 +403,85 @@ var MooEditable = new Class({
 		source = source.replace(/<span style="">/gi, '');
 
 		// Remove padded paragraphs
-		source = source.replace(/<p>\s*<br \/>\s*<\/p>/gi, '<p>\u00a0</p>');
+		source = source.replace(/<p>\s*<br ?\/?>\s*<\/p>/gi, '<p>\u00a0</p>');
 		source = source.replace(/<p>(&nbsp;|\s)*<\/p>/gi, '<p>\u00a0</p>');
-		source = source.replace(/\s*<br \/>\s*<\/p>/gi, '</p>');
+		source = source.replace(/\s*<br ?\/?>\s*<\/p>/gi, '</p>');
 
-		// Replace improper BRs
-		source = source.replace(/<br>/gi, "<br />");
+		// Replace improper BRs (only if XHTML : true)
+		if (this.options.xhtml) {
+			source = source.replace(/<br>/gi, "<br />");
+		}
+
+		if (this.options.semantics) {
+		
+			//replace .+<br> with <p>.+</p>
+			if (['gecko', 'presto'].contains(Browser.Engine.name)) {
+				source = source.replace(/(.+?)<br ?\/?>(?!\s*<\/li>)/g, '<p>$1</p>');
+			}
+
+			if (Browser.Engine.webkit) {
+				source = source.replace(/^([\w\s]+.*?)<div>/i, '<p>$1</p><div>');
+				source = source.replace(/<div>(.+?)<\/div>/ig, '<p>$1</p>');
+			}
+
+			//<p> tags around a list will get moved to after the list
+			if (['gecko', 'presto','webkit'].contains(Browser.Engine.name)) {
+				//not working properly in safari
+				source = source.replace(/<p>[\s\n]*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/ig, '$1<p>$2</p>');
+			}
+
+			source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n'); //if a <p> only contains <img>, remove the <p> tags
+
+			//format the source
+			source = source.replace(/<p>(?!\n)/g, '<p>\n');  //break after <p> tags
+			source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '</$1>\n'); //break after </p></ol></ul> tags
+			source = source.replace(/><li>/g, '>\n\t<li>'); //break and indent <li>
+			source = source.replace(/([^\n])<\/(ol|ul|p)>/g, '$1\n</$2>');  //break before </p></ol></ul> tags
+			source = source.replace(/([^\n])<img/ig, '$1\n<img'); //move images to their own line
+		
+		}
 
 		// Remove leading and trailing BRs
-		source = source.replace(/<br \/>$/gi, '');
-		source = source.replace(/^<br \/>/gi, '');
+		source = source.replace(/<br ?\/?>$/gi, '');
+		source = source.replace(/^<br ?\/?>/gi, '');
 
 		// Remove useless BRs
-		source = source.replace(/><br \/>/gi, '>');
+		source = source.replace(/><br ?\/?>/gi, '>');
 
 		// Remove BRs right before the end of blocks
-		source = source.replace(/<br \/>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
-
-		// Remove empty tags
-		source = source.replace(/(<[^\/]>|<[^\/][^>]*[^\/]>)\s*<\/[^>]*>/gi, '');
+		source = source.replace(/<br ?\/?>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
 
 		// Semantic conversion
 		source = source.replace(/<span style="font-weight: bold;">(.*)<\/span>/gi, '<strong>$1</strong>');
 		source = source.replace(/<span style="font-style: italic;">(.*)<\/span>/gi, '<em>$1</em>');
-		source = source.replace(/<b(\s+|>)/g, '<strong$1');
-		source = source.replace(/<\/b(\s+|>)/g, '</strong$1');
-		source = source.replace(/<i(\s+|>)/g, '<em$1');
-		source = source.replace(/<\/i(\s+|>)/g, '</em$1');
-		source = source.replace(/<u(\s+|>)/g, '<span style="text-decoration: underline;"$1');
-		source = source.replace(/<\/u(\s+|>)/g, "</span$1");
+		source = source.replace(/<b(?!r)[^>]*>(.*?)<\/b[^>]*>/gi, '<strong>$1</strong>')
+		source = source.replace(/<i[^>]*>(.*?)<\/i[^>]*>/gi, '<em>$1</em>')
+		source = source.replace(/<u(?!l)[^>]*>(.*?)<\/u[^>]*>/gi, '<span style="text-decoration: underline;">$1</span>')
 
 		// Replace uppercase element names with lowercase
-		source = source.replace(/<[^> ]*/g, function(match) { return match.toLowerCase(); });
+		source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
 
 		// Replace uppercase attribute names with lowercase
-		source = source.replace(/<[^>]*>/g, function(match) {
-			match = match.replace(/ [^=]+=/g, function(match2) { return match2.toLowerCase(); });
-			return match;
+		source = source.replace(/<[^>]*>/g, function(match){
+			   match = match.replace(/ [^=]+=/g, function(match2){return match2.toLowerCase();});
+			   return match;
 		});
 
 		// Put quotes around unquoted attributes
-		source = source.replace(/<[^>]*>/g, function(match) {
-			match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
-			return match;
+		source = source.replace(/<[^>]*>/g, function(match){
+			   match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
+			   return match;
 		});
+
+		//make img tags xhtml compatable
+		//           if (this.options.xhtml) {
+		//                source = source.replace(/(<(?:img|input)[^/>]*)>/g, '$1 />');
+		//           }
+
+		//remove double <p> tags and empty <p> tags
+		source = source.replace(/<p><p>/g, '<p>');
+		source = source.replace(/<\/p>\s*<\/p>/g, '</p>');
+		source = source.replace(/<p>\W*<\/p>/g, '');
 
 		// Final trim
 		source = source.trim();
@@ -461,7 +495,7 @@ MooEditable.Actions = new Hash({
 	bold: { title: 'Bold', shortcut: 'b', tags: ['b','strong'], css: {'font-weight':'bold'} },
 	italic: { title: 'Italic', shortcut: 'i', tags: ['i','em'], css: {'font-style':'italic'} },
 	underline: { title: 'Underline', shortcut: 'u', tags: ['u'], css: {'text-decoration':'underline'} },
-	strikethrough: { title: 'Strikethrough', shortcut: 's', tags: ['s','strike'], css: {'font-style':'line-through'} },
+	strikethrough: { title: 'Strikethrough', shortcut: 's', tags: ['s','strike'], css: {'text-decoration':'line-through'} },
 	insertunorderedlist: { title: 'Unordered List', tags: ['ul'] },
 	insertorderedlist: { title: 'Ordered List', tags: ['ol'] },
 	indent: { title: 'Indent', tags: ['blockquote'] },
