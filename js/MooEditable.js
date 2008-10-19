@@ -50,8 +50,10 @@
  *              Some regex from Cameron Adams's widgEditor
  *                  <http://themaninblue.com/experiment/widgEditor/>
  *              Some code from Juan M Martinez's jwysiwyg, the WYSIWYG jQuery Plugin
- *                  <http://private.tietokone.com.ar/jquery.wysiwyg/>,
+ *                  <http://projects.bundleweb.com.ar/jWYSIWYG/>,
  *                  <http://code.google.com/p/jwysiwyg/>
+ *              Some reference from MoxieForge's PunyMCE
+ *                  <http://code.google.com/p/punymce/>
  *              IE support referring Robert Bredlau's "Rich Text Editing" part 1 and 2 articles
  *                  <http://www.rbredlau.com/drupal/node/6>
  *              Tango icons from the Tango Desktop Project
@@ -80,6 +82,8 @@ var MooEditable = new Class({
 	},
 
 	build: function() {
+		var self = this;
+		
 		// Build the container
 		this.container = new Element('div',{
 			'id': (this.textarea.id) ? this.textarea.id+'-container' : null,
@@ -123,7 +127,7 @@ var MooEditable = new Class({
 		// contentWindow and document references
 		this.win = this.iframe.contentWindow;
 		this.doc = this.win.document;
-
+		
 		// Build the content of iframe
 		var documentTemplate = '\
 			<html style="cursor: text; height: 100%">\
@@ -138,44 +142,27 @@ var MooEditable = new Class({
 		this.doc.close();
 
 		// Turn on Design Mode
-		this.doc_designMode = false;
-		try {
-			this.doc.designMode = 'on';
-			this.doc_designMode = true;
-		} catch(e) {
-			// Will fail on Gecko if the editor is placed in an hidden container element
-			// The design mode will be set ones the editor is focused
-			$(this.doc).addEvent('focus', function() {
-				if (!this.doc_designMode) {
-					try {
-						this.doc.designMode = 'on';
-						this.doc_designMode = true;
-					} catch(e) {}
-				}
-			}.bind(this));
-		}
-
-		// In IE6, after designMode is on, it forgots what is this.doc. Weird.
-		if(Browser.Engine.trident4) this.doc = this.win.document;
+		// IE fired load event twice if designMode is set
+		(Browser.Engine.trident) ? this.doc.body.contentEditable = true : this.doc.designMode = 'On';
 
 		// Assign view mode
 		this.mode = 'iframe';
 
 		// Update the event for textarea's corresponding labels
-		if(this.textarea.id && $$('label[for="'+this.textarea.id+'"]')) {
-			$$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e) {
-				if(this.mode == 'iframe') {
-					e = new Event(e).stop();
-					this.focus();
-				}
-			}.bind(this));
-		}
+		if (this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e) {
+			if(self.mode == 'iframe') {
+				e = new Event(e).stop();
+				self.focus();
+			}
+		});
 
 		// Update & cleanup content before submit
-		this.form = this.textarea.getParent('form');
-		if(this.form) this.form.addEvent('submit',function() {
-			if(this.mode=='iframe') this.saveContent();
-		}.bind(this));
+		this.form = this.textarea.getParent('form').addEvent('submit',function() {
+			if(self.mode=='iframe') self.saveContent();
+		});
+
+		// document.window for IE, for new Document code below
+		if (Browser.Engine.trident) this.doc.window = this.win;
 		
 		// Mootoolize document and body
 		if (!this.doc.$family) this.doc = new Document(this.doc);
@@ -189,23 +176,25 @@ var MooEditable = new Class({
 		});
 
 		this.textarea.addEvent('keypress', this.keyListener.bind(this));
-
-		this.iframe.addEvent('load', function() {
+		
+		var styleCSS = function() {
 			// styleWithCSS, not supported in IE and Opera
-			if (!['trident', 'presto'].contains(Browser.Engine.name)) this.execute('styleWithCSS', false, false);
-		}.bind(this));
+			if (!['trident', 'presto'].contains(Browser.Engine.name)) self.execute('styleWithCSS', false, false);
+			self.doc.removeEvent('focus', styleCSS);
+		}
+		this.doc.addEvent('focus', styleCSS);
 
-		this.buildToolbar();
+		if (this.options.toolbar) this.buildToolbar();
 	},
 
 	buildToolbar: function() {
-		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' });
-		if(this.options.toolbar) this.toolbar.inject(this.iframe, 'before');
+		var self = this;
+		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' }).inject(this.iframe, 'before');
 		this.keys = [];
+		
 		var toolbarButtons = this.options.buttons.split(',');
 		toolbarButtons.each(function(command, idx) {
 			var b;
-			var self = this;
 			if (command == '|') b = new Element('span',{ 'class': 'toolbar-separator' });
 			else{
 				b = new Element('button',{
@@ -224,7 +213,7 @@ var MooEditable = new Class({
 					}
 				});
 				// apply toolbar mode
-				b.addClass(MooEditable.Actions[command]['mode'] || this.options.mode);
+				b.addClass(MooEditable.Actions[command]['mode'] || self.options.mode);
 
 				// add hover effect for IE
 				if(Browser.Engine.trident) b.addEvents({
@@ -233,19 +222,19 @@ var MooEditable = new Class({
 				});
 				// shortcuts
 				var key = MooEditable.Actions[command]['shortcut'];
-				if (key) this.keys[key] = b;
+				if (key) self.keys[key] = b;
 
 				b.set('text', MooEditable.Actions[command]['title']);
 			}
-			b.inject(this.toolbar);
-		}.bind(this));
+			b.inject(self.toolbar);
+		});
 	},
 
 	keyListener: function(event) {
 		var event = new Event(event);
 		if (event.control && this.keys[event.key]) {
 			event.stop();
-			this.keys[event.key].fireEvent('click',event);
+			this.keys[event.key].fireEvent('click', event);
 		}
 	},
 	
@@ -256,7 +245,7 @@ var MooEditable = new Class({
 	action: function(command) {
 		var action = MooEditable.Actions[command];
 		var args = action.arguments || [];
-		if(action.command)
+		if (action.command)
 			($type(action.command) == 'function') ? action.command(this) : this.execute(action.command, false, args);
 		else
 			this.execute(command, false, args);
