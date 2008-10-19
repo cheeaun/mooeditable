@@ -13,7 +13,7 @@
 				border: 2px solid #ddd;
 			}
 			#textarea-1{
-				width: 700px;
+				width: 720px;
 				height: 200px;
 				padding: 10px;
 			}
@@ -52,12 +52,32 @@
 					arguments: '<p>',
 					command: 'formatBlock',
 					mode: 'text'
+				},
+				'justifyLeft': {
+					title: 'left',
+					css: {'text-align':'left'},
+					mode: 'text'
+				},
+				'justifyRight': {
+					title: 'right',
+					css: {'text-align':'right'},
+					mode: 'text'
+				},
+				'justifyCenter': {
+					title: 'center',
+					css: {'text-align':'center'},
+					mode: 'text'
+				},
+				'justifyFull': {
+					title: 'justify',
+					css: {'text-align':'justify'},
+					mode: 'text'
 				}
 			});
 			
 			window.addEvent('load', function(){
 				$('textarea-1').mooEditable({
-					buttons: 'bold,italic,underline,strikethrough,|,h1,h2,h3,p,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview'
+					buttons: 'bold,italic,underline,strikethrough,|,h1,h2,h3,p,|,justifyLeft,justifyRight,justifyCenter,justifyFull,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview'
 				});
 
 				// Post submit
