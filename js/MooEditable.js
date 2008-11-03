@@ -183,6 +183,12 @@ var MooEditable = new Class({
 			self.doc.removeEvent('focus', styleCSS);
 		}
 		this.doc.addEvent('focus', styleCSS);
+		
+		// make images selectable and draggable in Safari
+		if (Browser.Engine.webkit) this.doc.addEvent('click', function(e){
+			var el = e.target;
+			if (el.get('tag') == 'img') self.selectNode(el);
+		});
 
 		if (this.options.toolbar) this.buildToolbar();
 	},
