@@ -157,7 +157,8 @@ var MooEditable = new Class({
 		});
 
 		// Update & cleanup content before submit
-		this.form = this.textarea.getParent('form').addEvent('submit',function() {
+		this.form = this.textarea.getParent('form');
+		if (this.form) this.form.addEvent('submit',function() {
 			if(self.mode=='iframe') self.saveContent();
 		});
 
@@ -165,14 +166,13 @@ var MooEditable = new Class({
 		if (Browser.Engine.trident) this.doc.window = this.win;
 		
 		// Mootoolize document and body
-		if (!this.doc.$family) this.doc = new Document(this.doc);
+		if (!this.doc.$family) new Document(this.doc);
 		$(this.doc.body);
 
 		this.doc.addEvents({
 			'keypress': this.keyListener.bind(this),
-			'focus': this.checkStates.bind(this),
-			'click': this.checkStates.bind(this),
-			'keyup': this.checkStates.bind(this)
+			'keyup': this.checkStates.bind(this),
+			'mouseup': this.checkStates.bind(this)
 		});
 
 		this.textarea.addEvent('keypress', this.keyListener.bind(this));
@@ -307,47 +307,129 @@ var MooEditable = new Class({
 	},
 
 	getSelection: function() {
-		return (Browser.Engine.trident) ? this.doc.selection.createRange().text : this.win.getSelection();
+		return (this.win.getSelection) ? this.win.getSelection() : this.doc.selection;
 	},
 
-	getSelectedNode: function() {
-		var parentNode = null;
+	getRange: function() {
+		var s = this.getSelection();
 
-		if (Browser.Engine.trident) parentNode = this.doc.selection.createRange().parentElement();
-		else {
-			var sel = this.win.getSelection();
-			if (!sel) return false;
-			parentNode = sel.anchorNode.parentNode;
-		}
-		
-		while (parentNode.nodeType == 3) parentNode = parentNode.parentNode; // 3 = textNode
+		if (!s) return null;
 
-		return parentNode;
-	},
-	
-	createRange: function() {
-		if (Browser.Engine.trident) return this.doc.selection.createRange();
-		else {
-			var sel = this.win.getSelection();
-			if ($type(sel)) {
-				try {
-					return sel.getRangeAt(0);
-				} catch(e) {
-					return this.doc.createRange();
-				}
-			}
-			else return this.doc.createRange();
+		try {
+			return s.rangeCount > 0 ? s.getRangeAt(0) : (s.createRange ? s.createRange() : null);
+		} catch (e) {
+			// IE bug when used in frameset
+			return this.doc.body.createTextRange();
 		}
 	},
 	
-	addRange: function(range) {
-		if(range.select) range.select();
+	setRange: function(range) {
+		if (range.select) $try(function(){
+				range.select();
+			});
 		else {
 			var s = this.getSelection();
-			if (s.removeAllRanges && s.addRange) {
+			if (s.addRange) {
 				s.removeAllRanges();
 				s.addRange(range);
 			}
+		}
+	},
+	
+	selectNode: function(node, collapse) {
+		var r = this.getRange();
+		var s = this.getSelection();
+
+		if (r.moveToElementText) $try(function(){
+				r.moveToElementText(node);
+				r.select();
+			});
+		else if (s.addRange) {
+			collapse ? r.selectNodeContents(node) : r.selectNode(node);
+			s.removeAllRanges();
+			s.addRange(r);
+		} else
+			s.setBaseAndExtent(node, 0, node, 1);
+
+		return node;
+	},
+
+	isCollapsed: function() {
+		var r = this.getRange();
+		if (r.item) return false;
+		return r.boundingWidth == 0 || this.getSelection().isCollapsed;
+	},
+
+	collapse: function(toStart) {
+		var r = this.getRange();
+		var s = this.getSelection();
+
+		if (r.select) {
+			r.collapse(toStart);
+			r.select();
+		}
+		else
+			toStart ? s.collapseToStart() : s.collapseToEnd();
+	},
+	
+	getSelectedContent: function() {
+		var r = this.getRange();
+		var body = new Element('body');
+
+		if (this.isCollapsed()) return '';
+
+		if (r.cloneContents) body.appendChild(r.cloneContents());
+		else if ($defined(r.item) || $defined(r.htmlText)) body.set('html', r.item ? r.item(0).outerHTML : r.htmlText);
+		else body.set('html', r.toString());
+		
+		var content = body.get('html');
+		return this.cleanup(content);
+	},
+
+	getSelectedText : function() {
+		var r = this.getRange();
+		var s = this.getSelection();
+
+		return this.isCollapsed() ? '' : r.text || s.toString();
+	},
+
+	getSelectedNode: function() {
+		var r = this.getRange();
+
+		if (!Browser.Engine.trident) {
+			var el = null;
+			
+			if (r) {
+				el = r.commonAncestorContainer;
+
+				// Handle selection a image or other control like element such as anchors
+				if (!r.collapsed)
+					if (r.startContainer == r.endContainer)
+						if (r.startOffset - r.endOffset < 2)
+							if (r.startContainer.hasChildNodes())
+								el = r.startContainer.childNodes[r.startOffset];
+			
+				while ($type(el) != 'element') el = el.parentNode;
+			}
+			
+			return el;
+		}
+
+		return r.item ? r.item(0) : r.parentElement();
+	},
+	
+	insertContent: function(content) {
+		this.focus(); // IE6 do some pretty scary stuff without this.
+		var r = this.getRange();
+
+		if (r.insertNode) {
+			r.deleteContents();
+			r.insertNode(r.createContextualFragment(content));
+		}
+		else {
+			// Handle text and control range
+			if (r.pasteHTML) r.pasteHTML(content);
+			else r.item(0).outerHTML = content;
 		}
 	},
 	
@@ -360,7 +442,7 @@ var MooEditable = new Class({
 			if (action.tags) {
 				var el = this.getSelectedNode();
 
-				do {
+				if (el) do {
 					if (el.nodeType != 1) break;
 					if (action.tags.contains(el.tagName.toLowerCase()))
 						button.addClass('active');
@@ -371,8 +453,8 @@ var MooEditable = new Class({
 			if(action.css) {
 				var el = this.getSelectedNode();
 
-				do {
-					if (el.nodeType != 1) break;
+				if (el) do {
+					if ($type(el) != 'element') break;
 					for (var prop in action.css)
 						if ($(el).getStyle(prop).contains(action.css[prop]))
 							button.addClass('active');
@@ -560,7 +642,7 @@ MooEditable.Dialogs = new Hash({
 	},
 	
 	prompt: function(me, el, q, a, fn) {
-		me.range = me.createRange(); // store the range
+		me.range = me.getRange(); // store the range
 		
 		// Adds the prompt bar
 		if (!me.promptbar) {
@@ -603,7 +685,7 @@ MooEditable.Dialogs = new Hash({
 		// Update the fn for the OK button event (memory leak?)
 		me.promptbar.okButton.addEvent('click', function(e){
 			e.stop();
-			me.addRange(me.range);
+			me.setRange(me.range);
 			fn(me.promptbar.aInput.value);
 			me.promptbar.setStyle('display','none');
 			me.enableToolbar();

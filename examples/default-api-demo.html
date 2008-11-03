@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>MooEditable example with API demonstration</title>
+
+		<style type="text/css">
+			body{
+				font-family: sans-serif;
+				font-size: .9em;
+			}
+			.mooeditable{
+				border: 2px solid #ddd;
+			}
+			#textarea-1{
+				width: 700px;
+				height: 200px;
+				padding: 10px;
+			}
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../css/MooEditable.css">
+		<script type="text/javascript" src="../js/mootools-1.2.1-core-built.js"></script>
+		<script type="text/javascript" src="../js/MooEditable.js"></script>
+
+		<script type="text/javascript">
+			var m;
+			window.addEvent('load', function(){
+				m = $('textarea-1').mooEditable();
+			});
+		</script>
+
+	</head>
+	<body>
+
+		<h1>MooEditable example with API demonstration</h1>
+
+		<label for="textarea-1">Textarea 1</label>
+		<textarea class="mooeditable" id="textarea-1" name="editable1">
+		&lt;p&gt;&lt;strong&gt;This&lt;/strong&gt; is cool!&lt;/p&gt;
+		</textarea>
+		
+		<p>
+			<button onmousedown="alert(m.getContent());return false;">Get content</button> &middot;
+			<button onmousedown="alert(m.getSelectedContent());return false;">Get selected HTML</button> &middot;
+			<button onmousedown="alert(m.getSelectedText());return false;">Get selected text</button> &middot;
+			<button onmousedown="alert(m.getSelectedNode().nodeName);return false;">Get focus element</button> &middot;
+			<button onmousedown="m.select(m.getSelectedNode());return false;">Select focus element</button> &middot;
+			<button onmousedown="m.setContent('Whole new <strong>content</strong>');return false;">Set content</button> &middot;
+			<button onmousedown="m.insertContent('inserted <strong>content</strong>');return false;">Insert content</button>
+		</p>
+
+	</body>
+</html>
