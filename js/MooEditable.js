@@ -83,7 +83,7 @@ var MooEditable = new Class({
 
 	build: function() {
 		var self = this;
-		
+
 		// Build the container
 		this.container = new Element('div',{
 			'id': (this.textarea.id) ? this.textarea.id+'-container' : null,
@@ -127,7 +127,7 @@ var MooEditable = new Class({
 		// contentWindow and document references
 		this.win = this.iframe.contentWindow;
 		this.doc = this.win.document;
-		
+
 		// Build the content of iframe
 		var documentTemplate = '\
 			<html style="cursor: text; height: 100%">\
@@ -164,7 +164,7 @@ var MooEditable = new Class({
 
 		// document.window for IE, for new Document code below
 		if (Browser.Engine.trident) this.doc.window = this.win;
-		
+
 		// Mootoolize document and body
 		if (!this.doc.$family) new Document(this.doc);
 		$(this.doc.body);
@@ -176,14 +176,14 @@ var MooEditable = new Class({
 		});
 
 		this.textarea.addEvent('keypress', this.keyListener.bind(this));
-		
+
 		var styleCSS = function() {
 			// styleWithCSS, not supported in IE and Opera
 			if (!['trident', 'presto'].contains(Browser.Engine.name)) self.execute('styleWithCSS', false, false);
 			self.doc.removeEvent('focus', styleCSS);
 		}
 		this.doc.addEvent('focus', styleCSS);
-		
+
 		// make images selectable and draggable in Safari
 		if (Browser.Engine.webkit) this.doc.addEvent('click', function(e){
 			var el = e.target;
@@ -191,7 +191,7 @@ var MooEditable = new Class({
 		});
 
 		if (this.options.toolbar) this.buildToolbar();
-		
+
 		this.selection = new MooEditable.Selection(this);
 	},
 
@@ -199,7 +199,7 @@ var MooEditable = new Class({
 		var self = this;
 		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' }).inject(this.iframe, 'before');
 		this.keys = [];
-		
+
 		var toolbarButtons = this.options.buttons.split(',');
 		toolbarButtons.each(function(command, idx) {
 			var b;
@@ -211,7 +211,7 @@ var MooEditable = new Class({
 					'events': {
 						'click': function(e) {
 							e.stop();
-							if (!this.hasClass('disabled') && !this.hasClass('onActive')) {
+							if (!this.hasClass('disabled') ) {
 								self.focus();
 								self.action(command);
 								if (self.mode == 'iframe') self.checkStates();
@@ -245,7 +245,7 @@ var MooEditable = new Class({
 			this.keys[event.key].fireEvent('click', event);
 		}
 	},
-	
+
 	focus: function() {
 		(this.mode=='iframe' ? this.win : this.textarea).focus();
 	},
@@ -286,24 +286,24 @@ var MooEditable = new Class({
 		// toggling from textarea to iframe needs the delay to get focus working
 		(function() { this.focus(); }).bind(this).delay(10);
 	},
-	
+
 	disableToolbar: function(b) {
 		this.toolbar.getElements('.toolbar-button').each(function(item) {
 			if (!item.hasClass(b+'-button'))
-				item.addClass('disabled').removeClass('active').set('opacity', 0.4);
+				item.addClass('disabled').removeClass('onActive').set('opacity', 0.4);
 			else
 				item.addClass('onActive');
 		});
 	},
-	
+
 	enableToolbar: function() {
 		this.toolbar.getElements('.toolbar-button').removeClass('disabled').removeClass('onActive').set('opacity', 1);
 	},
-	
+
 	getContent: function() {
 		return this.cleanup(this.doc.getElementById('editable').innerHTML);
 	},
-	
+
 	setContent: function(newContent) {
 		(function() {
 			$(this.doc.getElementById('editable')).set('html', newContent);
@@ -313,13 +313,13 @@ var MooEditable = new Class({
 	saveContent: function() {
 		if(this.mode == 'iframe') this.textarea.set('value', this.getContent());
 	},
-	
+
 	checkStates: function() {
 		MooEditable.Actions.each(function(action, command) {
 			var button = this.toolbar.getElement('.' + command + '-button');
 			if (!button) return;
 			button.removeClass('active');
-			
+
 			if (action.tags) {
 				var el = this.selection.getNode();
 
@@ -330,7 +330,7 @@ var MooEditable = new Class({
 				}
 				while (el = el.parentNode);
 			}
-			
+
 			if(action.css) {
 				var el = this.selection.getNode();
 
@@ -365,7 +365,7 @@ var MooEditable = new Class({
 		}
 
 		if (this.options.semantics) {
-		
+
 			//replace .+<br> with <p>.+</p>
 			if (['gecko', 'presto'].contains(Browser.Engine.name)) {
 				source = source.replace(/(.+?)<br ?\/?>(?!\s*<\/li>)/g, '<p>$1</p>');
@@ -390,7 +390,7 @@ var MooEditable = new Class({
 			source = source.replace(/><li>/g, '>\n\t<li>'); //break and indent <li>
 			source = source.replace(/([^\n])<\/(ol|ul|p)>/g, '$1\n</$2>');  //break before </p></ol></ul> tags
 			source = source.replace(/([^\n])<img/ig, '$1\n<img'); //move images to their own line
-		
+
 		}
 
 		// Remove leading and trailing BRs
@@ -440,7 +440,7 @@ var MooEditable = new Class({
 
 		return source;
 	}
-	
+
 });
 
 MooEditable.Selection = new Class({
@@ -466,7 +466,7 @@ MooEditable.Selection = new Class({
 			return this.doc.body.createTextRange();
 		}
 	},
-	
+
 	setRange: function(range) {
 		if (range.select) $try(function(){
 				range.select();
@@ -479,7 +479,7 @@ MooEditable.Selection = new Class({
 			}
 		}
 	},
-	
+
 	selectNode: function(node, collapse) {
 		var r = this.getRange();
 		var s = this.getSelection();
@@ -515,7 +515,7 @@ MooEditable.Selection = new Class({
 		else
 			toStart ? s.collapseToStart() : s.collapseToEnd();
 	},
-	
+
 	getContent: function() {
 		var r = this.getRange();
 		var body = new Element('body');
@@ -525,7 +525,7 @@ MooEditable.Selection = new Class({
 		if (r.cloneContents) body.appendChild(r.cloneContents());
 		else if ($defined(r.item) || $defined(r.htmlText)) body.set('html', r.item ? r.item(0).outerHTML : r.htmlText);
 		else body.set('html', r.toString());
-		
+
 		var content = body.get('html');
 		return content;
 	},
@@ -542,7 +542,7 @@ MooEditable.Selection = new Class({
 
 		if (!Browser.Engine.trident) {
 			var el = null;
-			
+
 			if (r) {
 				el = r.commonAncestorContainer;
 
@@ -552,16 +552,16 @@ MooEditable.Selection = new Class({
 						if (r.startOffset - r.endOffset < 2)
 							if (r.startContainer.hasChildNodes())
 								el = r.startContainer.childNodes[r.startOffset];
-			
+
 				while ($type(el) != 'element') el = el.parentNode;
 			}
-			
+
 			return el;
 		}
 
 		return r.item ? r.item(0) : r.parentElement();
 	},
-	
+
 	insertContent: function(content) {
 		var r = this.getRange();
 
@@ -575,7 +575,7 @@ MooEditable.Selection = new Class({
 			else r.item(0).outerHTML = content;
 		}
 	}
-	
+
 });
 
 MooEditable.Actions = new Hash({
@@ -631,7 +631,7 @@ MooEditable.Dialogs = new Hash({
 		if (!me.alertbar) {
 			me.alertbar = new Element('div', { 'class': 'alertbar dialog-toolbar' });
 			me.alertbar.inject(me.toolbar, 'after');
-			
+
 			me.alertbar.strLabel = new Element('span', { 'class': 'alertbar-label' });
 
 			me.alertbar.okButton = new Element('button', {
@@ -646,37 +646,37 @@ MooEditable.Dialogs = new Hash({
 					}
 				}
 			});
-			
+
 			new Element('div').adopt(me.alertbar.strLabel, me.alertbar.okButton).inject(me.alertbar);
 		}
 		else if (me.alertbar.getStyle('display') == 'none') me.alertbar.setStyle('display', '');
-		
+
 		me.alertbar.strLabel.set('text', str);
 		me.alertbar.okButton.focus();
-		
+
 		me.doc.addEvent('mousedown', function(e) { e.stop(); });
 		me.disableToolbar(el);
 	},
-	
+
 	prompt: function(me, el, q, a, fn) {
 		me.range = me.selection.getRange(); // store the range
-		
+
 		// Adds the prompt bar
 		if (!me.promptbar) {
 			me.promptbar = new Element('div', { 'class': 'promptbar dialog-toolbar' });
 			me.promptbar.inject(me.toolbar, 'after');
-			
+
 			me.promptbar.qLabel = new Element('label', {
 				'class': 'promptbar-label',
 				'for': 'promptbar-'+me.container.uid
 			});
-			
+
 			me.promptbar.aInput = new Element('input', {
 				'class': 'promptbar-input input-text',
 				'id': 'promptbar-'+me.container.uid,
 				'type': 'text'
 			});
-			
+
 			me.promptbar.okButton = new Element('button', {
 				'class': 'promptbar-ok input-button',
 				'text': 'OK'
@@ -694,11 +694,11 @@ MooEditable.Dialogs = new Hash({
 					}
 				}
 			});
-			
+
 			new Element('div').adopt(me.promptbar.qLabel, me.promptbar.aInput, me.promptbar.okButton, me.promptbar.cancelButton).inject(me.promptbar);
 		}
 		else if (me.promptbar.getStyle('display') == 'none') me.promptbar.setStyle('display', '');
-		
+
 		// Update the fn for the OK button event (memory leak?)
 		me.promptbar.okButton.addEvent('click', function(e){
 			e.stop();
@@ -709,12 +709,12 @@ MooEditable.Dialogs = new Hash({
 			me.doc.removeEvents('mousedown');
 			this.removeEvents('click');
 		});
-		
+
 		// Set the label and input
 		me.promptbar.qLabel.set('text', q);
 		me.promptbar.aInput.set('value', a);
 		me.promptbar.aInput.focus();
-		
+
 		// Disables iframe and toolbar
 		me.doc.addEvent('mousedown', function(e) { e.stop(); });
 		me.disableToolbar(el);
