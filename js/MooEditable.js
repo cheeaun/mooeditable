@@ -191,6 +191,8 @@ var MooEditable = new Class({
 		});
 
 		if (this.options.toolbar) this.buildToolbar();
+		
+		this.selection = new MooEditable.Selection(this);
 	},
 
 	buildToolbar: function() {
@@ -209,7 +211,7 @@ var MooEditable = new Class({
 					'events': {
 						'click': function(e) {
 							e.stop();
-							if (!this.hasClass('disabled')) {
+							if (!this.hasClass('disabled') && !this.hasClass('onActive')) {
 								self.focus();
 								self.action(command);
 								if (self.mode == 'iframe') self.checkStates();
@@ -252,7 +254,7 @@ var MooEditable = new Class({
 		var action = MooEditable.Actions[command];
 		var args = action.arguments || [];
 		if (action.command)
-			($type(action.command) == 'function') ? action.command(this) : this.execute(action.command, false, args);
+			($type(action.command) == 'function') ? action.command.attempt(args, this) : this.execute(action.command, false, args);
 		else
 			this.execute(command, false, args);
 	},
@@ -311,133 +313,6 @@ var MooEditable = new Class({
 	saveContent: function() {
 		if(this.mode == 'iframe') this.textarea.set('value', this.getContent());
 	},
-
-	getSelection: function() {
-		return (this.win.getSelection) ? this.win.getSelection() : this.doc.selection;
-	},
-
-	getRange: function() {
-		var s = this.getSelection();
-
-		if (!s) return null;
-
-		try {
-			return s.rangeCount > 0 ? s.getRangeAt(0) : (s.createRange ? s.createRange() : null);
-		} catch (e) {
-			// IE bug when used in frameset
-			return this.doc.body.createTextRange();
-		}
-	},
-	
-	setRange: function(range) {
-		if (range.select) $try(function(){
-				range.select();
-			});
-		else {
-			var s = this.getSelection();
-			if (s.addRange) {
-				s.removeAllRanges();
-				s.addRange(range);
-			}
-		}
-	},
-	
-	selectNode: function(node, collapse) {
-		var r = this.getRange();
-		var s = this.getSelection();
-
-		if (r.moveToElementText) $try(function(){
-				r.moveToElementText(node);
-				r.select();
-			});
-		else if (s.addRange) {
-			collapse ? r.selectNodeContents(node) : r.selectNode(node);
-			s.removeAllRanges();
-			s.addRange(r);
-		} else
-			s.setBaseAndExtent(node, 0, node, 1);
-
-		return node;
-	},
-
-	isCollapsed: function() {
-		var r = this.getRange();
-		if (r.item) return false;
-		return r.boundingWidth == 0 || this.getSelection().isCollapsed;
-	},
-
-	collapse: function(toStart) {
-		var r = this.getRange();
-		var s = this.getSelection();
-
-		if (r.select) {
-			r.collapse(toStart);
-			r.select();
-		}
-		else
-			toStart ? s.collapseToStart() : s.collapseToEnd();
-	},
-	
-	getSelectedContent: function() {
-		var r = this.getRange();
-		var body = new Element('body');
-
-		if (this.isCollapsed()) return '';
-
-		if (r.cloneContents) body.appendChild(r.cloneContents());
-		else if ($defined(r.item) || $defined(r.htmlText)) body.set('html', r.item ? r.item(0).outerHTML : r.htmlText);
-		else body.set('html', r.toString());
-		
-		var content = body.get('html');
-		return this.cleanup(content);
-	},
-
-	getSelectedText : function() {
-		var r = this.getRange();
-		var s = this.getSelection();
-
-		return this.isCollapsed() ? '' : r.text || s.toString();
-	},
-
-	getSelectedNode: function() {
-		var r = this.getRange();
-
-		if (!Browser.Engine.trident) {
-			var el = null;
-			
-			if (r) {
-				el = r.commonAncestorContainer;
-
-				// Handle selection a image or other control like element such as anchors
-				if (!r.collapsed)
-					if (r.startContainer == r.endContainer)
-						if (r.startOffset - r.endOffset < 2)
-							if (r.startContainer.hasChildNodes())
-								el = r.startContainer.childNodes[r.startOffset];
-			
-				while ($type(el) != 'element') el = el.parentNode;
-			}
-			
-			return el;
-		}
-
-		return r.item ? r.item(0) : r.parentElement();
-	},
-	
-	insertContent: function(content) {
-		this.focus(); // IE6 do some pretty scary stuff without this.
-		var r = this.getRange();
-
-		if (r.insertNode) {
-			r.deleteContents();
-			r.insertNode(r.createContextualFragment(content));
-		}
-		else {
-			// Handle text and control range
-			if (r.pasteHTML) r.pasteHTML(content);
-			else r.item(0).outerHTML = content;
-		}
-	},
 	
 	checkStates: function() {
 		MooEditable.Actions.each(function(action, command) {
@@ -446,7 +321,7 @@ var MooEditable = new Class({
 			button.removeClass('active');
 			
 			if (action.tags) {
-				var el = this.getSelectedNode();
+				var el = this.selection.getNode();
 
 				if (el) do {
 					if (el.nodeType != 1) break;
@@ -457,7 +332,7 @@ var MooEditable = new Class({
 			}
 			
 			if(action.css) {
-				var el = this.getSelectedNode();
+				var el = this.selection.getNode();
 
 				if (el) do {
 					if ($type(el) != 'element') break;
@@ -565,6 +440,142 @@ var MooEditable = new Class({
 
 		return source;
 	}
+	
+});
+
+MooEditable.Selection = new Class({
+
+	initialize: function(editor) {
+		this.win = editor.win;
+		this.doc = editor.doc;
+	},
+
+	getSelection: function() {
+		return (this.win.getSelection) ? this.win.getSelection() : this.doc.selection;
+	},
+
+	getRange: function() {
+		var s = this.getSelection();
+
+		if (!s) return null;
+
+		try {
+			return s.rangeCount > 0 ? s.getRangeAt(0) : (s.createRange ? s.createRange() : null);
+		} catch (e) {
+			// IE bug when used in frameset
+			return this.doc.body.createTextRange();
+		}
+	},
+	
+	setRange: function(range) {
+		if (range.select) $try(function(){
+				range.select();
+			});
+		else {
+			var s = this.getSelection();
+			if (s.addRange) {
+				s.removeAllRanges();
+				s.addRange(range);
+			}
+		}
+	},
+	
+	selectNode: function(node, collapse) {
+		var r = this.getRange();
+		var s = this.getSelection();
+
+		if (r.moveToElementText) $try(function(){
+				r.moveToElementText(node);
+				r.select();
+			});
+		else if (s.addRange) {
+			collapse ? r.selectNodeContents(node) : r.selectNode(node);
+			s.removeAllRanges();
+			s.addRange(r);
+		} else
+			s.setBaseAndExtent(node, 0, node, 1);
+
+		return node;
+	},
+
+	isCollapsed: function() {
+		var r = this.getRange();
+		if (r.item) return false;
+		return r.boundingWidth == 0 || this.getSelection().isCollapsed;
+	},
+
+	collapse: function(toStart) {
+		var r = this.getRange();
+		var s = this.getSelection();
+
+		if (r.select) {
+			r.collapse(toStart);
+			r.select();
+		}
+		else
+			toStart ? s.collapseToStart() : s.collapseToEnd();
+	},
+	
+	getContent: function() {
+		var r = this.getRange();
+		var body = new Element('body');
+
+		if (this.isCollapsed()) return '';
+
+		if (r.cloneContents) body.appendChild(r.cloneContents());
+		else if ($defined(r.item) || $defined(r.htmlText)) body.set('html', r.item ? r.item(0).outerHTML : r.htmlText);
+		else body.set('html', r.toString());
+		
+		var content = body.get('html');
+		return content;
+	},
+
+	getText : function() {
+		var r = this.getRange();
+		var s = this.getSelection();
+
+		return this.isCollapsed() ? '' : r.text || s.toString();
+	},
+
+	getNode: function() {
+		var r = this.getRange();
+
+		if (!Browser.Engine.trident) {
+			var el = null;
+			
+			if (r) {
+				el = r.commonAncestorContainer;
+
+				// Handle selection a image or other control like element such as anchors
+				if (!r.collapsed)
+					if (r.startContainer == r.endContainer)
+						if (r.startOffset - r.endOffset < 2)
+							if (r.startContainer.hasChildNodes())
+								el = r.startContainer.childNodes[r.startOffset];
+			
+				while ($type(el) != 'element') el = el.parentNode;
+			}
+			
+			return el;
+		}
+
+		return r.item ? r.item(0) : r.parentElement();
+	},
+	
+	insertContent: function(content) {
+		var r = this.getRange();
+
+		if (r.insertNode) {
+			r.deleteContents();
+			r.insertNode(r.createContextualFragment(content));
+		}
+		else {
+			// Handle text and control range
+			if (r.pasteHTML) r.pasteHTML(content);
+			else r.item(0).outerHTML = content;
+		}
+	}
+	
 });
 
 MooEditable.Actions = new Hash({
@@ -585,30 +596,30 @@ MooEditable.Actions = new Hash({
 		title: 'Add Hyperlink',
 		shortcut: 'l',
 		tags: ['a'],
-		command: function(me) {
-			if (me.getSelection() == '')
-				MooEditable.Dialogs.alert(me, 'createlink', 'Please select the text you wish to hyperlink.');
+		command: function() {
+			if (this.selection.getSelection() == '')
+				MooEditable.Dialogs.alert(this, 'createlink', 'Please select the text you wish to hyperlink.');
 			else
-				MooEditable.Dialogs.prompt(me, 'createlink', 'Enter url','http://', function(url) {
-					me.execute('createlink', false, url.trim());
-				});
+				MooEditable.Dialogs.prompt(this, 'createlink', 'Enter url','http://', function(url) {
+					this.execute('createlink', false, url.trim());
+				}.bind(this));
 		}
 	},
 
 	urlimage: {
 		title: 'Add Image',
 		shortcut: 'm',
-		command: function(me) {
-			MooEditable.Dialogs.prompt(me, 'urlimage', 'Enter image url','http://', function(url) {
-				me.execute("insertimage", false, url.trim());
-			});
+		command: function() {
+			MooEditable.Dialogs.prompt(this, 'urlimage', 'Enter image url','http://', function(url) {
+				this.execute("insertimage", false, url.trim());
+			}.bind(this));
 		}
 	},
 
 	toggleview: {
 		title: 'Toggle View',
 		shortcut: 't',
-		command: function(me) { me.toggleView(); }
+		command: function() { this.toggleView(); }
 	}
 
 });
@@ -648,7 +659,7 @@ MooEditable.Dialogs = new Hash({
 	},
 	
 	prompt: function(me, el, q, a, fn) {
-		me.range = me.getRange(); // store the range
+		me.range = me.selection.getRange(); // store the range
 		
 		// Adds the prompt bar
 		if (!me.promptbar) {
@@ -691,7 +702,7 @@ MooEditable.Dialogs = new Hash({
 		// Update the fn for the OK button event (memory leak?)
 		me.promptbar.okButton.addEvent('click', function(e){
 			e.stop();
-			me.setRange(me.range);
+			me.selection.setRange(me.range);
 			fn(me.promptbar.aInput.value);
 			me.promptbar.setStyle('display','none');
 			me.enableToolbar();

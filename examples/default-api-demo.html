@@ -42,12 +42,12 @@
 		
 		<p>
 			<button onmousedown="alert(m.getContent());return false;">Get content</button> &middot;
-			<button onmousedown="alert(m.getSelectedContent());return false;">Get selected HTML</button> &middot;
-			<button onmousedown="alert(m.getSelectedText());return false;">Get selected text</button> &middot;
-			<button onmousedown="alert(m.getSelectedNode().nodeName);return false;">Get focus element</button> &middot;
-			<button onmousedown="m.select(m.getSelectedNode());return false;">Select focus element</button> &middot;
+			<button onmousedown="alert(m.selection.getContent());return false;">Get selected HTML</button> &middot;
+			<button onmousedown="alert(m.selection.getText());return false;">Get selected text</button> &middot;
+			<button onmousedown="alert(m.selection.getNode().nodeName);return false;">Get focus element</button> &middot;
+			<button onmousedown="m.selection.selectNode(m.selection.getNode());return false;">Select focus element</button> &middot;
 			<button onmousedown="m.setContent('Whole new <strong>content</strong>');return false;">Set content</button> &middot;
-			<button onmousedown="m.insertContent('inserted <strong>content</strong>');return false;">Insert content</button>
+			<button onmousedown="m.selection.insertContent('inserted <strong>content</strong>');return false;">Insert content</button>
 		</p>
 
 	</body>
