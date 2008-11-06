@@ -720,9 +720,18 @@ MooEditable.Dialogs = new Hash({
 		me.disableToolbar(el);
 	}
 });
-
+Element.Properties.mooeditable = {
+	get : function() {
+		return this.retrieve('mooeditable');
+	},
+	set : function(options) {
+		var temp = new MooEditable(this, options);
+		this.store('mooeditable', temp);
+		return temp;
+	}
+}
 Element.implement({
 	mooEditable: function(options) {
-		return new MooEditable(this, options);
+		return this.set('mooeditable', options);
 	}
 });
