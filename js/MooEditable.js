@@ -69,6 +69,7 @@ var MooEditable = new Class({
 	options:{
 		toolbar: true,
 		cleanup: true,
+		paragraphise: true,
 		xhtml : true,
 		semantics : true,
 		buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview',
@@ -169,8 +170,10 @@ var MooEditable = new Class({
 		if (!this.doc.$family) new Document(this.doc);
 		$(this.doc.body);
 
-		this.doc.addEvents('keypress', this.keyListener.bind(this));
-		this.textarea.addEvent('keypress', this.keyListener.bind(this));
+		this.doc.addEvents({
+			'keypress': this.keyListener.bind(this),
+			'keydown': this.enterListener.bind(this)
+		});
 
 		var styleCSS = function() {
 			// styleWithCSS, not supported in IE and Opera
@@ -244,11 +247,36 @@ var MooEditable = new Class({
 		this.toolbarButtons = new Elements(buttons);
 	},
 
-	keyListener: function(event) {
-		var event = new Event(event);
-		if (event.control && this.keys[event.key]) {
-			event.stop();
-			this.keys[event.key].fireEvent('click', event);
+	keyListener: function(e) {
+		if (e.control && this.keys[e.key]) {
+			e.stop();
+			this.keys[e.key].fireEvent('click', e);
+		}
+	},
+	
+	enterListener: function(e) {
+		if (e.key == 'enter') {
+			if (this.options.paragraphise && !e.shift) {
+				if (Browser.Engine.gecko || Browser.Engine.webkit) {
+					var node = this.selection.getNode();
+					if (node.get('tag') != 'li') this.execute('insertparagraph');
+				}
+			}
+			else {
+				if (Browser.Engine.trident) {
+					//Insert a <br> instead of a <p></p> in Internet Explorer
+					var r = this.selection.getRange();
+					var node = this.selection.getNode();
+					if (node.get('tag') != 'li') {
+						if (r) {
+							r.pasteHTML('<br>');
+							r.collapse(false);
+							r.select();
+						}
+						e.stop();
+					}
+				}
+			}
 		}
 	},
 
