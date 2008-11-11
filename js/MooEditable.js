@@ -169,12 +169,7 @@ var MooEditable = new Class({
 		if (!this.doc.$family) new Document(this.doc);
 		$(this.doc.body);
 
-		this.doc.addEvents({
-			'keypress': this.keyListener.bind(this),
-			'keyup': this.checkStates.bind(this),
-			'mouseup': this.checkStates.bind(this)
-		});
-
+		this.doc.addEvents('keypress', this.keyListener.bind(this));
 		this.textarea.addEvent('keypress', this.keyListener.bind(this));
 
 		var styleCSS = function() {
@@ -190,7 +185,13 @@ var MooEditable = new Class({
 			if (el.get('tag') == 'img') self.selectNode(el);
 		});
 
-		if (this.options.toolbar) this.buildToolbar();
+		if (this.options.toolbar) {
+			this.buildToolbar();
+			this.doc.addEvents({
+				'keyup': this.checkStates.bind(this),
+				'mouseup': this.checkStates.bind(this)
+			});
+		}
 
 		this.selection = new MooEditable.Selection(this);
 	},
@@ -199,6 +200,7 @@ var MooEditable = new Class({
 		var self = this;
 		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' }).inject(this.iframe, 'before');
 		this.keys = [];
+		var buttons = [];
 
 		var toolbarButtons = this.options.buttons.split(',');
 		toolbarButtons.each(function(command, idx) {
@@ -233,9 +235,13 @@ var MooEditable = new Class({
 				if (key) self.keys[key] = b;
 
 				b.set('text', MooEditable.Actions[command]['title']);
+				
+				buttons.push(b);
 			}
 			b.inject(self.toolbar);
 		});
+		
+		this.toolbarButtons = new Elements(buttons);
 	},
 
 	keyListener: function(event) {
@@ -248,6 +254,7 @@ var MooEditable = new Class({
 
 	focus: function() {
 		(this.mode=='iframe' ? this.win : this.textarea).focus();
+		return this;
 	},
 
 	action: function(command) {
@@ -285,19 +292,20 @@ var MooEditable = new Class({
 		}
 		// toggling from textarea to iframe needs the delay to get focus working
 		(function() { this.focus(); }).bind(this).delay(10);
+		
+		return this;
 	},
 
 	disableToolbar: function(b) {
-		this.toolbar.getElements('.toolbar-button').each(function(item) {
-			if (!item.hasClass(b+'-button'))
-				item.addClass('disabled').removeClass('onActive').set('opacity', 0.4);
-			else
-				item.addClass('onActive');
+		this.toolbarButtons.each(function(item) {
+			(!item.hasClass(b+'-button')) ? item.addClass('disabled').set('opacity', 0.4) : item.addClass('onActive');
 		});
+		return this;
 	},
 
 	enableToolbar: function() {
-		this.toolbar.getElements('.toolbar-button').removeClass('disabled').removeClass('onActive').set('opacity', 1);
+		this.toolbarButtons.removeClass('disabled').removeClass('onActive').set('opacity', 1);
+		return this;
 	},
 
 	getContent: function() {
@@ -308,15 +316,17 @@ var MooEditable = new Class({
 		(function() {
 			$(this.doc.getElementById('editable')).set('html', newContent);
 		}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
+		return this;
 	},
 
 	saveContent: function() {
 		if(this.mode == 'iframe') this.textarea.set('value', this.getContent());
+		return this;
 	},
 
 	checkStates: function() {
 		MooEditable.Actions.each(function(action, command) {
-			var button = this.toolbar.getElement('.' + command + '-button');
+			var button = this.toolbarButtons.filter('.' + command + '-button');
 			if (!button) return;
 			button.removeClass('active');
 
@@ -324,7 +334,7 @@ var MooEditable = new Class({
 				var el = this.selection.getNode();
 
 				if (el) do {
-					if (el.nodeType != 1) break;
+					if ($type(el) != 'element') break;
 					if (action.tags.contains(el.tagName.toLowerCase()))
 						button.addClass('active');
 				}
