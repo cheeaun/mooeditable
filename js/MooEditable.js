@@ -174,6 +174,7 @@ var MooEditable = new Class({
 			'keypress': this.keyListener.bind(this),
 			'keydown': this.enterListener.bind(this)
 		});
+		this.textarea.addEvent('keypress', this.keyListener.bind(this));
 
 		var styleCSS = function() {
 			// styleWithCSS, not supported in IE and Opera
