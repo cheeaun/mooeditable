@@ -134,7 +134,7 @@ var MooEditable = new Class({
 			<html style="cursor: text; height: 100%">\
 				<head>' + (this.options.cssPath ? "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.options.cssPath + "\" />" : "") + '</head>\
 				<body id=\"editable\"' + (this.options.cssClass ? " class=\"" + this.options.cssClass + "\"" : "") + ' style="font-family: sans-serif; border: 0">'+
-				this.cleanup(this.textarea.get('value')) +
+				this.doCleanup(this.textarea.get('value')) +
 				'</body>\
 			</html>\
 		';
@@ -239,12 +239,12 @@ var MooEditable = new Class({
 				if (key) self.keys[key] = b;
 
 				b.set('text', MooEditable.Actions[command]['title']);
-				
+
 				buttons.push(b);
 			}
 			b.inject(self.toolbar);
 		});
-		
+
 		this.toolbarButtons = new Elements(buttons);
 	},
 
@@ -254,31 +254,37 @@ var MooEditable = new Class({
 			this.keys[e.key].fireEvent('click', e);
 		}
 	},
-	
+
+	insertBreak : function(e) {
+	        var r = this.selection.getRange();
+		var node = this.selection.getNode();
+		if (node.get('tag') != 'li') {
+			if (r) {
+				this.selection.insertContent("<br class='mooeditable-skip'>");
+				this.selection.collapse(false);
+			}
+			e.stop();
+
+		}
+	},
+
 	enterListener: function(e) {
 		if (e.key == 'enter') {
-			if (this.options.paragraphise && !e.shift) {
+			if (this.options.paragraphise && e.shift) {
+				this.insertBreak(e);
+			}
+			else if (this.options.paragraphise) {
 				if (Browser.Engine.gecko || Browser.Engine.webkit) {
 					var node = this.selection.getNode();
 					if (node.get('tag') != 'li') this.execute('insertparagraph');
 				}
 			}
-			else {
-				if (Browser.Engine.trident) {
-					//Insert a <br> instead of a <p></p> in Internet Explorer
-					var r = this.selection.getRange();
-					var node = this.selection.getNode();
-					if (node.get('tag') != 'li') {
-						if (r) {
-							r.pasteHTML('<br>');
-							r.collapse(false);
-							r.select();
-						}
-						e.stop();
-					}
-				}
+			//make IE insert <br> instead of <p></p>
+			else if (Browser.Engine.trident) {
+				this.insertBreak(e);
 			}
 		}
+
 	},
 
 	focus: function() {
@@ -321,7 +327,7 @@ var MooEditable = new Class({
 		}
 		// toggling from textarea to iframe needs the delay to get focus working
 		(function() { this.focus(); }).bind(this).delay(10);
-		
+
 		return this;
 	},
 
@@ -338,7 +344,7 @@ var MooEditable = new Class({
 	},
 
 	getContent: function() {
-		return this.cleanup(this.doc.getElementById('editable').innerHTML);
+		return this.doCleanup(this.doc.getElementById('editable').innerHTML);
 	},
 
 	setContent: function(newContent) {
@@ -396,7 +402,10 @@ var MooEditable = new Class({
 		// Remove padded paragraphs
 		source = source.replace(/<p>\s*<br ?\/?>\s*<\/p>/gi, '<p>\u00a0</p>');
 		source = source.replace(/<p>(&nbsp;|\s)*<\/p>/gi, '<p>\u00a0</p>');
-		source = source.replace(/\s*<br ?\/?>\s*<\/p>/gi, '</p>');
+		if (!this.options.semantics) {
+			source = source.replace(/\s*<br ?\/?>\s*<\/p>/gi, '</p>');
+		}
+
 
 		// Replace improper BRs (only if XHTML : true)
 		if (this.options.xhtml) {
@@ -404,12 +413,11 @@ var MooEditable = new Class({
 		}
 
 		if (this.options.semantics) {
-
-			//replace .+<br> with <p>.+</p>
-			if (['gecko', 'presto'].contains(Browser.Engine.name)) {
-				source = source.replace(/(.+?)<br ?\/?>(?!\s*<\/li>)/g, '<p>$1</p>');
+			//remove divs from <li>
+			if (Browser.Engine.trident) {
+				source = source.replace(/<li>\s*<div>(.+?)<\/div><\/li>/g, '<li>$1</li>');
 			}
-
+			//remove stupid apple divs
 			if (Browser.Engine.webkit) {
 				source = source.replace(/^([\w\s]+.*?)<div>/i, '<p>$1</p><div>');
 				source = source.replace(/<div>(.+?)<\/div>/ig, '<p>$1</p>');
@@ -419,17 +427,19 @@ var MooEditable = new Class({
 			if (['gecko', 'presto','webkit'].contains(Browser.Engine.name)) {
 				//not working properly in safari
 				source = source.replace(/<p>[\s\n]*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/ig, '$1<p>$2</p>');
+				source = source.replace(/<\/(ol|ul)>\s*(?!<(?:p|ol|ul|img).*?>)((?:<[^>]*>)?\w.*)$/g, '</$1><p>$2</p>');
 			}
 
-			source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n'); //if a <p> only contains <img>, remove the <p> tags
+			source = source.replace(/<br[^>]*><\/p>/g, '</p>');			//remove <br>'s that end a paragraph here.
+			source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n'); 	//if a <p> only contains <img>, remove the <p> tags
 
 			//format the source
-			source = source.replace(/<p>(?!\n)/g, '<p>\n');  //break after <p> tags
-			source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '</$1>\n'); //break after </p></ol></ul> tags
-			source = source.replace(/><li>/g, '>\n\t<li>'); //break and indent <li>
-			source = source.replace(/([^\n])<\/(ol|ul|p)>/g, '$1\n</$2>');  //break before </p></ol></ul> tags
-			source = source.replace(/([^\n])<img/ig, '$1\n<img'); //move images to their own line
-
+			source = source.replace(/<p([^>]*)>(.*?)<\/p>(?!\n)/g, '<p$1>$2</p>\n');  	//break after paragraphs
+			source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '</$1>\n'); 			//break after </p></ol></ul> tags
+			source = source.replace(/><li>/g, '>\n\t<li>'); 				//break and indent <li>
+			source = source.replace(/([^\n])<\/(ol|ul)>/g, '$1\n</$2>');  			//break before </ol></ul> tags
+			source = source.replace(/([^\n])<img/ig, '$1\n<img'); 				//move images to their own line
+			source = source.replace(/^$/g, '');
 		}
 
 		// Remove leading and trailing BRs
@@ -470,13 +480,22 @@ var MooEditable = new Class({
 		//           }
 
 		//remove double <p> tags and empty <p> tags
-		source = source.replace(/<p><p>/g, '<p>');
+		source = source.replace(/<p>(?:\s*)<p>/g, '<p>');
 		source = source.replace(/<\/p>\s*<\/p>/g, '</p>');
 		source = source.replace(/<p>\W*<\/p>/g, '');
 
 		// Final trim
 		source = source.trim();
 
+		return source;
+	},
+
+
+	doCleanup : function(source) {
+		do {
+			var oSource = source;
+			source = this.cleanup(source);
+		} while (source != oSource);
 		return source;
 	}
 
