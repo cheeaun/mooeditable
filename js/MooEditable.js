@@ -256,6 +256,7 @@ var MooEditable = new Class({
 	},
 
 	insertBreak : function(e) {
+		if (!Browser.Engine.trident)	return true;
 	        var r = this.selection.getRange();
 		var node = this.selection.getNode();
 		if (node.get('tag') != 'li') {
@@ -280,7 +281,7 @@ var MooEditable = new Class({
 				}
 			}
 			//make IE insert <br> instead of <p></p>
-			else if (Browser.Engine.trident) {
+			else {
 				this.insertBreak(e);
 			}
 		}
@@ -425,7 +426,7 @@ var MooEditable = new Class({
 
 			//<p> tags around a list will get moved to after the list
 			if (['gecko', 'presto','webkit'].contains(Browser.Engine.name)) {
-				//not working properly in safari
+				//not working properly in safari?
 				source = source.replace(/<p>[\s\n]*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/ig, '$1<p>$2</p>');
 				source = source.replace(/<\/(ol|ul)>\s*(?!<(?:p|ol|ul|img).*?>)((?:<[^>]*>)?\w.*)$/g, '</$1><p>$2</p>');
 			}
@@ -439,7 +440,7 @@ var MooEditable = new Class({
 			source = source.replace(/><li>/g, '>\n\t<li>'); 				//break and indent <li>
 			source = source.replace(/([^\n])<\/(ol|ul)>/g, '$1\n</$2>');  			//break before </ol></ul> tags
 			source = source.replace(/([^\n])<img/ig, '$1\n<img'); 				//move images to their own line
-			source = source.replace(/^$/g, '');
+			source = source.replace(/^\s*$/g, '');						//delete empty lines in the source code (not working in opera)
 		}
 
 		// Remove leading and trailing BRs
