@@ -255,37 +255,28 @@ var MooEditable = new Class({
 		}
 	},
 
-	insertBreak : function(e) {
-		if (!Browser.Engine.trident)	return true;
-	        var r = this.selection.getRange();
-		var node = this.selection.getNode();
-		if (node.get('tag') != 'li') {
-			if (r) {
-				this.selection.insertContent("<br class='mooeditable-skip'>");
-				this.selection.collapse(false);
-			}
-			e.stop();
-
-		}
-	},
-
 	enterListener: function(e) {
 		if (e.key == 'enter') {
-			if (this.options.paragraphise && e.shift) {
-				this.insertBreak(e);
-			}
-			else if (this.options.paragraphise) {
+			if (this.options.paragraphise && !e.shift) {
 				if (Browser.Engine.gecko || Browser.Engine.webkit) {
 					var node = this.selection.getNode();
-					if (node.get('tag') != 'li') this.execute('insertparagraph');
+					if (node.get('tag') != 'li' && node.get('tag') != 'p' && !node.getParent('p')) this.execute('insertparagraph');
 				}
 			}
-			//make IE insert <br> instead of <p></p>
 			else {
-				this.insertBreak(e);
+				if (Browser.Engine.trident) {
+					var r = this.selection.getRange();
+					var node = this.selection.getNode();
+					if (node.get('tag') != 'li') {
+						if (r) {
+							this.selection.insertContent('<br>');
+							this.selection.collapse(false);
+						}
+					}
+					e.stop();
+				}
 			}
 		}
-
 	},
 
 	focus: function() {
@@ -615,10 +606,10 @@ MooEditable.Selection = new Class({
 				while ($type(el) != 'element') el = el.parentNode;
 			}
 
-			return el;
+			return $(el);
 		}
 
-		return r.item ? r.item(0) : r.parentElement();
+		return $(r.item ? r.item(0) : r.parentElement());
 	},
 
 	insertContent: function(content) {
