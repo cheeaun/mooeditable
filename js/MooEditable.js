@@ -78,7 +78,7 @@ var MooEditable = new Class({
 
 	initialize: function(el,options) {
 		this.setOptions(options);
-		this.textarea = el;
+		this.textarea = $(el);
 		this.build();
 	},
 
@@ -779,18 +779,28 @@ MooEditable.Dialogs = new Hash({
 		me.disableToolbar(el);
 	}
 });
+
 Element.Properties.mooeditable = {
-	get : function() {
-		return this.retrieve('mooeditable');
+
+	set: function(options){
+		return this.eliminate('mooeditable').store('mooeditable:options', options);
 	},
-	set : function(options) {
-		var temp = new MooEditable(this, options);
-		this.store('mooeditable', temp);
-		return temp;
+	
+	get: function(options){
+		if (options || !this.retrieve('mooeditable')){
+			if (options || !this.retrieve('mooeditable:options')) this.set('mooeditable', options);
+			this.store('mooeditable', new MooEditable(this, this.retrieve('mooeditable:options')));
+		}
+		return this.retrieve('mooeditable');
 	}
-}
+	
+};
+
 Element.implement({
+
 	mooEditable: function(options) {
-		return this.set('mooeditable', options);
+		this.get('mooeditable', options);
+		return this;
 	}
+	
 });
