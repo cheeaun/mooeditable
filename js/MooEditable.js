@@ -260,7 +260,11 @@ var MooEditable = new Class({
 			if (this.options.paragraphise && !e.shift) {
 				if (Browser.Engine.gecko || Browser.Engine.webkit) {
 					var node = this.selection.getNode();
-					if (node.get('tag') != 'li' && node.get('tag') != 'p' && !node.getParent('p')) this.execute('insertparagraph');
+					var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
+					var isBlock = node.getParents().include(node).some(function(el){
+						return el.nodeName.test(blockEls);
+					});
+					if (!isBlock) this.execute('insertparagraph');
 				}
 			}
 			else {
