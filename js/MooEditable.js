@@ -451,9 +451,9 @@ var MooEditable = new Class({
 		// Semantic conversion
 		source = source.replace(/<span style="font-weight: bold;">(.*)<\/span>/gi, '<strong>$1</strong>');
 		source = source.replace(/<span style="font-style: italic;">(.*)<\/span>/gi, '<em>$1</em>');
-		source = source.replace(/<b(?!r)[^>]*>(.*?)<\/b[^>]*>/gi, '<strong>$1</strong>')
-		source = source.replace(/<i[^>]*>(.*?)<\/i[^>]*>/gi, '<em>$1</em>')
-		source = source.replace(/<u(?!l)[^>]*>(.*?)<\/u[^>]*>/gi, '<span style="text-decoration: underline;">$1</span>')
+		source = source.replace(/<b\b[^>]*>(.*?)<\/b[^>]*>/gi, '<strong>$1</strong>');
+		source = source.replace(/<i\b[^>]*>(.*?)<\/i[^>]*>/gi, '<em>$1</em>');
+		source = source.replace(/<u\b[^>]*>(.*?)<\/u[^>]*>/gi, '<span style="text-decoration: underline;">$1</span>');
 
 		// Replace uppercase element names with lowercase
 		source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
@@ -780,7 +780,7 @@ Element.Properties.mooeditable = {
 	set: function(options){
 		return this.eliminate('mooeditable').store('mooeditable:options', options);
 	},
-	
+
 	get: function(options){
 		if (options || !this.retrieve('mooeditable')){
 			if (options || !this.retrieve('mooeditable:options')) this.set('mooeditable', options);
@@ -788,7 +788,7 @@ Element.Properties.mooeditable = {
 		}
 		return this.retrieve('mooeditable');
 	}
-	
+
 };
 
 Element.implement({
@@ -797,5 +797,5 @@ Element.implement({
 		this.get('mooeditable', options);
 		return this;
 	}
-	
+
 });
