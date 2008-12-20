@@ -340,12 +340,12 @@ var MooEditable = new Class({
 	},
 
 	getContent: function() {
-		return this.doCleanup(this.doc.getElementById('editable').innerHTML);
+		return this.doCleanup(this.doc.getElement('#editable').get('html'));
 	},
 
 	setContent: function(newContent) {
 		(function() {
-			$(this.doc.getElementById('editable')).set('html', newContent);
+			this.doc.getElement('#editable').set('html', newContent);
 		}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
 		return this;
 	},
