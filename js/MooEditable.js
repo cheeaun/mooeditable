@@ -134,7 +134,7 @@ var MooEditable = new Class({
 			<html style="cursor: text; height: 100%">\
 				<head>' + (this.options.cssPath ? "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.options.cssPath + "\" />" : "") + '</head>\
 				<body id=\"editable\"' + (this.options.cssClass ? " class=\"" + this.options.cssClass + "\"" : "") + ' style="font-family: sans-serif; border: 0">'+
-				this.doCleanup(this.textarea.get('value')) +
+				this.cleanup(this.textarea.get('value')) +
 				'</body>\
 			</html>\
 		';
@@ -340,7 +340,7 @@ var MooEditable = new Class({
 	},
 
 	getContent: function() {
-		return this.doCleanup(this.doc.getElement('#editable').get('html'));
+		return this.cleanup(this.doc.getElement('#editable').get('html'));
 	},
 
 	setContent: function(newContent) {
@@ -388,110 +388,105 @@ var MooEditable = new Class({
 
 	cleanup: function(source) {
 		if(!this.options.cleanup) return source.trim();
-
-		// Webkit cleanup
-		source = source.replace(/<br class\="webkit-block-placeholder">/gi, "<br />");
-		source = source.replace(/<span class="Apple-style-span">(.*)<\/span>/gi, '$1');
-		source = source.replace(/ class="Apple-style-span"/gi, '');
-		source = source.replace(/<span style="">/gi, '');
-
-		// Remove padded paragraphs
-		source = source.replace(/<p>\s*<br ?\/?>\s*<\/p>/gi, '<p>\u00a0</p>');
-		source = source.replace(/<p>(&nbsp;|\s)*<\/p>/gi, '<p>\u00a0</p>');
-		if (!this.options.semantics) {
-			source = source.replace(/\s*<br ?\/?>\s*<\/p>/gi, '</p>');
-		}
-
-
-		// Replace improper BRs (only if XHTML : true)
-		if (this.options.xhtml) {
-			source = source.replace(/<br>/gi, "<br />");
-		}
-
-		if (this.options.semantics) {
-			//remove divs from <li>
-			if (Browser.Engine.trident) {
-				source = source.replace(/<li>\s*<div>(.+?)<\/div><\/li>/g, '<li>$1</li>');
-			}
-			//remove stupid apple divs
-			if (Browser.Engine.webkit) {
-				source = source.replace(/^([\w\s]+.*?)<div>/i, '<p>$1</p><div>');
-				source = source.replace(/<div>(.+?)<\/div>/ig, '<p>$1</p>');
-			}
-
-			//<p> tags around a list will get moved to after the list
-			if (['gecko', 'presto','webkit'].contains(Browser.Engine.name)) {
-				//not working properly in safari?
-				source = source.replace(/<p>[\s\n]*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/ig, '$1<p>$2</p>');
-				source = source.replace(/<\/(ol|ul)>\s*(?!<(?:p|ol|ul|img).*?>)((?:<[^>]*>)?\w.*)$/g, '</$1><p>$2</p>');
-			}
-
-			source = source.replace(/<br[^>]*><\/p>/g, '</p>');			//remove <br>'s that end a paragraph here.
-			source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n'); 	//if a <p> only contains <img>, remove the <p> tags
-
-			//format the source
-			source = source.replace(/<p([^>]*)>(.*?)<\/p>(?!\n)/g, '<p$1>$2</p>\n');  	//break after paragraphs
-			source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '</$1>\n'); 			//break after </p></ol></ul> tags
-			source = source.replace(/><li>/g, '>\n\t<li>'); 				//break and indent <li>
-			source = source.replace(/([^\n])<\/(ol|ul)>/g, '$1\n</$2>');  			//break before </ol></ul> tags
-			source = source.replace(/([^\n])<img/ig, '$1\n<img'); 				//move images to their own line
-			source = source.replace(/^\s*$/g, '');						//delete empty lines in the source code (not working in opera)
-		}
-
-		// Remove leading and trailing BRs
-		source = source.replace(/<br ?\/?>$/gi, '');
-		source = source.replace(/^<br ?\/?>/gi, '');
-
-		// Remove useless BRs
-		source = source.replace(/><br ?\/?>/gi, '>');
-
-		// Remove BRs right before the end of blocks
-		source = source.replace(/<br ?\/?>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
-
-		// Semantic conversion
-		source = source.replace(/<span style="font-weight: bold;">(.*)<\/span>/gi, '<strong>$1</strong>');
-		source = source.replace(/<span style="font-style: italic;">(.*)<\/span>/gi, '<em>$1</em>');
-		source = source.replace(/<b\b[^>]*>(.*?)<\/b[^>]*>/gi, '<strong>$1</strong>');
-		source = source.replace(/<i\b[^>]*>(.*?)<\/i[^>]*>/gi, '<em>$1</em>');
-		source = source.replace(/<u\b[^>]*>(.*?)<\/u[^>]*>/gi, '<span style="text-decoration: underline;">$1</span>');
-
-		// Replace uppercase element names with lowercase
-		source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
-
-		// Replace uppercase attribute names with lowercase
-		source = source.replace(/<[^>]*>/g, function(match){
-			   match = match.replace(/ [^=]+=/g, function(match2){return match2.toLowerCase();});
-			   return match;
-		});
-
-		// Put quotes around unquoted attributes
-		source = source.replace(/<[^>]*>/g, function(match){
-			   match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
-			   return match;
-		});
-
-		//make img tags xhtml compatable
-		//           if (this.options.xhtml) {
-		//                source = source.replace(/(<(?:img|input)[^/>]*)>/g, '$1 />');
-		//           }
-
-		//remove double <p> tags and empty <p> tags
-		source = source.replace(/<p>(?:\s*)<p>/g, '<p>');
-		source = source.replace(/<\/p>\s*<\/p>/g, '</p>');
-		source = source.replace(/<p>\W*<\/p>/g, '');
-
-		// Final trim
-		source = source.trim();
-
-		return source;
-	},
-
-
-	doCleanup : function(source) {
+		
 		do {
 			var oSource = source;
-			source = this.cleanup(source);
+
+			// Webkit cleanup
+			source = source.replace(/<br class\="webkit-block-placeholder">/gi, "<br />");
+			source = source.replace(/<span class="Apple-style-span">(.*)<\/span>/gi, '$1');
+			source = source.replace(/ class="Apple-style-span"/gi, '');
+			source = source.replace(/<span style="">/gi, '');
+
+			// Remove padded paragraphs
+			source = source.replace(/<p>\s*<br ?\/?>\s*<\/p>/gi, '<p>\u00a0</p>');
+			source = source.replace(/<p>(&nbsp;|\s)*<\/p>/gi, '<p>\u00a0</p>');
+			if (!this.options.semantics) {
+				source = source.replace(/\s*<br ?\/?>\s*<\/p>/gi, '</p>');
+			}
+
+
+			// Replace improper BRs (only if XHTML : true)
+			if (this.options.xhtml) {
+				source = source.replace(/<br>/gi, "<br />");
+			}
+
+			if (this.options.semantics) {
+				//remove divs from <li>
+				if (Browser.Engine.trident) {
+					source = source.replace(/<li>\s*<div>(.+?)<\/div><\/li>/g, '<li>$1</li>');
+				}
+				//remove stupid apple divs
+				if (Browser.Engine.webkit) {
+					source = source.replace(/^([\w\s]+.*?)<div>/i, '<p>$1</p><div>');
+					source = source.replace(/<div>(.+?)<\/div>/ig, '<p>$1</p>');
+				}
+
+				//<p> tags around a list will get moved to after the list
+				if (['gecko', 'presto','webkit'].contains(Browser.Engine.name)) {
+					//not working properly in safari?
+					source = source.replace(/<p>[\s\n]*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/ig, '$1<p>$2</p>');
+					source = source.replace(/<\/(ol|ul)>\s*(?!<(?:p|ol|ul|img).*?>)((?:<[^>]*>)?\w.*)$/g, '</$1><p>$2</p>');
+				}
+
+				source = source.replace(/<br[^>]*><\/p>/g, '</p>');			//remove <br>'s that end a paragraph here.
+				source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n'); 	//if a <p> only contains <img>, remove the <p> tags
+
+				//format the source
+				source = source.replace(/<p([^>]*)>(.*?)<\/p>(?!\n)/g, '<p$1>$2</p>\n');  	//break after paragraphs
+				source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '</$1>\n'); 			//break after </p></ol></ul> tags
+				source = source.replace(/><li>/g, '>\n\t<li>'); 				//break and indent <li>
+				source = source.replace(/([^\n])<\/(ol|ul)>/g, '$1\n</$2>');  			//break before </ol></ul> tags
+				source = source.replace(/([^\n])<img/ig, '$1\n<img'); 				//move images to their own line
+				source = source.replace(/^\s*$/g, '');						//delete empty lines in the source code (not working in opera)
+			}
+
+			// Remove leading and trailing BRs
+			source = source.replace(/<br ?\/?>$/gi, '');
+			source = source.replace(/^<br ?\/?>/gi, '');
+
+			// Remove useless BRs
+			source = source.replace(/><br ?\/?>/gi, '>');
+
+			// Remove BRs right before the end of blocks
+			source = source.replace(/<br ?\/?>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
+
+			// Semantic conversion
+			source = source.replace(/<span style="font-weight: bold;">(.*)<\/span>/gi, '<strong>$1</strong>');
+			source = source.replace(/<span style="font-style: italic;">(.*)<\/span>/gi, '<em>$1</em>');
+			source = source.replace(/<b\b[^>]*>(.*?)<\/b[^>]*>/gi, '<strong>$1</strong>');
+			source = source.replace(/<i\b[^>]*>(.*?)<\/i[^>]*>/gi, '<em>$1</em>');
+			source = source.replace(/<u\b[^>]*>(.*?)<\/u[^>]*>/gi, '<span style="text-decoration: underline;">$1</span>');
+
+			// Replace uppercase element names with lowercase
+			source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
+
+			// Replace uppercase attribute names with lowercase
+			source = source.replace(/<[^>]*>/g, function(match){
+				   match = match.replace(/ [^=]+=/g, function(match2){return match2.toLowerCase();});
+				   return match;
+			});
+
+			// Put quotes around unquoted attributes
+			source = source.replace(/<[^>]*>/g, function(match){
+				   match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
+				   return match;
+			});
+
+			//make img tags xhtml compatable
+			//           if (this.options.xhtml) {
+			//                source = source.replace(/(<(?:img|input)[^/>]*)>/g, '$1 />');
+			//           }
+
+			//remove double <p> tags and empty <p> tags
+			source = source.replace(/<p>(?:\s*)<p>/g, '<p>');
+			source = source.replace(/<\/p>\s*<\/p>/g, '</p>');
+			source = source.replace(/<p>\W*<\/p>/g, '');
+
+			// Final trim
+			source = source.trim();
 		} while (source != oSource);
+
 		return source;
 	}
 
