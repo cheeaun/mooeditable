@@ -1,0 +1,12 @@
+{
+
+	"MooEditable":{
+	
+		"MooEditable":{
+			"deps": ["None"],
+			"desc": "Class for creating a WYSIWYG editor, for contentEditable-capable browsers"
+		}
+		
+	}
+	
+}

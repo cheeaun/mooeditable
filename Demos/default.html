@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>MooEditable example  with customized toolbar buttons</title>
+		<title>MooEditable basic example</title>
 
 		<style type="text/css">
 			body{
@@ -19,15 +19,13 @@
 			}
 		</style>
 
-		<link rel="stylesheet" type="text/css" href="../css/MooEditable.css">
-		<script type="text/javascript" src="../js/mootools-1.2.1-core-built.js"></script>
-		<script type="text/javascript" src="../js/MooEditable.js"></script>
+		<link rel="stylesheet" type="text/css" href="../Assets/MooEditable/MooEditable.css">
+		<script type="text/javascript" src="mootools.js"></script>
+		<script type="text/javascript" src="../Source/MooEditable/MooEditable.js"></script>
 
 		<script type="text/javascript">
 			window.addEvent('load', function(){
-				$('textarea-1').mooEditable({
-					buttons: 'bold,italic,|,urlimage,createlink,unlink,|,toggleview'
-				});
+				$('textarea-1').mooEditable();
 
 				// Post submit
 				$('theForm').addEvent('submit', function(e){
@@ -40,7 +38,7 @@
 	</head>
 	<body>
 
-		<h1>MooEditable example with customized toolbar buttons</h1>
+		<h1>MooEditable basic example</h1>
 
 		<form id="theForm" method="post" action="http://xrado.hopto.org/post.php">
 
@@ -52,6 +50,8 @@
 			<input type="submit">
 
 		</form>
+
+		<div id="data"></div>
 
 	</body>
 </html>

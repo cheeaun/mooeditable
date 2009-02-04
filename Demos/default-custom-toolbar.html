@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>MooEditable example with AJAX submit</title>
+		<title>MooEditable example  with customized toolbar buttons</title>
 
 		<style type="text/css">
 			body{
@@ -19,13 +19,15 @@
 			}
 		</style>
 
-		<link rel="stylesheet" type="text/css" href="../css/MooEditable.css">
-		<script type="text/javascript" src="../js/mootools-1.2.1-core-built.js"></script>
-		<script type="text/javascript" src="../js/MooEditable.js"></script>
+		<link rel="stylesheet" type="text/css" href="../Assets/MooEditable/MooEditable.css">
+		<script type="text/javascript" src="mootools.js"></script>
+		<script type="text/javascript" src="../Source/MooEditable/MooEditable.js"></script>
 
 		<script type="text/javascript">
 			window.addEvent('load', function(){
-				mooeditable = $('textarea-1').mooEditable();
+				$('textarea-1').mooEditable({
+					buttons: 'bold,italic,|,urlimage,createlink,unlink,|,toggleview'
+				});
 
 				// Post submit
 				$('theForm').addEvent('submit', function(e){
@@ -33,17 +35,12 @@
 					return true;
 				});
 			});
-
-			// Ajax submit
-			function updateContent(){
-				mooeditable.saveContent();
-			}
 		</script>
 
 	</head>
 	<body>
 
-		<h1>MooEditable example with AJAX submit</h1>
+		<h1>MooEditable example with customized toolbar buttons</h1>
 
 		<form id="theForm" method="post" action="http://xrado.hopto.org/post.php">
 
@@ -54,11 +51,7 @@
 
 			<input type="submit">
 
-			<input type="button" onclick="updateContent(); new Request.HTML({url:'http://xrado.hopto.org/post.php',data:$('theForm'),update:$('data')}).send()" value="Ajax submit">
-
 		</form>
-
-		<div id="data"></div>
 
 	</body>
 </html>

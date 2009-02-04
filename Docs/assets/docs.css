@@ -1,0 +1,23 @@
+head,title{
+	display: block;
+}
+
+title{
+	font-weight: bold;
+	padding: .5em;
+	text-align: center;
+	border-bottom: 1px solid #000;
+}
+
+html{
+	font-family: helvetica, arial, sans-serif;
+	font-size: 80%;
+}
+
+pre{
+	font-size: 120%;
+}
+
+ul{
+	list-style-type: square;
+}
