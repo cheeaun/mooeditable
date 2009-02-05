@@ -35,22 +35,22 @@ var MooEditable = new Class({
 		mode: 'icons'
 	},
 
-	initialize: function(el,options) {
+	initialize: function(el,options){
 		this.setOptions(options);
 		this.textarea = $(el);
 		this.build();
 	},
 
-	build: function() {
+	build: function(){
 		var self = this;
 
 		// Build the container
-		this.container = new Element('div',{
-			'id': (this.textarea.id) ? this.textarea.id+'-container' : null,
+		this.container = new Element('div', {
+			id: (this.textarea.id) ? this.textarea.id+'-container' : null,
 			'class': 'mooeditable-container',
-			'styles': {
-				'width': this.textarea.getSize().x,
-				'margin': this.textarea.getStyle('margin')
+			styles: {
+				width: this.textarea.getSize().x,
+				margin: this.textarea.getStyle('margin')
 			}
 		});
 
@@ -58,17 +58,17 @@ var MooEditable = new Class({
 		this.container.wraps(this.textarea);
 
 		// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
-		if(Browser.Engine.trident) new Element('span').wraps(this.textarea);
+		if (Browser.Engine.trident) new Element('span').wraps(this.textarea);
 
 		// Build the iframe
 		var pads = this.textarea.getStyle('padding').split(' ');
-		pads = pads.map(function(p) { return (p == 'auto') ? 0 : p.toInt(); });
+		pads = pads.map(function(p){ return (p == 'auto') ? 0 : p.toInt(); });
 
 		this.iframe = new IFrame({
 			'class': 'mooeditable-iframe',
-			'styles': {
-				'width': this.textarea.getStyle('width').toInt() + pads[1] + pads[3],
-				'height': this.textarea.getStyle('height').toInt() + pads[0] + pads[2],
+			styles: {
+				width: this.textarea.getStyle('width').toInt() + pads[1] + pads[3],
+				height: this.textarea.getStyle('height').toInt() + pads[0] + pads[2],
 				'border-color': this.textarea.getStyle('border-color'),
 				'border-width': this.textarea.getStyle('border-width'),
 				'border-style': this.textarea.getStyle('border-style')
@@ -76,10 +76,10 @@ var MooEditable = new Class({
 		});
 
 		this.textarea.setStyles({
-			'margin': 0,
-			'display': 'none',
-			'resize': 'none', // disable resizable textareas in Safari
-			'outline': 'none' // disable focus ring in Safari
+			margin: 0,
+			display: 'none',
+			resize: 'none', // disable resizable textareas in Safari
+			outline: 'none' // disable focus ring in Safari
 		});
 
 		this.iframe.inject(this.container, 'top');
@@ -109,17 +109,17 @@ var MooEditable = new Class({
 		this.mode = 'iframe';
 
 		// Update the event for textarea's corresponding labels
-		if (this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e) {
-			if(self.mode == 'iframe') {
-				e = new Event(e).stop();
+		if (this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
+			if (self.mode == 'iframe'){
+				e.stop();
 				self.focus();
 			}
 		});
 
 		// Update & cleanup content before submit
 		this.form = this.textarea.getParent('form');
-		if (this.form) this.form.addEvent('submit',function() {
-			if(self.mode=='iframe') self.saveContent();
+		if (this.form) this.form.addEvent('submit', function(){
+			if (self.mode == 'iframe') self.saveContent();
 		});
 
 		// document.window for IE, for new Document code below
@@ -130,16 +130,16 @@ var MooEditable = new Class({
 		$(this.doc.body);
 
 		this.doc.addEvents({
-			'keypress': this.keyListener.bind(this),
-			'keydown': this.enterListener.bind(this)
+			keypress: this.keyListener.bind(this),
+			keydown: this.enterListener.bind(this)
 		});
 		this.textarea.addEvent('keypress', this.keyListener.bind(this));
 
-		var styleCSS = function() {
+		var styleCSS = function(){
 			// styleWithCSS, not supported in IE and Opera
 			if (!['trident', 'presto'].contains(Browser.Engine.name)) self.execute('styleWithCSS', false, false);
 			self.doc.removeEvent('focus', styleCSS);
-		}
+		};
 		this.doc.addEvent('focus', styleCSS);
 
 		// make images selectable and draggable in Safari
@@ -148,50 +148,51 @@ var MooEditable = new Class({
 			if (el.get('tag') == 'img') self.selectNode(el);
 		});
 
-		if (this.options.toolbar) {
+		if (this.options.toolbar){
 			this.buildToolbar();
 			this.doc.addEvents({
-				'keyup': this.checkStates.bind(this),
-				'mouseup': this.checkStates.bind(this)
+				keyup: this.checkStates.bind(this),
+				mouseup: this.checkStates.bind(this)
 			});
 		}
 
 		this.selection = new MooEditable.Selection(this);
 	},
 
-	buildToolbar: function() {
+	buildToolbar: function(){
 		var self = this;
-		this.toolbar = new Element('div',{ 'class': 'mooeditable-toolbar' }).inject(this.iframe, 'before');
+		this.toolbar = new Element('div', {'class': 'mooeditable-toolbar'}).inject(this.iframe, 'before');
 		this.keys = [];
 		var buttons = [];
 
 		var toolbarButtons = this.options.buttons.split(',');
-		toolbarButtons.each(function(command, idx) {
+		toolbarButtons.each(function(command, idx){
 			var b;
-			if (command == '|') b = new Element('span',{ 'class': 'toolbar-separator' });
-			else{
-				b = new Element('button',{
-					'class': command+'-button toolbar-button',
-					'title': MooEditable.Actions[command]['title'] + ((MooEditable.Actions[command]['shortcut']) ? ' ( Ctrl+' + MooEditable.Actions[command]['shortcut'].toUpperCase() + ' )' : ''),
-					'events': {
-						'click': function(e) {
+			if (command == '|'){
+				b = new Element('span', {'class': 'toolbar-separator'});
+			} else {
+				b = new Element('button', {
+					'class': command + '-button toolbar-button',
+					title: MooEditable.Actions[command]['title'] + ((MooEditable.Actions[command]['shortcut']) ? ' ( Ctrl+' + MooEditable.Actions[command]['shortcut'].toUpperCase() + ' )' : ''),
+					events: {
+						click: function(e){
 							e.stop();
-							if (!this.hasClass('disabled') ) {
+							if (!this.hasClass('disabled')){
 								self.focus();
 								self.action(command);
 								if (self.mode == 'iframe') self.checkStates();
 							}
 						},
-						'mousedown': function(e) { e.stop(); }
+						mousedown: function(e){ e.stop(); }
 					}
 				});
 				// apply toolbar mode
 				b.addClass(MooEditable.Actions[command]['mode'] || self.options.mode);
 
 				// add hover effect for IE
-				if(Browser.Engine.trident) b.addEvents({
-					'mouseenter': function(e) { this.addClass('hover'); },
-					'mouseleave': function(e) { this.removeClass('hover'); }
+				if (Browser.Engine.trident) b.addEvents({
+					mouseenter: function(e){ this.addClass('hover'); },
+					mouseleave: function(e){ this.removeClass('hover'); }
 				});
 				// shortcuts
 				var key = MooEditable.Actions[command]['shortcut'];
@@ -207,17 +208,17 @@ var MooEditable = new Class({
 		this.toolbarButtons = new Elements(buttons);
 	},
 
-	keyListener: function(e) {
-		if (e.control && this.keys[e.key]) {
+	keyListener: function(e){
+		if (e.control && this.keys[e.key]){
 			e.stop();
 			this.keys[e.key].fireEvent('click', e);
 		}
 	},
 
-	enterListener: function(e) {
-		if (e.key == 'enter') {
-			if (this.options.paragraphise && !e.shift) {
-				if (Browser.Engine.gecko || Browser.Engine.webkit) {
+	enterListener: function(e){
+		if (e.key == 'enter'){
+			if (this.options.paragraphise && !e.shift){
+				if (Browser.Engine.gecko || Browser.Engine.webkit){
 					var node = this.selection.getNode();
 					var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
 					var isBlock = node.getParents().include(node).some(function(el){
@@ -227,11 +228,11 @@ var MooEditable = new Class({
 				}
 			}
 			else {
-				if (Browser.Engine.trident) {
+				if (Browser.Engine.trident){
 					var r = this.selection.getRange();
 					var node = this.selection.getNode();
-					if (node.get('tag') != 'li') {
-						if (r) {
+					if (node.get('tag') != 'li'){
+						if (r){
 							this.selection.insertContent('<br>');
 							this.selection.collapse(false);
 						}
@@ -242,22 +243,23 @@ var MooEditable = new Class({
 		}
 	},
 
-	focus: function() {
+	focus: function(){
 		(this.mode=='iframe' ? this.win : this.textarea).focus();
 		return this;
 	},
 
-	action: function(command) {
+	action: function(command){
 		var action = MooEditable.Actions[command];
 		var args = action.arguments || [];
-		if (action.command)
+		if (action.command){
 			($type(action.command) == 'function') ? action.command.attempt(args, this) : this.execute(action.command, false, args);
-		else
+		} else {
 			this.execute(command, false, args);
+		}
 	},
 
-	execute: function(command, param1, param2) {
-		if (!this.busy) {
+	execute: function(command, param1, param2){
+		if (!this.busy){
 			this.busy = true;
 			this.doc.execCommand(command, param1, param2);
 			this.saveContent();
@@ -266,8 +268,8 @@ var MooEditable = new Class({
 		return false;
 	},
 
-	toggleView: function() {
-		if (this.mode == 'textarea') {
+	toggleView: function(){
+		if (this.mode == 'textarea'){
 			this.mode = 'iframe';
 			this.iframe.setStyle('display', '');
 			this.setContent(this.textarea.value);
@@ -281,57 +283,56 @@ var MooEditable = new Class({
 			this.iframe.setStyle('display', 'none');
 		}
 		// toggling from textarea to iframe needs the delay to get focus working
-		(function() { this.focus(); }).bind(this).delay(10);
+		(function(){ this.focus(); }).bind(this).delay(10);
 
 		return this;
 	},
 
-	disableToolbar: function(b) {
-		this.toolbarButtons.each(function(item) {
+	disableToolbar: function(b){
+		this.toolbarButtons.each(function(item){
 			(!item.hasClass(b+'-button')) ? item.addClass('disabled').set('opacity', 0.4) : item.addClass('onActive');
 		});
 		return this;
 	},
 
-	enableToolbar: function() {
+	enableToolbar: function(){
 		this.toolbarButtons.removeClass('disabled').removeClass('onActive').set('opacity', 1);
 		return this;
 	},
 
-	getContent: function() {
+	getContent: function(){
 		return this.cleanup(this.doc.getElement('#editable').get('html'));
 	},
 
-	setContent: function(newContent) {
-		(function() {
+	setContent: function(newContent){
+		(function(){
 			this.doc.getElement('#editable').set('html', newContent);
 		}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
 		return this;
 	},
 
-	saveContent: function() {
-		if(this.mode == 'iframe') this.textarea.set('value', this.getContent());
+	saveContent: function(){
+		if (this.mode == 'iframe') this.textarea.set('value', this.getContent());
 		return this;
 	},
 
-	checkStates: function() {
-		MooEditable.Actions.each(function(action, command) {
+	checkStates: function(){
+		MooEditable.Actions.each(function(action, command){
 			var button = this.toolbarButtons.filter('.' + command + '-button');
 			if (!button) return;
 			button.removeClass('active');
 
-			if (action.tags) {
+			if (action.tags){
 				var el = this.selection.getNode();
 
 				if (el) do {
 					if ($type(el) != 'element') break;
-					if (action.tags.contains(el.tagName.toLowerCase()))
-						button.addClass('active');
+					if (action.tags.contains(el.tagName.toLowerCase())) button.addClass('active');
 				}
 				while (el = el.parentNode);
 			}
 
-			if(action.css) {
+			if (action.css){
 				var el = this.selection.getNode();
 
 				if (el) do {
@@ -345,8 +346,8 @@ var MooEditable = new Class({
 		}.bind(this));
 	},
 
-	cleanup: function(source) {
-		if(!this.options.cleanup) return source.trim();
+	cleanup: function(source){
+		if (!this.options.cleanup) return source.trim();
 		
 		do {
 			var oSource = source;
@@ -360,29 +361,29 @@ var MooEditable = new Class({
 			// Remove padded paragraphs
 			source = source.replace(/<p>\s*<br ?\/?>\s*<\/p>/gi, '<p>\u00a0</p>');
 			source = source.replace(/<p>(&nbsp;|\s)*<\/p>/gi, '<p>\u00a0</p>');
-			if (!this.options.semantics) {
+			if (!this.options.semantics){
 				source = source.replace(/\s*<br ?\/?>\s*<\/p>/gi, '</p>');
 			}
 
 
 			// Replace improper BRs (only if XHTML : true)
-			if (this.options.xhtml) {
+			if (this.options.xhtml){
 				source = source.replace(/<br>/gi, "<br />");
 			}
 
-			if (this.options.semantics) {
+			if (this.options.semantics){
 				//remove divs from <li>
-				if (Browser.Engine.trident) {
+				if (Browser.Engine.trident){
 					source = source.replace(/<li>\s*<div>(.+?)<\/div><\/li>/g, '<li>$1</li>');
 				}
 				//remove stupid apple divs
-				if (Browser.Engine.webkit) {
+				if (Browser.Engine.webkit){
 					source = source.replace(/^([\w\s]+.*?)<div>/i, '<p>$1</p><div>');
 					source = source.replace(/<div>(.+?)<\/div>/ig, '<p>$1</p>');
 				}
 
 				//<p> tags around a list will get moved to after the list
-				if (['gecko', 'presto','webkit'].contains(Browser.Engine.name)) {
+				if (['gecko', 'presto', 'webkit'].contains(Browser.Engine.name)){
 					//not working properly in safari?
 					source = source.replace(/<p>[\s\n]*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/ig, '$1<p>$2</p>');
 					source = source.replace(/<\/(ol|ul)>\s*(?!<(?:p|ol|ul|img).*?>)((?:<[^>]*>)?\w.*)$/g, '</$1><p>$2</p>');
@@ -433,7 +434,7 @@ var MooEditable = new Class({
 			});
 
 			//make img tags xhtml compatable
-			//           if (this.options.xhtml) {
+			//           if (this.options.xhtml){
 			//                source = source.replace(/(<(?:img|input)[^/>]*)>/g, '$1 />');
 			//           }
 
@@ -444,7 +445,8 @@ var MooEditable = new Class({
 
 			// Final trim
 			source = source.trim();
-		} while (source != oSource);
+		}
+		while (source != oSource);
 
 		return source;
 	}
@@ -453,105 +455,112 @@ var MooEditable = new Class({
 
 MooEditable.Selection = new Class({
 
-	initialize: function(editor) {
+	initialize: function(editor){
 		this.win = editor.win;
 		this.doc = editor.doc;
 	},
 
-	getSelection: function() {
+	getSelection: function(){
 		return (this.win.getSelection) ? this.win.getSelection() : this.doc.selection;
 	},
 
-	getRange: function() {
+	getRange: function(){
 		var s = this.getSelection();
 
 		if (!s) return null;
 
 		try {
 			return s.rangeCount > 0 ? s.getRangeAt(0) : (s.createRange ? s.createRange() : null);
-		} catch (e) {
+		} catch (e){
 			// IE bug when used in frameset
 			return this.doc.body.createTextRange();
 		}
 	},
 
-	setRange: function(range) {
-		if (range.select) $try(function(){
+	setRange: function(range){
+		if (range.select){
+			$try(function(){
 				range.select();
 			});
-		else {
+		} else {
 			var s = this.getSelection();
-			if (s.addRange) {
+			if (s.addRange){
 				s.removeAllRanges();
 				s.addRange(range);
 			}
 		}
 	},
 
-	selectNode: function(node, collapse) {
+	selectNode: function(node, collapse){
 		var r = this.getRange();
 		var s = this.getSelection();
 
-		if (r.moveToElementText) $try(function(){
+		if (r.moveToElementText){
+			$try(function(){
 				r.moveToElementText(node);
 				r.select();
 			});
-		else if (s.addRange) {
+		} else if (s.addRange){
 			collapse ? r.selectNodeContents(node) : r.selectNode(node);
 			s.removeAllRanges();
 			s.addRange(r);
-		} else
+		} else {
 			s.setBaseAndExtent(node, 0, node, 1);
+		}
 
 		return node;
 	},
 
-	isCollapsed: function() {
+	isCollapsed: function(){
 		var r = this.getRange();
 		if (r.item) return false;
 		return r.boundingWidth == 0 || this.getSelection().isCollapsed;
 	},
 
-	collapse: function(toStart) {
+	collapse: function(toStart){
 		var r = this.getRange();
 		var s = this.getSelection();
 
-		if (r.select) {
+		if (r.select){
 			r.collapse(toStart);
 			r.select();
-		}
-		else
+		} else {
 			toStart ? s.collapseToStart() : s.collapseToEnd();
+		}
 	},
 
-	getContent: function() {
+	getContent: function(){
 		var r = this.getRange();
 		var body = new Element('body');
 
 		if (this.isCollapsed()) return '';
 
-		if (r.cloneContents) body.appendChild(r.cloneContents());
-		else if ($defined(r.item) || $defined(r.htmlText)) body.set('html', r.item ? r.item(0).outerHTML : r.htmlText);
-		else body.set('html', r.toString());
+		if (r.cloneContents){
+			body.appendChild(r.cloneContents());
+		} else if ($defined(r.item) || $defined(r.htmlText)){
+			body.set('html', r.item ? r.item(0).outerHTML : r.htmlText);
+		} else {
+			body.set('html', r.toString());
+		}
 
 		var content = body.get('html');
 		return content;
 	},
 
-	getText : function() {
+	getText : function(){
 		var r = this.getRange();
 		var s = this.getSelection();
 
 		return this.isCollapsed() ? '' : r.text || s.toString();
 	},
 
-	getNode: function() {
+	getNode: function(){
 		var r = this.getRange();
 
-		if (!Browser.Engine.trident) {
+		if (!Browser.Engine.trident){
 			var el = null;
 
-			if (r) {
+			if (r){
 				el = r.commonAncestorContainer;
 
 				// Handle selection a image or other control like element such as anchors
@@ -570,17 +579,15 @@ MooEditable.Selection = new Class({
 		return $(r.item ? r.item(0) : r.parentElement());
 	},
 
-	insertContent: function(content) {
+	insertContent: function(content){
 		var r = this.getRange();
 
-		if (r.insertNode) {
+		if (r.insertNode){
 			r.deleteContents();
 			r.insertNode(r.createContextualFragment(content));
-		}
-		else {
+		} else {
 			// Handle text and control range
-			if (r.pasteHTML) r.pasteHTML(content);
-			else r.item(0).outerHTML = content;
+			(r.pasteHTML) ? r.pasteHTML(content) : r.item(0).outerHTML = content;
 		}
 	}
 
@@ -588,37 +595,38 @@ MooEditable.Selection = new Class({
 
 MooEditable.Actions = new Hash({
 
-	bold: { title: 'Bold', shortcut: 'b', tags: ['b','strong'], css: {'font-weight':'bold'} },
-	italic: { title: 'Italic', shortcut: 'i', tags: ['i','em'], css: {'font-style':'italic'} },
-	underline: { title: 'Underline', shortcut: 'u', tags: ['u'], css: {'text-decoration':'underline'} },
-	strikethrough: { title: 'Strikethrough', shortcut: 's', tags: ['s','strike'], css: {'text-decoration':'line-through'} },
-	insertunorderedlist: { title: 'Unordered List', tags: ['ul'] },
-	insertorderedlist: { title: 'Ordered List', tags: ['ol'] },
-	indent: { title: 'Indent', tags: ['blockquote'] },
-	outdent: { title: 'Outdent' },
-	undo: { title: 'Undo', shortcut: 'z' },
-	redo: { title: 'Redo', shortcut: 'y' },
-	unlink: { title: 'Remove Hyperlink' },
+	bold: {title: 'Bold', shortcut: 'b', tags: ['b', 'strong'], css: {'font-weight': 'bold'}},
+	italic: {title: 'Italic', shortcut: 'i', tags: ['i', 'em'], css: {'font-style': 'italic'}},
+	underline: {title: 'Underline', shortcut: 'u', tags: ['u'], css: {'text-decoration': 'underline'}},
+	strikethrough: {title: 'Strikethrough', shortcut: 's', tags: ['s', 'strike'], css: {'text-decoration': 'line-through'}},
+	insertunorderedlist: {title: 'Unordered List', tags: ['ul']},
+	insertorderedlist: {title: 'Ordered List', tags: ['ol']},
+	indent: {title: 'Indent', tags: ['blockquote']},
+	outdent: {title: 'Outdent'},
+	undo: {title: 'Undo', shortcut: 'z'},
+	redo: {title: 'Redo', shortcut: 'y'},
+	unlink: {title: 'Remove Hyperlink'},
 
 	createlink: {
 		title: 'Add Hyperlink',
 		shortcut: 'l',
 		tags: ['a'],
-		command: function() {
-			if (this.selection.getSelection() == '')
+		command: function(){
+			if (this.selection.getSelection() == ''){
 				MooEditable.Dialogs.alert(this, 'createlink', 'Please select the text you wish to hyperlink.');
-			else
-				MooEditable.Dialogs.prompt(this, 'createlink', 'Enter url','http://', function(url) {
+			} else {
+				MooEditable.Dialogs.prompt(this, 'createlink', 'Enter url', 'http://', function(url){
 					this.execute('createlink', false, url.trim());
 				}.bind(this));
+			}
 		}
 	},
 
 	urlimage: {
 		title: 'Add Image',
 		shortcut: 'm',
-		command: function() {
-			MooEditable.Dialogs.prompt(this, 'urlimage', 'Enter image url','http://', function(url) {
+		command: function(){
+			MooEditable.Dialogs.prompt(this, 'urlimage', 'Enter image url', 'http://', function(url){
 				this.execute("insertimage", false, url.trim());
 			}.bind(this));
 		}
@@ -627,26 +635,26 @@ MooEditable.Actions = new Hash({
 	toggleview: {
 		title: 'Toggle View',
 		shortcut: 't',
-		command: function() { this.toggleView(); }
+		command: function(){ this.toggleView(); }
 	}
 
 });
 
 MooEditable.Dialogs = new Hash({
 
-	alert: function(me, el, str) {
+	alert: function(me, el, str){
 		// Adds the alert bar
-		if (!me.alertbar) {
-			me.alertbar = new Element('div', { 'class': 'alertbar dialog-toolbar' });
+		if (!me.alertbar){
+			me.alertbar = new Element('div', {'class': 'alertbar dialog-toolbar'});
 			me.alertbar.inject(me.toolbar, 'after');
 
-			me.alertbar.strLabel = new Element('span', { 'class': 'alertbar-label' });
+			me.alertbar.strLabel = new Element('span', {'class': 'alertbar-label'});
 
 			me.alertbar.okButton = new Element('button', {
 				'class': 'alertbar-ok input-button',
-				'text': 'OK',
-				'events': {
-					'click': function(e) {
+				text: 'OK',
+				events: {
+					click: function(e){
 						e.stop();
 						me.alertbar.setStyle('display','none');
 						me.enableToolbar();
@@ -656,45 +664,46 @@ MooEditable.Dialogs = new Hash({
 			});
 
 			new Element('div').adopt(me.alertbar.strLabel, me.alertbar.okButton).inject(me.alertbar);
+		} else if (me.alertbar.getStyle('display') == 'none'){
+			me.alertbar.setStyle('display', '');
 		}
-		else if (me.alertbar.getStyle('display') == 'none') me.alertbar.setStyle('display', '');
 
 		me.alertbar.strLabel.set('text', str);
 		me.alertbar.okButton.focus();
 
-		me.doc.addEvent('mousedown', function(e) { e.stop(); });
+		me.doc.addEvent('mousedown', function(e){ e.stop(); });
 		me.disableToolbar(el);
 	},
 
-	prompt: function(me, el, q, a, fn) {
+	prompt: function(me, el, q, a, fn){
 		me.range = me.selection.getRange(); // store the range
 
 		// Adds the prompt bar
-		if (!me.promptbar) {
-			me.promptbar = new Element('div', { 'class': 'promptbar dialog-toolbar' });
+		if (!me.promptbar){
+			me.promptbar = new Element('div', {'class': 'promptbar dialog-toolbar'});
 			me.promptbar.inject(me.toolbar, 'after');
 
 			me.promptbar.qLabel = new Element('label', {
 				'class': 'promptbar-label',
-				'for': 'promptbar-'+me.container.uid
+				'for': 'promptbar-' + me.container.uid
 			});
 
 			me.promptbar.aInput = new Element('input', {
 				'class': 'promptbar-input input-text',
-				'id': 'promptbar-'+me.container.uid,
-				'type': 'text'
+				id: 'promptbar-' + me.container.uid,
+				type: 'text'
 			});
 
 			me.promptbar.okButton = new Element('button', {
 				'class': 'promptbar-ok input-button',
-				'text': 'OK'
+				text: 'OK'
 			});
 
 			me.promptbar.cancelButton = new Element('button', {
 				'class': 'promptbar-cancel input-button',
-				'text': 'Cancel',
-				'events': {
-					'click': function(e) {
+				text: 'Cancel',
+				events: {
+					click: function(e){
 						e.stop();
 						me.promptbar.setStyle('display','none');
 						me.enableToolbar();
@@ -704,8 +713,9 @@ MooEditable.Dialogs = new Hash({
 			});
 
 			new Element('div').adopt(me.promptbar.qLabel, me.promptbar.aInput, me.promptbar.okButton, me.promptbar.cancelButton).inject(me.promptbar);
+		} else if (me.promptbar.getStyle('display') == 'none'){
+			me.promptbar.setStyle('display', '');
 		}
-		else if (me.promptbar.getStyle('display') == 'none') me.promptbar.setStyle('display', '');
 
 		// Update the fn for the OK button event (memory leak?)
 		me.promptbar.okButton.addEvent('click', function(e){
@@ -724,7 +734,7 @@ MooEditable.Dialogs = new Hash({
 		me.promptbar.aInput.focus();
 
 		// Disables iframe and toolbar
-		me.doc.addEvent('mousedown', function(e) { e.stop(); });
+		me.doc.addEvent('mousedown', function(e){ e.stop(); });
 		me.disableToolbar(el);
 	}
 });
@@ -747,7 +757,7 @@ Element.Properties.mooeditable = {
 
 Element.implement({
 
-	mooEditable: function(options) {
+	mooEditable: function(options){
 		this.get('mooeditable', options);
 		return this;
 	}
