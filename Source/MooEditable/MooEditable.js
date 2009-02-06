@@ -45,13 +45,13 @@ var MooEditable = new Class({
 	toElement: function(){
 		return this.textarea;
 	},
-
+	
 	build: function(){
 		var self = this;
-
+		
 		// Build the container
 		this.container = new Element('div', {
-			id: (this.textarea.id) ? this.textarea.id+'-container' : null,
+			id: (this.textarea.id) ? this.textarea.id + '-container' : null,
 			'class': 'mooeditable-container',
 			styles: {
 				width: this.textarea.getSize().x,
@@ -59,12 +59,13 @@ var MooEditable = new Class({
 			}
 		});
 
-		// Put textarea inside container
-		this.container.wraps(this.textarea);
-
-		// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
-		if (Browser.Engine.trident) new Element('span').wraps(this.textarea);
-
+		this.textarea.setStyles({
+			margin: 0,
+			display: 'none',
+			resize: 'none', // disable resizable textareas in Safari
+			outline: 'none' // disable focus ring in Safari
+		});
+		
 		// Build the iframe
 		var pads = this.textarea.getStyle('padding').split(' ');
 		pads = pads.map(function(p){ return (p == 'auto') ? 0 : p.toInt(); });
@@ -79,13 +80,75 @@ var MooEditable = new Class({
 				'border-style': this.textarea.getStyle('border-style')
 			}
 		});
-
-		this.textarea.setStyles({
-			margin: 0,
-			display: 'none',
-			resize: 'none', // disable resizable textareas in Safari
-			outline: 'none' // disable focus ring in Safari
+		
+		this.buildToolbar();
+		this.attach();
+		
+		// Update the event for textarea's corresponding labels
+		if (this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
+			if (self.mode == 'iframe'){
+				e.stop();
+				self.focus();
+			}
 		});
+
+		// Update & cleanup content before submit
+		this.form = this.textarea.getParent('form');
+		if (this.form) this.form.addEvent('submit', function(){
+			if (self.mode == 'iframe') self.saveContent();
+		});
+	},
+
+	buildToolbar: function(){
+		var self = this;
+		this.toolbar = new Element('div', {'class': 'mooeditable-toolbar'});
+		this.keys = [];
+
+		var toolbarButtons = this.options.buttons.split(',');
+		var buttons = toolbarButtons.map(function(command, idx){
+			if (command == '|') return new Element('span', {'class': 'toolbar-separator'});
+			var b = new Element('button', {
+				'class': command + '-button toolbar-button',
+				title: MooEditable.Actions[command]['title'] + ((MooEditable.Actions[command]['shortcut']) ? ' ( Ctrl+' + MooEditable.Actions[command]['shortcut'].toUpperCase() + ' )' : ''),
+				events: {
+					click: function(e){
+						e.stop();
+						if (!this.hasClass('disabled')){
+							self.focus();
+							self.action(command);
+							if (self.mode == 'iframe') self.checkStates();
+						}
+					},
+					mousedown: function(e){ e.stop(); }
+				}
+			});
+			// apply toolbar mode
+			b.addClass(MooEditable.Actions[command]['mode'] || self.options.mode);
+
+			// add hover effect for IE
+			if (Browser.Engine.trident) b.addEvents({
+				mouseenter: function(e){ this.addClass('hover'); },
+				mouseleave: function(e){ this.removeClass('hover'); }
+			});
+			// shortcuts
+			var key = MooEditable.Actions[command]['shortcut'];
+			if (key) self.keys[key] = b;
+
+			b.set('text', MooEditable.Actions[command]['title']);
+			return b;
+		});
+
+		this.toolbarButtons = new Elements(buttons);
+	},
+
+	attach: function(){
+		var self = this;
+
+		// Put textarea inside container
+		this.container.wraps(this.textarea);
+
+		// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
+		if (Browser.Engine.trident) new Element('span').wraps(this.textarea);
 
 		this.iframe.inject(this.container, 'top');
 
@@ -112,20 +175,6 @@ var MooEditable = new Class({
 
 		// Assign view mode
 		this.mode = 'iframe';
-
-		// Update the event for textarea's corresponding labels
-		if (this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
-			if (self.mode == 'iframe'){
-				e.stop();
-				self.focus();
-			}
-		});
-
-		// Update & cleanup content before submit
-		this.form = this.textarea.getParent('form');
-		if (this.form) this.form.addEvent('submit', function(){
-			if (self.mode == 'iframe') self.saveContent();
-		});
 
 		// document.window for IE, for new Document code below
 		if (Browser.Engine.trident) this.doc.window = this.win;
@@ -154,7 +203,8 @@ var MooEditable = new Class({
 		});
 
 		if (this.options.toolbar){
-			this.buildToolbar();
+			this.toolbar.inject(this.iframe, 'before');
+			this.toolbarButtons.inject(this.toolbar);
 			this.doc.addEvents({
 				keyup: this.checkStates.bind(this),
 				mouseup: this.checkStates.bind(this)
@@ -162,55 +212,17 @@ var MooEditable = new Class({
 		}
 
 		this.selection = new MooEditable.Selection(this);
+		
+		return this;
 	},
-
-	buildToolbar: function(){
-		var self = this;
-		this.toolbar = new Element('div', {'class': 'mooeditable-toolbar'}).inject(this.iframe, 'before');
-		this.keys = [];
-		var buttons = [];
-
-		var toolbarButtons = this.options.buttons.split(',');
-		toolbarButtons.each(function(command, idx){
-			var b;
-			if (command == '|'){
-				b = new Element('span', {'class': 'toolbar-separator'});
-			} else {
-				b = new Element('button', {
-					'class': command + '-button toolbar-button',
-					title: MooEditable.Actions[command]['title'] + ((MooEditable.Actions[command]['shortcut']) ? ' ( Ctrl+' + MooEditable.Actions[command]['shortcut'].toUpperCase() + ' )' : ''),
-					events: {
-						click: function(e){
-							e.stop();
-							if (!this.hasClass('disabled')){
-								self.focus();
-								self.action(command);
-								if (self.mode == 'iframe') self.checkStates();
-							}
-						},
-						mousedown: function(e){ e.stop(); }
-					}
-				});
-				// apply toolbar mode
-				b.addClass(MooEditable.Actions[command]['mode'] || self.options.mode);
-
-				// add hover effect for IE
-				if (Browser.Engine.trident) b.addEvents({
-					mouseenter: function(e){ this.addClass('hover'); },
-					mouseleave: function(e){ this.removeClass('hover'); }
-				});
-				// shortcuts
-				var key = MooEditable.Actions[command]['shortcut'];
-				if (key) self.keys[key] = b;
-
-				b.set('text', MooEditable.Actions[command]['title']);
-
-				buttons.push(b);
-			}
-			b.inject(self.toolbar);
-		});
-
-		this.toolbarButtons = new Elements(buttons);
+	
+	detach: function(){
+		this.saveContent();
+		this.mode = 'textarea';
+		this.textarea.setStyle('display', '').inject(this.container, 'before');
+		this.textarea.removeEvents('keypress');
+		this.container.destroy();
+		return this;
 	},
 
 	keyListener: function(e){
