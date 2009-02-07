@@ -775,8 +775,7 @@ Element.Properties.mooeditable = {
 Element.implement({
 
 	mooEditable: function(options){
-		this.get('mooeditable', options);
-		return this;
+		return this.get('mooeditable', options);
 	}
 
 });
