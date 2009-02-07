@@ -25,9 +25,7 @@
 	margin: 2px;
 	float: left;
 	color: inherit;
-	background-color: transparent;
-	background-repeat: no-repeat;
-	background-position: 4px 4px;
+	background: transparent url(images/mooeditable-toolbarbuttons-tango.png) no-repeat;
 	overflow: hidden;
 	text-indent: -999em;
 }
@@ -73,48 +71,21 @@
 	background-color: #fafafa;
 }
 
-.mooeditable-toolbar .bold-button{
-	background-image: url(Tango/format-text-bold.png);
-}
-.mooeditable-toolbar .italic-button{
-	background-image: url(Tango/format-text-italic.png);
-}
-.mooeditable-toolbar .underline-button{
-	background-image: url(Tango/format-text-underline.png);
-}
-.mooeditable-toolbar .strikethrough-button{
-	background-image: url(Tango/format-text-strikethrough.png);
-}
-.mooeditable-toolbar .insertunorderedlist-button{
-	background-image: url(Tango/format-bullet-list.png);
-}
-.mooeditable-toolbar .insertorderedlist-button{
-	background-image: url(Tango/format-number-list.png);
-}
-.mooeditable-toolbar .indent-button{
-	background-image: url(Tango/format-indent-more.png);
-}
-.mooeditable-toolbar .outdent-button{
-	background-image: url(Tango/format-indent-less.png);
-}
-.mooeditable-toolbar .undo-button{
-	background-image: url(Tango/edit-undo.png);
-}
-.mooeditable-toolbar .redo-button{
-	background-image: url(Tango/edit-redo.png);
-}
-.mooeditable-toolbar .createlink-button{
-	background-image: url(Tango/format-add-link.png);
-}
-.mooeditable-toolbar .unlink-button{
-	background-image: url(Tango/format-remove-link.png);
-}
-.mooeditable-toolbar .urlimage-button{
-	background-image: url(Tango/image-x-generic.png);
-}
-.mooeditable-toolbar .toggleview-button{
-	background-image: url(Tango/action-toggle-view.png);
-}
+.mooeditable-toolbar .insertorderedlist-button{ background-position: 4px -4px; } 
+.mooeditable-toolbar .outdent-button{ background-position: 4px -28px; } 
+.mooeditable-toolbar .urlimage-button{ background-position: 4px -52px; } 
+.mooeditable-toolbar .toggleview-button{ background-position: 4px -76px; } 
+.mooeditable-toolbar .underline-button{ background-position: 4px -100px; } 
+.mooeditable-toolbar .italic-button{ background-position: 4px -124px; } 
+.mooeditable-toolbar .strikethrough-button{ background-position: 4px -148px; } 
+.mooeditable-toolbar .redo-button{ background-position: 4px -172px; } 
+.mooeditable-toolbar .undo-button{ background-position: 4px -196px; } 
+.mooeditable-toolbar .unlink-button{ background-position: 4px -220px; } 
+.mooeditable-toolbar .view-refresh-button{ background-position: 4px -244px; } 
+.mooeditable-toolbar .insertunorderedlist-button{ background-position: 4px -268px; } 
+.mooeditable-toolbar .indent-button{ background-position: 4px -292px; } 
+.mooeditable-toolbar .bold-button{ background-position: 4px -316px; } 
+.mooeditable-toolbar .createlink-button{ background-position: 4px -340px; }
 
 .dialog-toolbar{
 	color: inherit;
