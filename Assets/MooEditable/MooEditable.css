@@ -34,6 +34,7 @@
 	width: auto;
 	padding-left: 3px;
 	padding-right: 3px;
+	background-image: none;
 }
 .mooeditable-toolbar .icons-text{
 	text-indent: 16px;
