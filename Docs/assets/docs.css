@@ -21,3 +21,13 @@ pre{
 ul{
 	list-style-type: square;
 }
+
+#menu{
+	float: left;
+	width: 15%;
+}
+
+#docs{
+	margin-left: 16%;
+	overflow: hidden;
+}

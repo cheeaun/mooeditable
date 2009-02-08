@@ -1,8 +1,38 @@
 var Docs = {
 
-	urls: ['MooEditable/MooEditable.md'],
-	mds: '',
-	count: 0,
+	urls: [
+		'MooEditable/MooEditable.md',
+		'MooEditable/MooEditable.Extras.md'
+		],
+	currentDoc: '',
+	
+	start: function(){
+		Docs.generateMenu();
+		
+		var hashdoc = function(){
+			var href = window.location.hash.slice(1);
+			if (href == Docs.currentDoc) return;
+			if (!href || !/(\.md)/.test(href)){
+				href = Docs.urls[0];
+				window.location.hash = href;
+			}
+			Docs.getContent(href, Docs.parse);
+			Docs.currentDoc = href;
+		};
+		
+		hashdoc.periodical(25);
+	},
+	
+	generateMenu: function(){
+		var html = '<ul>';
+		Docs.urls.each(function(url){
+			var file = url.split('/')[1].slice(0, -3);
+			html += '<li><a href="#' + url + '">' + file + '</a></li>';
+		});
+		html += '</ul>';
+		
+		$('menu').set('html', html);
+	},
 	
 	// inspired by http://cssgallery.info/mootools-ajax-request-for-local-files/
 	getContent: function(url, fn){
@@ -18,12 +48,9 @@ var Docs = {
 				},
 				events: {
 					load: function(){
-						Docs.mds += $(this.contentWindow.document.body).getElement('pre').get('text');
-						Docs.count++;
-						if (Docs.count == Docs.urls.length){
-							fn();
-							Docs.disposeIframes();
-						}
+						var doc = $(this.contentWindow.document.body).getElement('pre').get('text');
+						fn(url, doc);
+						Docs.disposeIframes();
 					}
 				}
 			}).inject(document.body);
@@ -31,17 +58,15 @@ var Docs = {
 			new Request({
 				url: url,
 				method: 'get',
-				onSuccess: function(md){
-					Docs.mds += md;
-					Docs.count++;
-					if (Docs.count == Docs.urls.length) fn();
+				onSuccess: function(doc){
+					fn(url, doc);
 				}
 			}).send();
 		}
 	},
 	
-	parse: function(){
-		var html = new Showdown.converter().makeHtml(Docs.mds);
+	parse: function(url, doc){
+		var html = new Showdown.converter().makeHtml(doc);
 		var sd = $('docs').set('html', html);
 		
 		// anchorize the headings
@@ -60,14 +85,8 @@ var Docs = {
 	disposeIframes: function(){
 		setTimeout(function(){
 			$$('.md-iframe').dispose();
-		}, 1000);
+		}, 100);
 	},
-	
-	start: function(){
-		Docs.urls.each(function(url){
-			Docs.getContent(url, Docs.parse);
-		});
-	}
 	
 };
 
