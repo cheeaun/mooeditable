@@ -11,7 +11,7 @@ var Docs = {
 		
 		var hashdoc = function(){
 			var href = window.location.hash.slice(1);
-			if (href == Docs.currentDoc) return;
+			if (Docs.currentDoc && href == Docs.currentDoc) return;
 			if (!href || !/(\.md)/.test(href)){
 				href = Docs.urls[0];
 				window.location.hash = href;
