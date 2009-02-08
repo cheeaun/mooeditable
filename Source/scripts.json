@@ -5,7 +5,7 @@
 		"MooEditable": {
 			"deps": ["MooEditable"],
 			"desc": "Class for creating a WYSIWYG editor, for contentEditable-capable browsers."
-		}
+		},
 	
 		"MooEditable.Extras": {
 			"deps": ["MooEditable"],
