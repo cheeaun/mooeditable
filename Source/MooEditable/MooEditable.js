@@ -1,6 +1,6 @@
 /*
 Script: MooEditable.js
-	Class for creating a WYSIWYG editor, for contentEditable-capable browsers
+	Class for creating a WYSIWYG editor, for contentEditable-capable browsers.
 
 License:
 	MIT-style license.
