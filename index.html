@@ -6,18 +6,24 @@ body {
 	background-color: #fff;
 	font-family: helvetica, arial, sans-serif;
 	font-size: 80%;
+	text-align: center;
 }
 #container{
 	margin: 0 auto;
 	width: 700px;
+	text-align: left;
 }
 .download{
 	float: right;
 }
 h1 a{
-  color: #000;
-  background-color: transparent;
-  text-decoration: none;
+	color: #000;
+	background-color: transparent;
+	text-decoration: none;
+	border-bottom: 2px solid #fafafa;
+}
+h1 a:hover{
+	border-color: #000;
 }
 pre{
 	color: #fff;
@@ -25,7 +31,24 @@ pre{
 	padding: 10px;
 	font-size: 110%;
 }
+.mooeditable{
+	border: 2px solid #ddd;
+}
+#textarea-1{
+	width: 670px;
+	height: 100px;
+	padding: 10px;
+}
 </style>
+<link rel="stylesheet" href="http://github.com/cheeaun/mooeditable/raw/master/Assets/MooEditable/MooEditable.css">
+<script src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.1/mootools-yui-compressed.js"></script>
+<script src="http://github.com/cheeaun/mooeditable/raw/master/Source/MooEditable/MooEditable.js"></script>
+<script>
+	window.addEvent('load', function(){
+		$('textarea-1').mooEditable();
+	});
+</script>
+
 <a href="http://github.com/cheeaun/mooeditable"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
 <div id="container">
@@ -41,6 +64,11 @@ pre{
 	<small>by <a href="http://github.com/cheeaun">cheeaun</a></small></h1>
 
 	<p class="description">A simple web-based WYSIWYG editor, written in <a href="http://mootools.net/">MooTools</a>.</p>
+	
+	<h2>Demo</h2>
+	<textarea class="mooeditable" id="textarea-1" name="editable1">
+		&lt;p&gt;&lt;strong&gt;This&lt;/strong&gt; is cool!&lt;/p&gt;
+	</textarea>
 
 	<h2>Download</h2>
 	<p>You can download this project in either
