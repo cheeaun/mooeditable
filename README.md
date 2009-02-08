@@ -3,7 +3,7 @@ MooEditable
 
 About
 -----
-A simple web-based WYSIWYG editor, written in [Mootools](http://mootools.net/).
+A simple web-based WYSIWYG editor, written in [MooTools](http://mootools.net/).
 
 Features
 --------
@@ -20,7 +20,7 @@ Requirements
 
 [Mootools 1.2.1 Core](http://mootools.net/download), with minimum requirements of:
 
-*  Class.Extras
+* Class.Extras
 * Element.Event
 * Element.Style
 * Element.Dimensions
