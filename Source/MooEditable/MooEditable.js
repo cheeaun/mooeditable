@@ -7,6 +7,8 @@ License:
 
 Copyright:
 	Copyright (c) 2007-2009 [Lim Chee Aun](http://cheeaun.com).
+	
+Build: %build%
 
 Credits:
 	- Code inspired by Stefan's work [Safari Supports Content Editing!](http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html) from [safari gets contentEditable](http://walkah.net/blog/walkah/safari-gets-contenteditable)
