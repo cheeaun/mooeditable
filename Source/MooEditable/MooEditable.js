@@ -27,7 +27,7 @@ var MooEditable = new Class({
 
 	Implements: [Events, Options],
 
-	options:{
+	options: {
 		toolbar: true,
 		cleanup: true,
 		paragraphise: true,
@@ -36,7 +36,19 @@ var MooEditable = new Class({
 		buttons: 'bold, italic, underline, strikethrough, |, insertunorderedlist, insertorderedlist, indent, outdent, |, undo, redo, |, createlink, unlink, |, urlimage, |, toggleview',
 		mode: 'icons',
 		handleSubmit: true,
-		handleLabel: true
+		handleLabel: true,
+		baseCSS: 'html{ height: 100%; cursor: text }\
+			body{ font-family: sans-serif; border: 0; }',
+		extraCSS: '',
+		externalCSS: '',
+		html: '<html>\
+			<head>\
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\
+			<style>{BASECSS} {EXTRACSS}</style>\
+			{EXTERNALCSS}\
+			</head>\
+			<body>{CONTENT}</body>\
+			</html>'
 	},
 
 	initialize: function(el,options){
@@ -164,16 +176,14 @@ var MooEditable = new Class({
 		this.doc = this.win.document;
 
 		// Build the content of iframe
-		var documentTemplate = '\
-			<html style="cursor: text; height: 100%">\
-				<head>' + (this.options.cssPath ? "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.options.cssPath + "\" />" : "") + '</head>\
-				<body id=\"editable\"' + (this.options.cssClass ? " class=\"" + this.options.cssClass + "\"" : "") + ' style="font-family: sans-serif; border: 0">'+
-				this.cleanup(this.textarea.get('value')) +
-				'</body>\
-			</html>\
-		';
+		var docHTML = this.options.html.substitute({
+			BASECSS: this.options.baseCSS,
+			EXTRACSS: this.options.extraCSS,
+			EXTERNALCSS: (this.options.externalCSS) ? '<link rel="stylesheet" href="' + this.options.externalCSS + '">': '',
+			CONTENT: this.cleanup(this.textarea.get('value')),
+		});
 		this.doc.open();
-		this.doc.write(documentTemplate);
+		this.doc.write(docHTML);
 		this.doc.close();
 
 		// Turn on Design Mode
@@ -325,12 +335,12 @@ var MooEditable = new Class({
 	},
 
 	getContent: function(){
-		return this.cleanup(this.doc.getElement('#editable').get('html'));
+		return this.cleanup(this.doc.body.get('html'));
 	},
 
 	setContent: function(newContent){
 		(function(){
-			this.doc.getElement('#editable').set('html', newContent);
+			this.doc.body.set('html', newContent);
 		}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
 		return this;
 	},
