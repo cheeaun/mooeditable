@@ -33,7 +33,7 @@ var MooEditable = new Class({
 		paragraphise: true,
 		xhtml : true,
 		semantics : true,
-		buttons: 'bold,italic,underline,strikethrough,|,insertunorderedlist,insertorderedlist,indent,outdent,|,undo,redo,|,createlink,unlink,|,urlimage,|,toggleview',
+		buttons: 'bold, italic, underline, strikethrough, |, insertunorderedlist, insertorderedlist, indent, outdent, |, undo, redo, |, createlink, unlink, |, urlimage, |, toggleview',
 		mode: 'icons'
 	},
 
@@ -108,6 +108,7 @@ var MooEditable = new Class({
 
 		var toolbarButtons = this.options.buttons.split(',');
 		var buttons = toolbarButtons.map(function(command, idx){
+			command = command.trim();
 			if (command == '|') return new Element('span', {'class': 'toolbar-separator'});
 			var b = new Element('button', {
 				'class': command + '-button toolbar-button',
@@ -614,16 +615,61 @@ MooEditable.Selection = new Class({
 
 MooEditable.Actions = new Hash({
 
-	bold: {title: 'Bold', shortcut: 'b', tags: ['b', 'strong'], css: {'font-weight': 'bold'}},
-	italic: {title: 'Italic', shortcut: 'i', tags: ['i', 'em'], css: {'font-style': 'italic'}},
-	underline: {title: 'Underline', shortcut: 'u', tags: ['u'], css: {'text-decoration': 'underline'}},
-	strikethrough: {title: 'Strikethrough', shortcut: 's', tags: ['s', 'strike'], css: {'text-decoration': 'line-through'}},
-	insertunorderedlist: {title: 'Unordered List', tags: ['ul']},
-	insertorderedlist: {title: 'Ordered List', tags: ['ol']},
-	indent: {title: 'Indent', tags: ['blockquote']},
+	bold: {
+		title: 'Bold',
+		shortcut: 'b',
+		tags: ['b', 'strong'],
+		css: {'font-weight': 'bold'}
+	},
+	
+	italic: {
+		title: 'Italic',
+		shortcut: 'i',
+		tags: ['i', 'em'],
+		css: {'font-style': 'italic'}
+	},
+	
+	underline: {
+		title: 'Underline',
+		shortcut: 'u',
+		tags: ['u'],
+		css: {'text-decoration': 'underline'}
+	},
+	
+	strikethrough: {
+		title: 'Strikethrough',
+		shortcut: 's',
+		tags: ['s', 'strike'],
+		css: {'text-decoration': 'line-through'}
+	},
+	
+	insertunorderedlist: {
+		title: 'Unordered List',
+		tags: ['ul']
+	},
+	
+	insertorderedlist: {
+		title: 'Ordered List',
+		tags: ['ol']
+	},
+	
+	indent: {
+		title: 'Indent',
+		tags: ['blockquote']
+	},
+	
 	outdent: {title: 'Outdent'},
-	undo: {title: 'Undo', shortcut: 'z'},
-	redo: {title: 'Redo', shortcut: 'y'},
+	
+	undo: {
+		title: 'Undo',
+		shortcut: 'z'
+	},
+	
+	redo: {
+		title: 'Redo',
+		shortcut: 'y'
+	},
+	
 	unlink: {title: 'Remove Hyperlink'},
 
 	createlink: {
