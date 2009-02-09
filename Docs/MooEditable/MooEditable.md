@@ -32,4 +32,5 @@ MooEditable Method: constructor {#MooEditable:constructor}
 	* 'icons'      - Iconic buttons.
 	* 'text'       - Textual buttons.
 	* 'icons-text' - Icon and text on the buttons.
-* handleSubmit  - (*boolean*: defaults to true) Whether or not to attach a submit listener to the textarea's parent form.
+* handleSubmit  - (*boolean*: defaults to true) Whether or not to attach a submit listener to the textarea's parent form, to save content to textarea before submit.
+* handleLabel   - (*boolean*: defaults to true) Whether or not to attach a click listener to the textarea's related label tag, to focus on the iframe instead.

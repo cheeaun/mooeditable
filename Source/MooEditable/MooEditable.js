@@ -35,7 +35,8 @@ var MooEditable = new Class({
 		semantics : true,
 		buttons: 'bold, italic, underline, strikethrough, |, insertunorderedlist, insertorderedlist, indent, outdent, |, undo, redo, |, createlink, unlink, |, urlimage, |, toggleview',
 		mode: 'icons',
-		handleSubmit: true
+		handleSubmit: true,
+		handleLabel: true
 	},
 
 	initialize: function(el,options){
@@ -88,7 +89,7 @@ var MooEditable = new Class({
 		this.attach();
 		
 		// Update the event for textarea's corresponding labels
-		if (this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
+		if (this.options.handleLabel && this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
 			if (self.mode == 'iframe'){
 				e.stop();
 				self.focus();
