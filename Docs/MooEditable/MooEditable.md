@@ -32,3 +32,4 @@ MooEditable Method: constructor {#MooEditable:constructor}
 	* 'icons'      - Iconic buttons.
 	* 'text'       - Textual buttons.
 	* 'icons-text' - Icon and text on the buttons.
+* handleSubmit  - (*boolean*: defaults to true) Whether or not to attach a submit listener to the textarea's parent form.

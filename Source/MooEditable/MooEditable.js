@@ -34,7 +34,8 @@ var MooEditable = new Class({
 		xhtml : true,
 		semantics : true,
 		buttons: 'bold, italic, underline, strikethrough, |, insertunorderedlist, insertorderedlist, indent, outdent, |, undo, redo, |, createlink, unlink, |, urlimage, |, toggleview',
-		mode: 'icons'
+		mode: 'icons',
+		handleSubmit: true
 	},
 
 	initialize: function(el,options){
@@ -95,10 +96,12 @@ var MooEditable = new Class({
 		});
 
 		// Update & cleanup content before submit
-		this.form = this.textarea.getParent('form');
-		if (this.form) this.form.addEvent('submit', function(){
-			if (self.mode == 'iframe') self.saveContent();
-		});
+		if (this.options.handleSubmit){
+			this.form = this.textarea.getParent('form');
+			if (this.form) this.form.addEvent('submit', function(){
+				if (self.mode == 'iframe') self.saveContent();
+			});
+		}
 	},
 
 	buildToolbar: function(){
