@@ -205,13 +205,14 @@ var MooEditable = new Class({
 		});
 		this.textarea.addEvent('keypress', this.keyListener.bind(this));
 
-		var styleCSS = function(){
-			// styleWithCSS, not supported in IE and Opera
-			if (['trident', 'presto'].contains(Browser.Engine.name)) return;
-			self.execute('styleWithCSS', false, false);
-			self.doc.removeEvent('focus', styleCSS);
-		};
-		this.doc.addEvent('focus', styleCSS);
+		// styleWithCSS, not supported in IE and Opera
+		if (!['trident', 'presto'].contains(Browser.Engine.name)){
+			var styleCSS = function(){
+				self.execute('styleWithCSS', false, false);
+				self.doc.removeEvent('focus', styleCSS);
+			};
+			this.doc.addEvent('focus', styleCSS);
+		}
 
 		// make images selectable and draggable in Safari
 		if (Browser.Engine.webkit) this.doc.addEvent('click', function(e){
