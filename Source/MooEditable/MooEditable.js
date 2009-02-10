@@ -146,11 +146,13 @@ var MooEditable = new Class({
 				mouseenter: function(e){ this.addClass('hover'); },
 				mouseleave: function(e){ this.removeClass('hover'); }
 			});
-			// shortcuts
-			var key = MooEditable.Actions[command]['shortcut'];
-			if (key) self.keys[key] = b;
 
 			b.set('text', MooEditable.Actions[command]['title']);
+			
+			// shortcuts
+			var key = MooEditable.Actions[command]['shortcut'];
+			if (key) self.keys[key] = command;
+			
 			return b;
 		});
 
@@ -243,7 +245,7 @@ var MooEditable = new Class({
 	keyListener: function(e){
 		if (!e.control || !this.keys[e.key]) return;
 		e.stop();
-		this.keys[e.key].fireEvent('click', e);
+		this.action(this.keys[e.key]);
 	},
 
 	enterListener: function(e){
