@@ -241,7 +241,7 @@ var MooEditable = new Class({
 	},
 
 	keyListener: function(e){
-		if (!(e.control && this.keys[e.key])) return;
+		if (!e.control || !this.keys[e.key]) return;
 		e.stop();
 		this.keys[e.key].fireEvent('click', e);
 	},
