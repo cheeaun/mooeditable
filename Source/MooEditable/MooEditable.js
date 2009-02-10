@@ -102,16 +102,16 @@ var MooEditable = new Class({
 		
 		// Update the event for textarea's corresponding labels
 		if (this.options.handleLabel && this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
-			if (self.mode == 'iframe'){
-				e.stop();
-				self.focus();
-			}
+			if (self.mode != 'iframe') return;
+			e.stop();
+			self.focus();
 		});
 
 		// Update & cleanup content before submit
 		if (this.options.handleSubmit){
 			this.form = this.textarea.getParent('form');
-			if (this.form) this.form.addEvent('submit', function(){
+			if (!this.form) return;
+			this.form.addEvent('submit', function(){
 				if (self.mode == 'iframe') self.saveContent();
 			});
 		}
@@ -127,22 +127,19 @@ var MooEditable = new Class({
 			command = command.trim();
 			if (command == '|') return new Element('span', {'class': 'toolbar-separator'});
 			var b = new Element('button', {
-				'class': command + '-button toolbar-button',
+				'class': command + '-button toolbar-button ' + MooEditable.Actions[command]['mode'] || self.options.mode,
 				title: MooEditable.Actions[command]['title'] + ((MooEditable.Actions[command]['shortcut']) ? ' ( Ctrl+' + MooEditable.Actions[command]['shortcut'].toUpperCase() + ' )' : ''),
 				events: {
 					click: function(e){
 						e.stop();
-						if (!this.hasClass('disabled')){
-							self.focus();
-							self.action(command);
-							if (self.mode == 'iframe') self.checkStates();
-						}
+						if (this.hasClass('disabled')) return;
+						self.focus();
+						self.action(command);
+						if (self.mode == 'iframe') self.checkStates();
 					},
 					mousedown: function(e){ e.stop(); }
 				}
 			});
-			// apply toolbar mode
-			b.addClass(MooEditable.Actions[command]['mode'] || self.options.mode);
 
 			// add hover effect for IE
 			if (Browser.Engine.trident) b.addEvents({
@@ -208,7 +205,8 @@ var MooEditable = new Class({
 
 		var styleCSS = function(){
 			// styleWithCSS, not supported in IE and Opera
-			if (!['trident', 'presto'].contains(Browser.Engine.name)) self.execute('styleWithCSS', false, false);
+			if (['trident', 'presto'].contains(Browser.Engine.name)) return;
+			self.execute('styleWithCSS', false, false);
 			self.doc.removeEvent('focus', styleCSS);
 		};
 		this.doc.addEvent('focus', styleCSS);
@@ -243,42 +241,40 @@ var MooEditable = new Class({
 	},
 
 	keyListener: function(e){
-		if (e.control && this.keys[e.key]){
-			e.stop();
-			this.keys[e.key].fireEvent('click', e);
-		}
+		if (!(e.control && this.keys[e.key])) return;
+		e.stop();
+		this.keys[e.key].fireEvent('click', e);
 	},
 
 	enterListener: function(e){
-		if (e.key == 'enter'){
-			if (this.options.paragraphise && !e.shift){
-				if (Browser.Engine.gecko || Browser.Engine.webkit){
-					var node = this.selection.getNode();
-					var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
-					var isBlock = node.getParents().include(node).some(function(el){
-						return el.nodeName.test(blockEls);
-					});
-					if (!isBlock) this.execute('insertparagraph');
-				}
+		if (e.key != 'enter') return;
+		if (this.options.paragraphise && !e.shift){
+			if (Browser.Engine.gecko || Browser.Engine.webkit){
+				var node = this.selection.getNode();
+				var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
+				var isBlock = node.getParents().include(node).some(function(el){
+					return el.nodeName.test(blockEls);
+				});
+				if (!isBlock) this.execute('insertparagraph');
 			}
-			else {
-				if (Browser.Engine.trident){
-					var r = this.selection.getRange();
-					var node = this.selection.getNode();
-					if (node.get('tag') != 'li'){
-						if (r){
-							this.selection.insertContent('<br>');
-							this.selection.collapse(false);
-						}
+		}
+		else {
+			if (Browser.Engine.trident){
+				var r = this.selection.getRange();
+				var node = this.selection.getNode();
+				if (node.get('tag') != 'li'){
+					if (r){
+						this.selection.insertContent('<br>');
+						this.selection.collapse(false);
 					}
-					e.stop();
 				}
+				e.stop();
 			}
 		}
 	},
 
 	focus: function(){
-		(this.mode=='iframe' ? this.win : this.textarea).focus();
+		(this.mode == 'iframe' ? this.win : this.textarea).focus();
 		return this;
 	},
 
@@ -293,12 +289,11 @@ var MooEditable = new Class({
 	},
 
 	execute: function(command, param1, param2){
-		if (!this.busy){
-			this.busy = true;
-			this.doc.execCommand(command, param1, param2);
-			this.saveContent();
-			this.busy = false;
-		}
+		if (this.busy) return;
+		this.busy = true;
+		this.doc.execCommand(command, param1, param2);
+		this.saveContent();
+		this.busy = false;
 		return false;
 	},
 
@@ -339,9 +334,7 @@ var MooEditable = new Class({
 	},
 
 	setContent: function(newContent){
-		(function(){
-			this.doc.body.set('html', newContent);
-		}).bind(this).delay(1); // dealing with Adobe AIR's webkit bug
+		this.doc.body.set('html', newContent);
 		return this;
 	},
 
@@ -505,7 +498,7 @@ MooEditable.Selection = new Class({
 
 		try {
 			return s.rangeCount > 0 ? s.getRangeAt(0) : (s.createRange ? s.createRange() : null);
-		} catch (e){
+		} catch(e) {
 			// IE bug when used in frameset
 			return this.doc.body.createTextRange();
 		}
