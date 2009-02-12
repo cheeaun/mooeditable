@@ -77,7 +77,6 @@ var MooEditable = new Class({
 
 		this.textarea.setStyles({
 			margin: 0,
-			display: 'none',
 			resize: 'none', // disable resizable textareas in Safari
 			outline: 'none' // disable focus ring in Safari
 		});
@@ -162,13 +161,19 @@ var MooEditable = new Class({
 	attach: function(){
 		var self = this;
 
+		// Assign view mode
+		this.mode = 'iframe';
+
 		// Put textarea inside container
 		this.container.wraps(this.textarea);
 
 		// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
 		if (Browser.Engine.trident) new Element('span').wraps(this.textarea);
 
-		this.iframe.inject(this.container, 'top');
+		this.textarea.setStyle('display', 'none');
+		this.enableToolbar();
+		
+		this.iframe.setStyle('display', '').inject(this.container, 'top');
 
 		// contentWindow and document references
 		this.win = this.iframe.contentWindow;
@@ -189,9 +194,6 @@ var MooEditable = new Class({
 		// IE fired load event twice if designMode is set
 		(Browser.Engine.trident) ? this.doc.body.contentEditable = true : this.doc.designMode = 'On';
 
-		// Assign view mode
-		this.mode = 'iframe';
-
 		// document.window for IE, for new Document code below
 		if (Browser.Engine.trident) this.doc.window = this.win;
 
@@ -203,7 +205,7 @@ var MooEditable = new Class({
 			keypress: this.keyListener.bind(this),
 			keydown: this.enterListener.bind(this)
 		});
-		this.textarea.addEvent('keypress', this.keyListener.bind(this));
+		this.textarea.addEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener', this.keyListener.bind(this)));
 
 		// styleWithCSS, not supported in IE and Opera
 		if (!['trident', 'presto'].contains(Browser.Engine.name)){
@@ -231,14 +233,15 @@ var MooEditable = new Class({
 
 		this.selection = new MooEditable.Selection(this);
 		
+		this.focus();
+		
 		return this;
 	},
 	
 	detach: function(){
 		this.saveContent();
-		this.mode = 'textarea';
 		this.textarea.setStyle('display', '').inject(this.container, 'before');
-		this.textarea.removeEvents('keypress');
+		this.textarea.removeEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener'));
 		this.container.destroy();
 		return this;
 	},
@@ -277,7 +280,10 @@ var MooEditable = new Class({
 	},
 
 	focus: function(){
-		(this.mode == 'iframe' ? this.win : this.textarea).focus();
+		// needs the delay to get focus working
+		(function(){ 
+			(this.mode == 'iframe' ? this.win : this.textarea).focus();
+		}).bind(this).delay(10);
 		return this;
 	},
 
@@ -314,9 +320,7 @@ var MooEditable = new Class({
 			this.disableToolbar('toggleview');
 			this.iframe.setStyle('display', 'none');
 		}
-		// toggling from textarea to iframe needs the delay to get focus working
-		(function(){ this.focus(); }).bind(this).delay(10);
-
+		this.focus();
 		return this;
 	},
 
