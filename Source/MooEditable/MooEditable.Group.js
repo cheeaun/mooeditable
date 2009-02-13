@@ -27,16 +27,18 @@ var MooEditableGroup = new Class({
 			this.iframe = $(this.textarea.getProperty("id") + "-container").getChildren("iframe")[0];
 			this.win = this.iframe.contentWindow;
 			this.doc = this.win.document;
-		});
-		this.doc.addEvent('focus',function(event){
-			this.doc = $(event.target); 
-			(function(){ 
-				this.win = $(this.doc.window);
-				this.iframe = $(this.win.name);
-				this.selection = new MooEditable.Selection(this);
-				this.textarea = this.iframe.getParent().getChildren("textarea")[0];
-			}.delay(10,this)); // delay this or it doesnt work
+			this.mode = 'textarea';
 		}.bindWithEvent(this));
+		// safari doesnt fire onfocus event, so make it onclick
+		this.doc.addEvent((Browser.Engine.webkit) ? 'click' : 'focus',function(event){
+			this.self.win = this.win;
+			this.self.iframe = $(this.win.name);
+			this.self.doc = this.win.document;
+			this.self.selection = new MooEditable.Selection(this.self);
+			this.self.textarea = this.self.iframe.getParent().getChildren("textarea")[0];
+			this.self.mode = 'iframe';
+		}.bindWithEvent({ self:this, win:this.win }));
+
 	}
 
 });
