@@ -37,7 +37,7 @@ var MooEditableGroup = new Class({
 			this.self.selection = new MooEditable.Selection(this.self);
 			this.self.textarea = this.self.iframe.getParent().getChildren("textarea")[0];
 			this.self.mode = 'iframe';
-		}.bindWithEvent({ self:this, win:this.win }));
+		}.bindWithEvent({self:this, win:this.win}));
 
 	}
 
