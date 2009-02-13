@@ -184,7 +184,7 @@ var MooEditable = new Class({
 			BASECSS: this.options.baseCSS,
 			EXTRACSS: this.options.extraCSS,
 			EXTERNALCSS: (this.options.externalCSS) ? '<link rel="stylesheet" href="' + this.options.externalCSS + '">': '',
-			CONTENT: this.cleanup(this.textarea.get('value')),
+			CONTENT: this.cleanup(this.textarea.get('value'))
 		});
 		this.doc.open();
 		this.doc.write(docHTML);
