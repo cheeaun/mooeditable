@@ -282,6 +282,7 @@ var MooEditable = new Class({
 	focus: function(){
 		// needs the delay to get focus working
 		(function(){ 
+			console.log(this.win.name);
 			(this.mode == 'iframe' ? this.win : this.textarea).focus();
 		}).bind(this).delay(10);
 		return this;
@@ -725,7 +726,7 @@ MooEditable.Dialogs = new Hash({
 		// Adds the alert bar
 		if (!me.alertbar){
 			me.alertbar = new Element('div', {'class': 'alertbar dialog-toolbar'});
-			me.alertbar.inject(me.toolbar, 'after');
+			me.alertbar.inject(me.iframe, 'before');
 
 			me.alertbar.strLabel = new Element('span', {'class': 'alertbar-label'});
 
@@ -760,7 +761,7 @@ MooEditable.Dialogs = new Hash({
 		// Adds the prompt bar
 		if (!me.promptbar){
 			me.promptbar = new Element('div', {'class': 'promptbar dialog-toolbar'});
-			me.promptbar.inject(me.toolbar, 'after');
+			me.promptbar.inject(me.iframe, 'before');
 
 			me.promptbar.qLabel = new Element('label', {
 				'class': 'promptbar-label',
