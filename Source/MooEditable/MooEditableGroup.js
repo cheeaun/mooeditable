@@ -30,7 +30,7 @@ var MooEditableGroup = new Class({
 		});
 		this.doc.addEvent('focus',function(event){
 			this.doc = $(event.target); 
-			(function() { 
+			(function(){ 
 				this.win = $(this.doc.window);
 				this.iframe = $(this.win.name);
 				this.selection = new MooEditable.Selection(this);
