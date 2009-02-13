@@ -282,7 +282,6 @@ var MooEditable = new Class({
 	focus: function(){
 		// needs the delay to get focus working
 		(function(){ 
-			console.log(this.win.name);
 			(this.mode == 'iframe' ? this.win : this.textarea).focus();
 		}).bind(this).delay(10);
 		return this;
