@@ -13,7 +13,7 @@ Features
 * Tango icons
 * Lightweight (~20Kb uncompressed)
 * Fully degradable when Javascript disabled
-* Works in Internet Explorer 6/7, Firefox 2/3, Opera 9 and Safari 3 beta
+* Works in Internet Explorer 6/7, Firefox 2/3, Opera 9 and Safari 3
 
 Requirements
 ------------
