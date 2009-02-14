@@ -2,7 +2,8 @@ var Docs = {
 
 	urls: [
 		'MooEditable/MooEditable.md',
-		'MooEditable/MooEditable.Extras.md'
+		'MooEditable/MooEditable.Extras.md',
+		'MooEditable/MooEditable.Group.md'
 		],
 	currentDoc: '',
 	
