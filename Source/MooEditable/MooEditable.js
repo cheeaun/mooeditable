@@ -675,7 +675,7 @@ MooEditable.UI = {};
 
 MooEditable.UI.Toolbar= new Class({
 
-	initialize: function(editor, items){
+	initialize: function(editor){
 		this.editor = editor;
 		this.el = new Element('div', {'class': 'mooeditable-toolbar'});
 		this.actions = this.editor.options.actions.clean().split(' ');
