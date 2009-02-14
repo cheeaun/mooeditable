@@ -1,14 +1,16 @@
 /*
+Script: MooEditable.Group.js
+	Class for having multiple MooEditable instances on a page controlled by one toolbar.
 
-	MooEditableGroup
-	Class for having multiple MooEditable instances on a page controlled by one toolbar
-
+License:
+	MIT-style license.
 */
-var MooEditableGroup = new Class({
+
+MooEditable.Group = new Class({
 
 	Extends: MooEditable,
 		
-	initialize: function(toolbarEl,editorEl,options){
+	initialize: function(toolbarEl, editorEl, options){
 		this.setOptions(options);
 		this.options.toolbar = false; // no toolbars for the editors
 		this.addInstance(editorEl);
@@ -38,7 +40,6 @@ var MooEditableGroup = new Class({
 			this.self.textarea = this.self.iframe.getParent().getChildren("textarea")[0];
 			this.self.mode = 'iframe';
 		}.bindWithEvent({self:this, win:this.win}));
-
 	}
 
 });
