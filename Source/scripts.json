@@ -10,6 +10,11 @@
 		"MooEditable.Extras": {
 			"deps": ["MooEditable"],
 			"desc": "Extends MooEditable to include more (simple) toolbar buttons."
+		},
+	
+		"MooEditable.Group": {
+			"deps": ["MooEditable"],
+			"desc": "Class for having multiple MooEditable instances on a page controlled by one toolbar."
 		}
 		
 	}
