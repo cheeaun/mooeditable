@@ -33,7 +33,7 @@ var MooEditable = new Class({
 		paragraphise: true,
 		xhtml : true,
 		semantics : true,
-		actions: 'bold, italic, underline, strikethrough, |, insertunorderedlist, insertorderedlist, indent, outdent, |, undo, redo, |, createlink, unlink, |, urlimage, |, toggleview',
+		actions: 'bold italic underline strikethrough | insertunorderedlist insertorderedlist indent outdent | undo redo | createlink unlink | urlimage | toggleview',
 		mode: 'icons',
 		handleSubmit: true,
 		handleLabel: true,
@@ -159,6 +159,13 @@ var MooEditable = new Class({
 		if (!this.doc.$family) new Document(this.doc);
 		$(this.doc.body);
 
+		// Bind keyboard shortcuts
+		this.keys = {};
+		this.options.actions.clean().split(' ').each(function(action){
+			if (!MooEditable.Actions[action]) return;
+			var key = MooEditable.Actions[action]['shortcut'];
+			if (key) self.keys[key] = action;
+		});
 		this.doc.addEvents({
 			keypress: this.keyListener.bind(this),
 			keydown: this.enterListener.bind(this)
@@ -671,11 +678,8 @@ MooEditable.UI.Toolbar= new Class({
 	initialize: function(editor, items){
 		this.editor = editor;
 		this.el = new Element('div', {'class': 'mooeditable-toolbar'});
-		this.actions = this.editor.options.actions.split(',').map(function(action){
-			return action.trim();
-		});
+		this.actions = this.editor.options.actions.clean().split(' ');
 		this.items = new Elements();
-		this.editor.keys = [];
 	},
 	
 	render: function(){
@@ -717,10 +721,6 @@ MooEditable.UI.Toolbar= new Class({
 			});
 
 			item.set('text', MooEditable.Actions[action]['title']);
-			
-			// shortcuts
-			var key = MooEditable.Actions[action]['shortcut'];
-			if (key) self.editor.keys[key] = action;
 		}
 		
 		this.items.push(item);
