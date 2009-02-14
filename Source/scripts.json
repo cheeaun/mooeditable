@@ -14,7 +14,7 @@
 	
 		"MooEditable.Group": {
 			"deps": ["MooEditable"],
-			"desc": "Class for having multiple MooEditable instances on a page controlled by one toolbar."
+			"desc": "A MooEditable extension for having multiple MooEditable instances on a page controlled by one toolbar."
 		}
 		
 	}

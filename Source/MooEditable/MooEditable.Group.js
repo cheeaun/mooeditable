@@ -1,6 +1,6 @@
 /*
 Script: MooEditable.Group.js
-	Class for having multiple MooEditable instances on a page controlled by one toolbar.
+	A MooEditable extension for having multiple MooEditable instances on a page controlled by one toolbar.
 
 License:
 	MIT-style license.
