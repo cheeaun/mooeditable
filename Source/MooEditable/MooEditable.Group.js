@@ -14,15 +14,14 @@ MooEditable.Group = new Class({
 		this.setOptions(options);
 		this.options.toolbar = false; // no toolbars for the editors
 		this.addInstance(editorEl);
-		this.buildToolbar();
-		this.toolbarButtons.inject(this.toolbar);
-		$(toolbarEl).adopt(this.toolbar);
+		this.toolbar = new MooEditable.UI.Toolbar(this);
+		$(toolbarEl).adopt(this.toolbar.render());
 	},
 	
 	addInstance: function(el){
 		this.textarea = $(el);
 		this.textarea.store('MooEditable', this);
-		this.build();
+		this.render();
 		// add focus events
 		this.textarea.addEvent('focus',function(event){ 
 			this.textarea = $(event.target); 
