@@ -583,7 +583,7 @@ MooEditable.Selection = new Class({
 
 MooEditable.Actions = new Hash({
 
-	'|' : { type: 'separator' },
+	'|': { type: 'separator' },
 
 	bold: {
 		title: 'Bold',
@@ -695,12 +695,12 @@ MooEditable.UI.Toolbar= new Class({
 				$(item).inject(this.el);
 			}.bind(this));
 		} else {
-			this.editor.actions.each(this.add.bind(this));
+			this.editor.actions.each(this.addItem.bind(this));
 		}
 		return this;
 	},
 	
-	add: function(action){
+	addItem: function(action){
 		var type = MooEditable.Actions[action]['type'];
 		type = (type) ? type.capitalize() : 'Button';
 		var item = new MooEditable.UI[type](this.editor, action);
@@ -775,7 +775,7 @@ MooEditable.UI.Button = new Class({
 			}
 		});
 		
-		this.isDisabled = false;
+		this.disabled = false;
 
 		// add hover effect for IE
 		if (Browser.Engine.trident) this.el.addEvents({
@@ -790,28 +790,28 @@ MooEditable.UI.Button = new Class({
 	
 	click: function(e){
 		e.stop();
-		if (this.isDisabled) return;
+		if (this.disabled) return;
 		this.editor.focus();
 		this.editor.action(this.action);
 		if (this.editor.mode == 'iframe') this.editor.checkStates();
 	},
 	
 	enable: function(){
-		if (!this.isDisabled) return;
-		this.isDisabled = false;
+		if (!this.disabled) return;
+		this.disabled = false;
 		this.el.removeClass('disabled').set('opacity', 1);
 		return this;
 	},
 	
 	disable: function(){
-		if (this.isDisabled) return;
-		this.isDisabled = true;
+		if (this.disabled) return;
+		this.disabled = true;
 		this.el.addClass('disabled').set('opacity', 0.4);
 		return this;
 	},
 	
 	active: function(state){
-		if (this.isDisabled) return;
+		if (this.disabled) return;
 		(state) ? this.el.addClass('onActive') : this.el.removeClass('onActive');
 		return this;
 	}
