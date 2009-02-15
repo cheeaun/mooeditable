@@ -772,11 +772,11 @@ MooEditable.UI.Button = new Class({
 	
 	render: function(){
 		var self = this;
-		var act = MooEditable.Actions[action];
+		var act = MooEditable.Actions[this.action];
 		this.el = new Element('button', {
-			'class': action + '-button toolbar-button ' + act.mode || self.editor.options.mode,
+			'class': self.action + '-button toolbar-button ' + act.mode || self.editor.options.mode,
 			title: act.title + ((act.shortcut) ? ' ( Ctrl+' + act.shortcut.toUpperCase() + ' )' : ''),
-			text: act.title || action,
+			text: act.title || self.action,
 			events: {
 				click: self.click.bind(self),
 				mousedown: function(e){ e.stop(); }
