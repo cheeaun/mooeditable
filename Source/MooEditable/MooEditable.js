@@ -129,9 +129,11 @@ var MooEditable = new Class({
 		if (Browser.Engine.trident) new Element('span').wraps(this.textarea);
 
 		this.textarea.setStyle('display', 'none');
-		this.toolbar.enable();
 		
 		this.iframe.setStyle('display', '').inject(this.container, 'top');
+
+		$(this.toolbar).inject(this.iframe, 'before');
+		this.toolbar.enable();
 
 		// contentWindow and document references
 		this.win = this.iframe.contentWindow;
@@ -678,14 +680,19 @@ MooEditable.UI.Toolbar= new Class({
 	initialize: function(editor){
 		this.editor = editor;
 		this.el = new Element('div', {'class': 'mooeditable-toolbar'});
-		this.actions = this.editor.options.actions.clean().split(' ');
 		this.items = [];
 	},
 	
+	toElement: function(){
+		return this.el;
+	},
+	
 	render: function(){
-		this.el.inject(this.editor.iframe, 'before');
+		this.actions = this.editor.options.actions.clean().split(' ');
 		if (this.items.length){
-			this.items.inject(this.el);
+			this.items.each(function(item){
+				$(item).inject(this.el);
+			}.bind(this));
 		} else {
 			this.actions.each(this.add.bind(this));
 		}
@@ -693,7 +700,6 @@ MooEditable.UI.Toolbar= new Class({
 	},
 	
 	add: function(action){
-		var self = this;
 		var item;
 		
 		if (action == '|'){
@@ -701,7 +707,6 @@ MooEditable.UI.Toolbar= new Class({
 		} else {
 			item = new MooEditable.UI.Button(this.editor, action);
 		}
-		
 		this.items.push(item);
 		$(item).inject(this.el);
 		return this;
@@ -710,7 +715,7 @@ MooEditable.UI.Toolbar= new Class({
 	getItem: function(action){
 		var item = null;
 		this.items.each(function(i){
-			if (item.action && item.action == action){
+			if (i.action && i.action == action){
 				item = i;
 				return;
 			}
