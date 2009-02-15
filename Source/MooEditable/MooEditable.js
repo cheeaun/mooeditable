@@ -197,7 +197,7 @@ var MooEditable = new Class({
 			});
 		}
 
-		this.selection = new MooEditable.Selection(this);
+		this.selection = new MooEditable.Selection(this.win);
 		
 		this.focus();
 		
@@ -443,13 +443,12 @@ var MooEditable = new Class({
 
 MooEditable.Selection = new Class({
 
-	initialize: function(editor){
-		this.win = editor.win;
-		this.doc = editor.doc;
+	initialize: function(win){
+		this.win = win;
 	},
 
 	getSelection: function(){
-		return (this.win.getSelection) ? this.win.getSelection() : this.doc.selection;
+		return (this.win.getSelection) ? this.win.getSelection() : this.win.document.selection;
 	},
 
 	getRange: function(){
