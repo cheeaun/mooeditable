@@ -65,6 +65,8 @@ var MooEditable = new Class({
 	render: function(){
 		var self = this;
 		
+		this.actions = this.options.actions.clean().split(' ');
+		
 		// Build the container
 		this.container = new Element('div', {
 			id: (this.textarea.id) ? this.textarea.id + '-container' : null,
@@ -163,7 +165,7 @@ var MooEditable = new Class({
 
 		// Bind keyboard shortcuts
 		this.keys = {};
-		this.options.actions.clean().split(' ').each(function(action){
+		this.actions.each(function(action){
 			if (!MooEditable.Actions[action]) return;
 			var key = MooEditable.Actions[action]['shortcut'];
 			if (key) self.keys[key] = action;
@@ -688,13 +690,12 @@ MooEditable.UI.Toolbar= new Class({
 	},
 	
 	render: function(){
-		this.actions = this.editor.options.actions.clean().split(' ');
 		if (this.items.length){
 			this.items.each(function(item){
 				$(item).inject(this.el);
 			}.bind(this));
 		} else {
-			this.actions.each(this.add.bind(this));
+			this.editor.actions.each(this.add.bind(this));
 		}
 		return this;
 	},
