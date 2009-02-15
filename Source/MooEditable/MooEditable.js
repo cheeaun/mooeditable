@@ -134,9 +134,6 @@ var MooEditable = new Class({
 		
 		this.iframe.setStyle('display', '').inject(this.container, 'top');
 
-		$(this.toolbar).inject(this.iframe, 'before');
-		this.toolbar.enable();
-
 		// contentWindow and document references
 		this.win = this.iframe.contentWindow;
 		this.doc = this.win.document;
@@ -192,6 +189,7 @@ var MooEditable = new Class({
 		});
 
 		if (this.options.toolbar){
+			$(this.toolbar).inject(this.iframe, 'before');
 			this.toolbar.render();
 			this.doc.addEvents({
 				keyup: this.checkStates.bind(this),
