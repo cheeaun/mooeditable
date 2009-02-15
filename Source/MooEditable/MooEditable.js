@@ -761,9 +761,17 @@ MooEditable.UI.Separator = new Class({
 MooEditable.UI.Button = new Class({
 
 	initialize: function(editor, action){
-		var self = this;
 		this.editor = editor;
 		this.action = action;
+		this.render();
+	},
+	
+	toElement: function(){
+		return this.el;
+	},
+	
+	render: function(){
+		var self = this;
 		var act = MooEditable.Actions[action];
 		this.el = new Element('button', {
 			'class': action + '-button toolbar-button ' + act.mode || self.editor.options.mode,
@@ -782,10 +790,8 @@ MooEditable.UI.Button = new Class({
 			mouseenter: function(e){ this.addClass('hover'); },
 			mouseleave: function(e){ this.removeClass('hover'); }
 		});
-	},
-	
-	toElement: function(){
-		return this.el;
+		
+		return this;
 	},
 	
 	click: function(e){
