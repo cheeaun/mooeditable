@@ -229,8 +229,7 @@ var MooEditable = new Class({
 				});
 				if (!isBlock) this.execute('insertparagraph');
 			}
-		}
-		else {
+		} else {
 			if (Browser.Engine.trident){
 				var r = this.selection.getRange();
 				var node = this.selection.getNode();
