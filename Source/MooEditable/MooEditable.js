@@ -708,10 +708,14 @@ MooEditable.UI.Toolbar= new Class({
 	},
 	
 	getItem: function(action){
-		var item = this.items.filter(function(item){
-			return item.action && item.action == action;
+		var item = null;
+		this.items.each(function(i){
+			if (item.action && item.action == action){
+				item = i;
+				return;
+			}
 		});
-		return (item.length) ? item[0] : null;
+		return item;
 	},
 
 	disable: function(except){
