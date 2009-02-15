@@ -735,11 +735,13 @@ MooEditable.UI.Toolbar= new Class({
 	},
 	
 	show: function(){
-		return this.el.setStyle('display', '');
+		this.el.setStyle('display', '');
+		return this;
 	},
 	
 	hide: function(){
-		return this.el.setStyle('display', 'none');
+		this.el.setStyle('display', 'none');
+		return this;
 	}
 	
 });
