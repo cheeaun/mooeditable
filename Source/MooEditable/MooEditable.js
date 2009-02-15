@@ -589,79 +589,63 @@ MooEditable.Actions = new Hash({
 		title: 'Bold',
 		shortcut: 'b',
 		tags: ['b', 'strong'],
-		css: {'font-weight': 'bold'},
-		type: 'button'
+		css: {'font-weight': 'bold'}
 	},
 	
 	italic: {
 		title: 'Italic',
 		shortcut: 'i',
 		tags: ['i', 'em'],
-		css: {'font-style': 'italic'},
-		type: 'button'
+		css: {'font-style': 'italic'}
 	},
 	
 	underline: {
 		title: 'Underline',
 		shortcut: 'u',
 		tags: ['u'],
-		css: {'text-decoration': 'underline'},
-		type: 'button'
+		css: {'text-decoration': 'underline'}
 	},
 	
 	strikethrough: {
 		title: 'Strikethrough',
 		shortcut: 's',
 		tags: ['s', 'strike'],
-		css: {'text-decoration': 'line-through'},
-		type: 'button'
+		css: {'text-decoration': 'line-through'}
 	},
 	
 	insertunorderedlist: {
 		title: 'Unordered List',
-		tags: ['ul'],
-		type: 'button'
+		tags: ['ul']
 	},
 	
 	insertorderedlist: {
 		title: 'Ordered List',
-		tags: ['ol'],
-		type: 'button'
+		tags: ['ol']
 	},
 	
 	indent: {
 		title: 'Indent',
-		tags: ['blockquote'],
-		type: 'button'
+		tags: ['blockquote']
 	},
 	
-	outdent: {
-		title: 'Outdent',
-		type: 'button'
-	},
+	outdent: { title: 'Outdent' },
 	
 	undo: {
 		title: 'Undo',
-		shortcut: 'z',
-		type: 'button'
+		shortcut: 'z'
 	},
 	
 	redo: {
 		title: 'Redo',
-		shortcut: 'y',
-		type: 'button'
+		shortcut: 'y'
 	},
 	
-	unlink: {
-		title: 'Remove Hyperlink',
-		type: 'button'
-	},
+	unlink: { title: 'Remove Hyperlink' },
 
 	createlink: {
 		title: 'Add Hyperlink',
 		shortcut: 'l',
 		tags: ['a'],
-		type: 'button',
 		command: function(){
 			if (this.selection.getSelection() == ''){
 				MooEditable.Dialogs.alert(this, 'createlink', 'Please select the text you wish to hyperlink.');
@@ -676,7 +660,6 @@ MooEditable.Actions = new Hash({
 	urlimage: {
 		title: 'Add Image',
 		shortcut: 'm',
-		type: 'button',
 		command: function(){
 			MooEditable.Dialogs.prompt(this, 'urlimage', 'Enter image url', 'http://', function(url){
 				this.execute("insertimage", false, url.trim());
@@ -687,7 +670,6 @@ MooEditable.Actions = new Hash({
 	toggleview: {
 		title: 'Toggle View',
 		shortcut: 't',
-		type: 'button',
 		command: function(){ this.toggleView(); }
 	}
 
@@ -719,7 +701,8 @@ MooEditable.UI.Toolbar= new Class({
 	},
 	
 	add: function(action){
-		var type = MooEditable.Actions[action]['type'].capitalize();
+		var type = MooEditable.Actions[action]['type'];
+		type = (type) ? type.capitalize() : 'Button';
 		var item = new MooEditable.UI[type](this.editor, action);
 		this.items.push(item);
 		$(item).inject(this.el);
