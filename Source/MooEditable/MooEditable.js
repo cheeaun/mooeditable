@@ -51,7 +51,7 @@ var MooEditable = new Class({
 			</html>'
 	},
 
-	initialize: function(el,options){
+	initialize: function(el, options){
 		this.setOptions(options);
 		this.textarea = $(el);
 		this.textarea.store('MooEditable', this);
