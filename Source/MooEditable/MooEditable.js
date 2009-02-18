@@ -304,11 +304,13 @@ var MooEditable = new Class({
 	},
 
 	checkStates: function(){
-		MooEditable.Actions.each(function(value, action){
+		this.actions.each(function(action){
 			var item = this.toolbar.getItem(action);
 			if (!item) return;
 			item.active(false);
 
+			var value = MooEditable.Actions[action];
+			
 			if (value.tags){
 				var el = this.selection.getNode();
 
