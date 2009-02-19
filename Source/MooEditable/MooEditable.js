@@ -84,16 +84,16 @@ var MooEditable = new Class({
 		});
 		
 		// Build the iframe
-		var pads = this.textarea.getStyle('padding').split(' ');
-		pads = pads.map(function(p){ return (p == 'auto') ? 0 : p.toInt(); });
+		var borderWidths = this.textarea.getStyle('border-width');
+		var borderWidth = borderWidths.split(' ').map(function(b){ return (b == 'auto') ? 0 : b.toInt(); });
 
 		this.iframe = new IFrame({
 			'class': 'mooeditable-iframe',
 			styles: {
-				width: this.textarea.getStyle('width').toInt() + pads[1] + pads[3],
-				height: this.textarea.getStyle('height').toInt() + pads[0] + pads[2],
+				width: this.textarea.getSize().x - borderWidth[1] - borderWidth[3],
+				height: this.textarea.getSize().y - borderWidth[0] - borderWidth[2],
+				'border-width': borderWidths,
 				'border-color': this.textarea.getStyle('border-color'),
-				'border-width': this.textarea.getStyle('border-width'),
 				'border-style': this.textarea.getStyle('border-style')
 			}
 		});
