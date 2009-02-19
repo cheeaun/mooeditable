@@ -116,6 +116,13 @@ var MooEditable = new Class({
 				if (self.mode == 'iframe') self.saveContent();
 			});
 		}
+		
+		this.keys = {};
+		this.actions.each(function(action){
+			if (!MooEditable.Actions[action]) return;
+			var key = MooEditable.Actions[action]['shortcut'];
+			if (key) self.keys[key] = action;
+		});
 	},
 
 	attach: function(){
@@ -161,12 +168,6 @@ var MooEditable = new Class({
 		$(this.doc.body);
 
 		// Bind keyboard shortcuts
-		this.keys = {};
-		this.actions.each(function(action){
-			if (!MooEditable.Actions[action]) return;
-			var key = MooEditable.Actions[action]['shortcut'];
-			if (key) self.keys[key] = action;
-		});
 		this.doc.addEvents({
 			keypress: this.keyListener.bind(this),
 			keydown: this.enterListener.bind(this)
