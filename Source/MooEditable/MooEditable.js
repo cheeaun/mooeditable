@@ -55,6 +55,13 @@ var MooEditable = new Class({
 		this.setOptions(options);
 		this.textarea = $(el);
 		this.textarea.store('MooEditable', this);
+		this.actions = this.options.actions.clean().split(' ');
+		this.keys = {};
+		this.actions.each(function(action){
+			if (!MooEditable.Actions[action]) return;
+			var key = MooEditable.Actions[action]['shortcut'];
+			if (key) this.keys[key] = action;
+		}.bind(this));
 		this.render();
 	},
 	
@@ -64,8 +71,6 @@ var MooEditable = new Class({
 	
 	render: function(){
 		var self = this;
-		
-		this.actions = this.options.actions.clean().split(' ');
 		
 		// Build the container
 		this.container = new Element('div', {
@@ -116,13 +121,6 @@ var MooEditable = new Class({
 				if (self.mode == 'iframe') self.saveContent();
 			});
 		}
-		
-		this.keys = {};
-		this.actions.each(function(action){
-			if (!MooEditable.Actions[action]) return;
-			var key = MooEditable.Actions[action]['shortcut'];
-			if (key) self.keys[key] = action;
-		});
 	},
 
 	attach: function(){
