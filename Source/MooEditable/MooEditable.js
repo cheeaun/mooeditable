@@ -72,34 +72,44 @@ var MooEditable = new Class({
 	render: function(){
 		var self = this;
 		
+		// Styles and dimensions
+		var textareaStyles = this.textarea.getStyles('border-width', 'border-color', 'border-style', 'margin', 'padding');
+		var borderWidths = textareaStyles['border-width'].split(' ').map(function(b){ return (b == 'auto') ? 0 : b.toInt(); });
+		var paddings = textareaStyles['padding'].split(' ').map(function(p){ return (p == 'auto') ? 0 : p.toInt(); })
+		var dimensions = {
+			width: this.textarea.getSize().x - borderWidths[1] - borderWidths[3],
+			height: this.textarea.getSize().y - borderWidths[0] - borderWidths[2]
+		};
+		
 		// Build the container
 		this.container = new Element('div', {
 			id: (this.textarea.id) ? this.textarea.id + '-container' : null,
 			'class': 'mooeditable-container',
 			styles: {
-				width: this.textarea.getSize().x,
-				margin: this.textarea.getStyle('margin')
+				width: dimensions.width,
+				margin: textareaStyles.margin,
+				'border-width': textareaStyles['border-width'],
+				'border-color': textareaStyles['border-color'],
+				'border-style': textareaStyles['border-style']
 			}
 		});
 
+		// Override all textarea styles
 		this.textarea.setStyles({
 			margin: 0,
+			border: 0,
+			padding: 0,
+			width: '100%',
+			height: dimensions.height,
 			resize: 'none', // disable resizable textareas in Safari
 			outline: 'none' // disable focus ring in Safari
 		});
 		
 		// Build the iframe
-		var borderWidths = this.textarea.getStyle('border-width');
-		var borderWidth = borderWidths.split(' ').map(function(b){ return (b == 'auto') ? 0 : b.toInt(); });
-
 		this.iframe = new IFrame({
 			'class': 'mooeditable-iframe',
 			styles: {
-				width: this.textarea.getSize().x - borderWidth[1] - borderWidth[3],
-				height: this.textarea.getSize().y - borderWidth[0] - borderWidth[2],
-				'border-width': borderWidths,
-				'border-color': this.textarea.getStyle('border-color'),
-				'border-style': this.textarea.getStyle('border-style')
+				height: dimensions.height
 			}
 		});
 		
@@ -132,12 +142,9 @@ var MooEditable = new Class({
 		// Put textarea inside container
 		this.container.wraps(this.textarea);
 
-		// Fix IE bug, refer "IE/Win Inherited Margins on Form Elements" <http://positioniseverything.net/explorer/inherited_margin.html>
-		if (Browser.Engine.trident) new Element('span').wraps(this.textarea);
-
 		this.textarea.setStyle('display', 'none');
 		
-		this.iframe.setStyle('display', '').inject(this.container, 'top');
+		this.iframe.setStyle('display', '').inject(this.textarea, 'before');
 
 		// contentWindow and document references
 		this.win = this.iframe.contentWindow;
@@ -188,7 +195,7 @@ var MooEditable = new Class({
 		});
 
 		if (this.options.toolbar){
-			$(this.toolbar).inject(this.iframe, 'before');
+			$(this.toolbar).inject(this.container, 'top');
 			this.toolbar.render();
 			this.doc.addEvents({
 				keyup: this.checkStates.bind(this),
