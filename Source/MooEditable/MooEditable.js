@@ -282,13 +282,11 @@ var MooEditable = new Class({
 			this.mode = 'iframe';
 			this.iframe.setStyle('display', '');
 			this.setContent(this.textarea.value);
-			this.toolbar.enable();
 			this.textarea.setStyle('display', 'none');
 		} else {
 			this.saveContent();
 			this.mode = 'textarea';
 			this.textarea.setStyle('display', '');
-			this.toolbar.disable('toggleview');
 			this.iframe.setStyle('display', 'none');
 		}
 		this.focus();
@@ -589,8 +587,6 @@ MooEditable.Selection = new Class({
 
 MooEditable.Actions = new Hash({
 
-	'|': { type: 'separator' },
-
 	bold: {
 		title: 'Bold',
 		shortcut: 'b',
@@ -676,7 +672,10 @@ MooEditable.Actions = new Hash({
 	toggleview: {
 		title: 'Toggle View',
 		shortcut: 't',
-		command: function(){ this.toggleView(); }
+		command: function(){
+			(this.mode == 'textarea') ? this.toolbar.enable() : this.toolbar.disable('toggleview');
+			this.toggleView();
+		}
 	}
 
 });
@@ -689,6 +688,7 @@ MooEditable.UI.Toolbar= new Class({
 		this.editor = editor;
 		this.el = new Element('div', {'class': 'mooeditable-toolbar'});
 		this.items = [];
+		this.content = null;
 	},
 	
 	toElement: function(){
@@ -696,47 +696,64 @@ MooEditable.UI.Toolbar= new Class({
 	},
 	
 	render: function(){
-		if (this.items.length){
-			this.items.each(function(item){
-				$(item).inject(this.el);
-			}.bind(this));
+		if (this.content){
+			this.el.adopt(this.content);
 		} else {
-			this.editor.actions.each(this.addItem.bind(this));
+			this.content = this.editor.actions.map(function(action){
+				return (action == '|') ? this.addSeparator() : this.addItem(action);
+			}.bind(this));
 		}
 		return this;
 	},
 	
 	addItem: function(action){
-		var type = MooEditable.Actions[action]['type'];
-		type = (type) ? type.capitalize() : 'Button';
-		var item = new MooEditable.UI[type](this.editor, action);
+		var self = this;
+		var type = MooEditable.Actions[action]['type'] || 'button';
+		var itemType = (type) ? type.capitalize() : 'Button';
+		var act = MooEditable.Actions[action];
+		var mode = ' ' + ((act.mode) ? act.mode : self.editor.options.mode);
+		var shortcut = (act.shortcut) ? ' ( Ctrl+' + act.shortcut.toUpperCase() + ' )' : '';
+		var text = (act.title) ? act.title : self.action;
+		var item = new MooEditable.UI[itemType]({
+			'class': action + '-item toolbar-' + type + mode,
+			title: text + shortcut,
+			text: text,
+			onAction: function(){
+				self.editor.focus();
+				self.editor.action(action);
+				if (self.editor.mode == 'iframe') self.editor.checkStates();
+			}
+		});
+		item.name = action;
 		this.items.push(item);
 		$(item).inject(this.el);
-		return this;
+		return item;
 	},
 	
 	getItem: function(action){
 		var item = null;
 		this.items.each(function(i){
-			if (i.action && i.action == action){
+			if (i.name == action){
 				item = i;
 				return;
 			}
 		});
 		return item;
 	},
+	
+	addSeparator: function(){
+		return new Element('span', {'class': 'toolbar-separator'}).inject(this.el);
+	},
 
 	disable: function(except){
 		this.items.each(function(item){
-			if (!item.action) return;
-			(item.action == except) ? item.active(true) : item.active(false).disable();
+			(item.name == except) ? item.active(true) : item.active(false).disable();
 		});
 		return this;
 	},
 
 	enable: function(){
 		this.items.each(function(item){
-			if (!item.action) return;
 			item.enable();
 		});
 		return this;
@@ -754,23 +771,21 @@ MooEditable.UI.Toolbar= new Class({
 	
 });
 
-MooEditable.UI.Separator = new Class({
-
-	initialize: function(editor, action){
-		this.el = new Element('span', {'class': 'toolbar-separator'});
-	},
-	
-	toElement: function(){
-		return this.el;
-	}
-	
-});
-
 MooEditable.UI.Button = new Class({
 
-	initialize: function(editor, action){
-		this.editor = editor;
-		this.action = action;
+	Implements: [Events, Options],
+
+	options: {
+		/*
+		onAction: $empty,
+		*/
+		text: 'Button',
+		'class': '',
+		title: ''
+	},
+
+	initialize: function(options){
+		this.setOptions(options);
 		this.render();
 	},
 	
@@ -780,16 +795,12 @@ MooEditable.UI.Button = new Class({
 	
 	render: function(){
 		var self = this;
-		var act = MooEditable.Actions[this.action];
-		var mode = ' ' + ((act.mode) ? act.mode : self.editor.options.mode);
-		var shortcut = (act.shortcut) ? ' ( Ctrl+' + act.shortcut.toUpperCase() + ' )' : '';
-		var text = (act.title) ? act.title : self.action;
 		this.el = new Element('button', {
-			'class': self.action + '-button toolbar-button' + mode,
-			title: text + shortcut,
-			text: text,
+			'class': self.options['class'],
+			title: self.options.title,
+			text: self.options.text,
 			events: {
-				click: self.click.bind(self),
+				click: self.action.bind(self),
 				mousedown: function(e){ e.stop(); }
 			}
 		});
@@ -805,12 +816,10 @@ MooEditable.UI.Button = new Class({
 		return this;
 	},
 	
-	click: function(e){
+	action: function(e){
 		e.stop();
 		if (this.disabled) return;
-		this.editor.focus();
-		this.editor.action(this.action);
-		if (this.editor.mode == 'iframe') this.editor.checkStates();
+		this.fireEvent('action', this.el);
 	},
 	
 	enable: function(){
