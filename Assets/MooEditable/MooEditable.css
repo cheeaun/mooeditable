@@ -72,21 +72,21 @@
 	background-color: #fafafa;
 }
 
-.mooeditable-toolbar .insertorderedlist-button{ background-position: 4px -4px; } 
-.mooeditable-toolbar .outdent-button{ background-position: 4px -28px; } 
-.mooeditable-toolbar .urlimage-button{ background-position: 4px -52px; } 
-.mooeditable-toolbar .toggleview-button{ background-position: 4px -76px; } 
-.mooeditable-toolbar .underline-button{ background-position: 4px -100px; } 
-.mooeditable-toolbar .italic-button{ background-position: 4px -124px; } 
-.mooeditable-toolbar .strikethrough-button{ background-position: 4px -148px; } 
-.mooeditable-toolbar .redo-button{ background-position: 4px -172px; } 
-.mooeditable-toolbar .undo-button{ background-position: 4px -196px; } 
-.mooeditable-toolbar .unlink-button{ background-position: 4px -220px; } 
-.mooeditable-toolbar .view-refresh-button{ background-position: 4px -244px; } 
-.mooeditable-toolbar .insertunorderedlist-button{ background-position: 4px -268px; } 
-.mooeditable-toolbar .indent-button{ background-position: 4px -292px; } 
-.mooeditable-toolbar .bold-button{ background-position: 4px -316px; } 
-.mooeditable-toolbar .createlink-button{ background-position: 4px -340px; }
+.mooeditable-toolbar .insertorderedlist-item{ background-position: 4px -4px; } 
+.mooeditable-toolbar .outdent-item{ background-position: 4px -28px; } 
+.mooeditable-toolbar .urlimage-item{ background-position: 4px -52px; } 
+.mooeditable-toolbar .toggleview-item{ background-position: 4px -76px; } 
+.mooeditable-toolbar .underline-item{ background-position: 4px -100px; } 
+.mooeditable-toolbar .italic-item{ background-position: 4px -124px; } 
+.mooeditable-toolbar .strikethrough-item{ background-position: 4px -148px; } 
+.mooeditable-toolbar .redo-item{ background-position: 4px -172px; } 
+.mooeditable-toolbar .undo-item{ background-position: 4px -196px; } 
+.mooeditable-toolbar .unlink-item{ background-position: 4px -220px; } 
+.mooeditable-toolbar .view-refresh-item{ background-position: 4px -244px; } 
+.mooeditable-toolbar .insertunorderedlist-item{ background-position: 4px -268px; } 
+.mooeditable-toolbar .indent-item{ background-position: 4px -292px; } 
+.mooeditable-toolbar .bold-item{ background-position: 4px -316px; } 
+.mooeditable-toolbar .createlink-item{ background-position: 4px -340px; }
 
 .mooeditable-iframe{
 	margin: 0;
