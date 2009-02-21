@@ -723,12 +723,12 @@ MooEditable.UI.Toolbar= new Class({
 	
 	addItem: function(action){
 		var self = this;
-		var type = MooEditable.Actions[action]['type'] || 'button';
-		var itemType = (type) ? type.capitalize() : 'Button';
 		var act = MooEditable.Actions[action];
+		if (!act) return;
+		var type = act.type || 'button';
 		var shortcut = (act.shortcut) ? ' ( Ctrl+' + act.shortcut.toUpperCase() + ' )' : '';
 		var text = (act.title) ? act.title : action;
-		var item = new MooEditable.UI[itemType]({
+		var item = new MooEditable.UI[type.capitalize()]({
 			'class': action + '-item toolbar-' + type,
 			title: text + shortcut,
 			text: text,
