@@ -319,25 +319,26 @@ var MooEditable = new Class({
 			if (!item) return;
 			item.active(false);
 
-			var value = MooEditable.Actions[action];
+			var states = MooEditable.Actions[action]['states'];
+			if (!states) return;
 			
-			if (value.tags){
+			if (states.tags){
 				var el = this.selection.getNode();
 
 				if (el) do {
 					if ($type(el) != 'element') break;
-					if (value.tags.contains(el.tagName.toLowerCase())) item.active(true);
+					if (states.tags.contains(el.tagName.toLowerCase())) item.active(true);
 				}
 				while (el = el.parentNode);
 			}
 
-			if (value.css){
+			if (states.css){
 				var el = this.selection.getNode();
 
 				if (el) do {
 					if ($type(el) != 'element') break;
-					for (var prop in value.css)
-						if ($(el).getStyle(prop).contains(value.css[prop]))
+					for (var prop in states.css)
+						if ($(el).getStyle(prop).contains(states.css[prop]))
 							item.active(true);
 				}
 				while (el = el.parentNode);
@@ -594,66 +595,110 @@ MooEditable.Selection = new Class({
 MooEditable.Actions = new Hash({
 
 	bold: {
-		title: 'Bold',
-		shortcut: 'b',
-		tags: ['b', 'strong'],
-		css: {'font-weight': 'bold'}
+		options: {
+			title: 'Bold',
+			shortcut: 'b'
+		},
+		states: {
+			tags: ['b', 'strong'],
+			css: {'font-weight': 'bold'}
+		}
 	},
 	
 	italic: {
-		title: 'Italic',
-		shortcut: 'i',
-		tags: ['i', 'em'],
-		css: {'font-style': 'italic'}
+		options: {
+			title: 'Italic',
+			shortcut: 'i'
+		},
+		states: {
+			tags: ['i', 'em'],
+			css: {'font-style': 'italic'}
+		}
 	},
 	
 	underline: {
-		title: 'Underline',
-		shortcut: 'u',
-		tags: ['u'],
-		css: {'text-decoration': 'underline'}
+		options: {
+			title: 'Underline',
+			shortcut: 'u'
+		},
+		states: {
+			tags: ['u'],
+			css: {'text-decoration': 'underline'}
+		}
 	},
 	
 	strikethrough: {
-		title: 'Strikethrough',
-		shortcut: 's',
-		tags: ['s', 'strike'],
-		css: {'text-decoration': 'line-through'}
+		options: {
+			title: 'Strikethrough',
+			shortcut: 's'
+		},
+		states: {
+			tags: ['s', 'strike'],
+			css: {'text-decoration': 'line-through'}
+		}
 	},
 	
 	insertunorderedlist: {
-		title: 'Unordered List',
-		tags: ['ul']
+		options: {
+			title: 'Unordered List'
+		},
+		states: {
+			tags: ['ul']
+		}
 	},
 	
 	insertorderedlist: {
-		title: 'Ordered List',
-		tags: ['ol']
+		options: {
+			title: 'Ordered List'
+		},
+		states: {
+			tags: ['ol']
+		}
 	},
 	
 	indent: {
-		title: 'Indent',
-		tags: ['blockquote']
+		options: {
+			title: 'Indent'
+		},
+		states: {
+			tags: ['blockquote']
+		}
 	},
 	
-	outdent: { title: 'Outdent' },
+	outdent: {
+		options: {
+			title: 'Outdent'
+		}
+	},
 	
 	undo: {
-		title: 'Undo',
-		shortcut: 'z'
+		options: {
+			title: 'Undo',
+			shortcut: 'z'
+		}
 	},
 	
 	redo: {
-		title: 'Redo',
-		shortcut: 'y'
+		options: {
+			title: 'Redo',
+			shortcut: 'y'
+		}
 	},
 	
-	unlink: { title: 'Remove Hyperlink' },
+	unlink: {
+		options: {
+			title: 'Remove Hyperlink'
+		}
+	},
 
 	createlink: {
-		title: 'Add Hyperlink',
-		shortcut: 'l',
-		tags: ['a'],
+		options: {
+			title: 'Add Hyperlink',
+			shortcut: 'l'
+		},
+		states: {
+			tags: ['a']
+		},
 		command: function(){
 			if (this.selection.getSelection() == ''){
 				MooEditable.Dialogs.alert(this, 'createlink', 'Please select the text you wish to hyperlink.');
@@ -666,8 +711,10 @@ MooEditable.Actions = new Hash({
 	},
 
 	urlimage: {
-		title: 'Add Image',
-		shortcut: 'm',
+		options: {
+			title: 'Add Image',
+			shortcut: 'm'
+		},
 		command: function(){
 			MooEditable.Dialogs.prompt(this, 'urlimage', 'Enter image url', 'http://', function(url){
 				this.execute("insertimage", false, url.trim());
@@ -676,8 +723,10 @@ MooEditable.Actions = new Hash({
 	},
 
 	toggleview: {
-		title: 'Toggle View',
-		shortcut: 't',
+		options: {
+			title: 'Toggle View',
+			shortcut: 't',
+		},
 		command: function(){
 			(this.mode == 'textarea') ? this.toolbar.enable() : this.toolbar.disable('toggleview');
 			this.toggleView();
@@ -726,15 +775,11 @@ MooEditable.UI.Toolbar= new Class({
 		var act = MooEditable.Actions[action];
 		if (!act) return;
 		var type = act.type || 'button';
-		var shortcut = (act.shortcut) ? ' ( Ctrl+' + act.shortcut.toUpperCase() + ' )' : '';
-		var text = (act.title) ? act.title : action;
-		var item = new MooEditable.UI[type.capitalize()]({
+		var item = new MooEditable.UI[type.capitalize()]($extend(act.options, {
+			name: action,
 			'class': action + '-item toolbar-' + type,
-			title: text + shortcut,
-			text: text,
 			onAction: self.itemAction.bind(self)
-		});
-		item.name = action;
+		}));
 		this.items.push(item);
 		$(item).inject(this.el);
 		return item;
@@ -793,13 +838,15 @@ MooEditable.UI.Button = new Class({
 		/*
 		onAction: $empty,
 		*/
+		name: '',
 		text: 'Button',
 		'class': '',
-		title: ''
+		shortcut: ''
 	},
 
 	initialize: function(options){
 		this.setOptions(options);
+		this.name = this.options.name;
 		this.render();
 	},
 	
@@ -809,10 +856,13 @@ MooEditable.UI.Button = new Class({
 	
 	render: function(){
 		var self = this;
+		var shortcut = (this.options.shortcut) ? ' ( Ctrl+' + this.options.shortcut.toUpperCase() + ' )' : '';
+		var text = this.options.title || name;
+		var title = text + shortcut;
 		this.el = new Element('button', {
 			'class': self.options['class'],
-			title: self.options.title,
-			text: self.options.text,
+			title: title,
+			text: text,
 			events: {
 				click: self.action.bind(self),
 				mousedown: function(e){ e.stop(); }
