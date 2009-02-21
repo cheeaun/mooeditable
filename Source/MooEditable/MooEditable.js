@@ -267,8 +267,8 @@ var MooEditable = new Class({
 	action: function(command){
 		var action = MooEditable.Actions[command];
 		var args = action.arguments || [];
-		if (action.command){
-			($type(action.command) == 'function') ? action.command.attempt(args, this) : this.execute(action.command, false, args);
+		if (action.command && $type(action.command) == 'function'){
+			action.command.attempt(args, this);
 		} else {
 			this.execute(command, false, args);
 		}
