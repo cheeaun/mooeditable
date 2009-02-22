@@ -175,12 +175,10 @@ var MooEditable = new Class({
 		// IE fired load event twice if designMode is set
 		(Browser.Engine.trident) ? this.doc.body.contentEditable = true : this.doc.designMode = 'On';
 
-		// document.window for IE, for new Document code below
-		if (Browser.Engine.trident) this.doc.window = this.win;
-
-		// Mootoolize document and Element
+		// Mootoolize window, document and body
+		if (!this.win.$family) new Window(this.win);
 		if (!this.doc.$family) new Document(this.doc);
-		$extend(this.win.Element.prototype, Element.Prototype);
+		$(this.doc.body);
 
 		// Bind keyboard shortcuts
 		this.doc.addEvents({
@@ -349,7 +347,7 @@ var MooEditable = new Class({
 					if ($type(el) != 'element') break;
 					for (var prop in states.css){
 						var css = states.css[prop];
-						if (Element.getStyle(el, prop).contains(css)) item.activate(css);
+						if ($(el).getStyle(prop).contains(css)) item.activate(css);
 					}
 				}
 				while (el = el.parentNode);
@@ -786,7 +784,7 @@ MooEditable.UI.Toolbar= new Class({
 		var type = act.type || 'button';
 		var item = new MooEditable.UI[type.camelCase().capitalize()]($extend(act.options, {
 			name: action,
-			'class': action + '-item toolbar-' + type,
+			'class': action + '-item toolbar-' + type + ' toolbar-item',
 			onAction: self.itemAction.bind(self)
 		}));
 		this.items.push(item);
