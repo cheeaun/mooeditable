@@ -12,10 +12,28 @@ MooEditable.Group = new Class({
 		
 	initialize: function(toolbarEl, editorEl, options){
 		this.setOptions(options);
+		this.actions = this.options.actions.clean().split(' ');
+		this.keys = {};
+		this.actions.each(function(action){
+			var act = MooEditable.Actions[action];
+			if (!act || !act.options) return;
+			var key = act.options.shortcut;
+			if (key) this.keys[key] = action;
+		}.bind(this));
 		this.options.toolbar = false; // no toolbars for the editors
 		this.addInstance(editorEl);
-		this.toolbar = new MooEditable.UI.Toolbar(this);
-		$(toolbarEl).adopt(this.toolbar.render());
+        self = this;
+		this.toolbar = new MooEditable.UI.Toolbar({
+			'class': 'mooeditable-toolbar',
+			onItemAction: function(){
+				var args = $splat(arguments);
+				var item = args[0];
+				self.focus();
+				self.action(item.name, Array.slice(args, 1));
+				if (self.mode == 'iframe') self.checkStates();
+			}
+		});
+		$(toolbarEl).adopt(this.toolbar.render(this.actions));
 	},
 	
 	addInstance: function(el){
