@@ -343,18 +343,27 @@ var MooEditable = new Class({
 				do {
 					if ($type(el) != 'element') break;
 					var tag = el.tagName.toLowerCase();
-					if (states.tags.contains(tag)) item.activate(tag);
+					if (states.tags.contains(tag)){
+						item.activate(tag);
+						break;
+					}
 				}
 				while (el = el.parentNode);
 			}
 
 			if (states.css){
+				var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
 				do {
 					if ($type(el) != 'element') break;
+					var found = false;
 					for (var prop in states.css){
 						var css = states.css[prop];
-						if ($(el).getStyle(prop).contains(css)) item.activate(css);
+						if ($(el).getStyle(prop).contains(css)){
+							item.activate(css);
+							found = true;
+						}
 					}
+					if (found || el.tagName.test(blockEls)) break;
 				}
 				while (el = el.parentNode);
 			}
