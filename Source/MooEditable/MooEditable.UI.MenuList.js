@@ -1,0 +1,100 @@
+/*
+Script: MooEditable.UI.MenuList.js
+	UI Class to create a menu list (select) element.
+
+License:
+	MIT-style license.
+
+Copyright:
+	Copyright (c) 2007-2009 [Lim Chee Aun](http://cheeaun.com).
+*/
+
+MooEditable.UI.MenuList = new Class({
+
+	Implements: [Events, Options],
+
+	options: {
+		/*
+		onAction: $empty,
+		*/
+		title: '',
+		name: '',
+		'class': '',
+		title: '',
+		list: []
+	},
+
+	initialize: function(options){
+		this.setOptions(options);
+		this.name = this.options.name;
+		this.render();
+	},
+	
+	toElement: function(){
+		return this.el;
+	},
+	
+	render: function(){
+		var self = this;
+		var html = '';
+		this.options.list.each(function(item){
+			html += '<option value="{value}">{text}</option>'.substitute(item);
+		});
+		this.el = new Element('select', {
+			'class': self.options['class'],
+			title: self.options.title,
+			html: html,
+			events: {
+				change: self.action.bind(self)
+			}
+		});
+		
+		this.disabled = false;
+
+		// add hover effect for IE
+		if (Browser.Engine.trident) this.el.addEvents({
+			mouseenter: function(e){ this.addClass('hover'); },
+			mouseleave: function(e){ this.removeClass('hover'); }
+		});
+		
+		return this;
+	},
+	
+	action: function(e){
+		e.stop();
+		if (this.disabled) return;
+		var name = e.target.value;
+		this.fireEvent('action', [this, name]);
+	},
+	
+	enable: function(){
+		if (!this.disabled) return;
+		this.disabled = false;
+		this.el.set('disabled', false).removeClass('disabled').set('opacity', 1);
+		return this;
+	},
+	
+	disable: function(){
+		if (this.disabled) return;
+		this.disabled = true;
+		this.el.set('disabled', true).addClass('disabled').set('opacity', 0.4);
+		return this;
+	},
+	
+	activate: function(value){
+		if (this.disabled) return;
+		var index = 0;
+		if (value) this.options.list.each(function(item, i){
+			if (item.value == value) index = i;
+		});
+		this.el.selectedIndex = index;
+		return this;
+	},
+	
+	deactivate: function(){
+		this.el.selectedIndex = 0;
+		this.el.removeClass('onActive');
+		return this;
+	}
+	
+});
