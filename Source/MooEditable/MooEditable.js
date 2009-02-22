@@ -326,7 +326,7 @@ var MooEditable = new Class({
 		this.actions.each(function(action){
 			var item = this.toolbar.getItem(action);
 			if (!item) return;
-			item.active(false);
+			item.deactivate();
 
 			var states = MooEditable.Actions[action]['states'];
 			if (!states) return;
@@ -336,7 +336,7 @@ var MooEditable = new Class({
 
 				if (el) do {
 					if ($type(el) != 'element') break;
-					if (states.tags.contains(el.tagName.toLowerCase())) item.active(true);
+					if (states.tags.contains(el.tagName.toLowerCase())) item.activate();
 				}
 				while (el = el.parentNode);
 			}
@@ -348,7 +348,7 @@ var MooEditable = new Class({
 					if ($type(el) != 'element') break;
 					for (var prop in states.css)
 						if ($(el).getStyle(prop).contains(states.css[prop]))
-							item.active(true);
+							item.activate();
 				}
 				while (el = el.parentNode);
 			}
@@ -813,7 +813,7 @@ MooEditable.UI.Toolbar= new Class({
 
 	disable: function(except){
 		this.items.each(function(item){
-			(item.name == except) ? item.active(true) : item.active(false).disable();
+			(item.name == except) ? item.activate() : item.deactivate().disable();
 		});
 		return this;
 	},
@@ -907,9 +907,14 @@ MooEditable.UI.Button = new Class({
 		return this;
 	},
 	
-	active: function(state){
+	activate: function(){
 		if (this.disabled) return;
-		(state) ? this.el.addClass('onActive') : this.el.removeClass('onActive');
+		this.el.addClass('onActive');
+		return this;
+	},
+	
+	deactivate: function(){
+		this.el.removeClass('onActive');
 		return this;
 	}
 	
