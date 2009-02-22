@@ -178,9 +178,9 @@ var MooEditable = new Class({
 		// document.window for IE, for new Document code below
 		if (Browser.Engine.trident) this.doc.window = this.win;
 
-		// Mootoolize document and body
+		// Mootoolize document and Element
 		if (!this.doc.$family) new Document(this.doc);
-		$(this.doc.body);
+		$extend(this.win.Element.prototype, Element.Prototype);
 
 		// Bind keyboard shortcuts
 		this.doc.addEvents({
@@ -336,7 +336,8 @@ var MooEditable = new Class({
 
 				if (el) do {
 					if ($type(el) != 'element') break;
-					if (states.tags.contains(el.tagName.toLowerCase())) item.activate();
+					var tag = el.tagName.toLowerCase();
+					if (states.tags.contains(tag)) item.activate(tag);
 				}
 				while (el = el.parentNode);
 			}
@@ -346,9 +347,10 @@ var MooEditable = new Class({
 
 				if (el) do {
 					if ($type(el) != 'element') break;
-					for (var prop in states.css)
-						if ($(el).getStyle(prop).contains(states.css[prop]))
-							item.activate();
+					for (var prop in states.css){
+						var css = states.css[prop];
+						if (Element.getStyle(el, prop).contains(css)) item.activate(css, css[prop]);
+					}
 				}
 				while (el = el.parentNode);
 			}
