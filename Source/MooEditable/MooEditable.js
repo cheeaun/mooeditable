@@ -781,7 +781,7 @@ MooEditable.UI.Toolbar= new Class({
 		var act = MooEditable.Actions[action];
 		if (!act) return;
 		var type = act.type || 'button';
-		var item = new MooEditable.UI[type.capitalize()]($extend(act.options, {
+		var item = new MooEditable.UI[type.camelCase().capitalize()]($extend(act.options, {
 			name: action,
 			'class': action + '-item toolbar-' + type,
 			onAction: self.itemAction.bind(self)
