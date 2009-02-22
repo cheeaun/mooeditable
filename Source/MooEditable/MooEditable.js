@@ -137,6 +137,8 @@ var MooEditable = new Class({
 				if (self.mode == 'iframe') self.saveContent();
 			});
 		}
+		
+		this.fireEvent('render', this);
 	},
 
 	attach: function(){
@@ -211,6 +213,8 @@ var MooEditable = new Class({
 
 		this.selection = new MooEditable.Selection(this.win);
 		
+		this.fireEvent('attach', this);
+		
 		this.focus();
 		
 		return this;
@@ -221,6 +225,7 @@ var MooEditable = new Class({
 		this.textarea.setStyle('display', '').inject(this.container, 'before');
 		this.textarea.removeEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener'));
 		this.container.destroy();
+		this.fireEvent('detach', this);
 		return this;
 	},
 
@@ -260,6 +265,7 @@ var MooEditable = new Class({
 		// needs the delay to get focus working
 		(function(){ 
 			(this.mode == 'iframe' ? this.win : this.textarea).focus();
+			this.fireEvent('focus', this);
 		}).bind(this).delay(10);
 		return this;
 	},
@@ -295,6 +301,7 @@ var MooEditable = new Class({
 			this.textarea.setStyle('display', '');
 			this.iframe.setStyle('display', 'none');
 		}
+		this.fireEvent('toggleView', this);
 		this.focus();
 		return this;
 	},
