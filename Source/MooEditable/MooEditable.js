@@ -58,7 +58,7 @@ var MooEditable = new Class({
 		this.keys = {};
 		this.actions.each(function(action){
 			var act = MooEditable.Actions[action];
-			if (!act) return;
+			if (!act || !act.options) return;
 			var key = act.options.shortcut;
 			if (key) this.keys[key] = action;
 		}.bind(this));
@@ -605,8 +605,8 @@ MooEditable.Selection = new Class({
 MooEditable.Actions = new Hash({
 
 	bold: {
+		title: 'Bold',
 		options: {
-			title: 'Bold',
 			shortcut: 'b'
 		},
 		states: {
@@ -616,8 +616,8 @@ MooEditable.Actions = new Hash({
 	},
 	
 	italic: {
+		title: 'Italic',
 		options: {
-			title: 'Italic',
 			shortcut: 'i'
 		},
 		states: {
@@ -627,8 +627,8 @@ MooEditable.Actions = new Hash({
 	},
 	
 	underline: {
+		title: 'Underline',
 		options: {
-			title: 'Underline',
 			shortcut: 'u'
 		},
 		states: {
@@ -638,8 +638,8 @@ MooEditable.Actions = new Hash({
 	},
 	
 	strikethrough: {
+		title: 'Strikethrough',
 		options: {
-			title: 'Strikethrough',
 			shortcut: 's'
 		},
 		states: {
@@ -649,61 +649,51 @@ MooEditable.Actions = new Hash({
 	},
 	
 	insertunorderedlist: {
-		options: {
-			title: 'Unordered List'
-		},
+		title: 'Unordered List',
 		states: {
 			tags: ['ul']
 		}
 	},
 	
 	insertorderedlist: {
-		options: {
-			title: 'Ordered List'
-		},
+		title: 'Ordered List',
 		states: {
 			tags: ['ol']
 		}
 	},
 	
 	indent: {
-		options: {
-			title: 'Indent'
-		},
+		title: 'Indent',
 		states: {
 			tags: ['blockquote']
 		}
 	},
 	
 	outdent: {
-		options: {
-			title: 'Outdent'
-		}
+		title: 'Outdent'
 	},
 	
 	undo: {
+		title: 'Undo',
 		options: {
-			title: 'Undo',
 			shortcut: 'z'
 		}
 	},
 	
 	redo: {
+		title: 'Redo',
 		options: {
-			title: 'Redo',
 			shortcut: 'y'
 		}
 	},
 	
 	unlink: {
-		options: {
-			title: 'Remove Hyperlink'
-		}
+		title: 'Remove Hyperlink'
 	},
 
 	createlink: {
+		title: 'Add Hyperlink',
 		options: {
-			title: 'Add Hyperlink',
 			shortcut: 'l'
 		},
 		states: {
@@ -721,8 +711,8 @@ MooEditable.Actions = new Hash({
 	},
 
 	urlimage: {
+		title: 'Add Image',
 		options: {
-			title: 'Add Image',
 			shortcut: 'm'
 		},
 		command: function(){
@@ -733,9 +723,7 @@ MooEditable.Actions = new Hash({
 	},
 
 	toggleview: {
-		options: {
-			title: 'Toggle View'
-		},
+		title: 'Toggle View',
 		command: function(){
 			(this.mode == 'textarea') ? this.toolbar.enable() : this.toolbar.disable('toggleview');
 			this.toggleView();
@@ -760,7 +748,7 @@ MooEditable.UI.Toolbar= new Class({
 	initialize: function(options){
 		this.setOptions(options);
 		this.el = new Element('div', {'class': options['class']});
-		this.items = [];
+		this.items = {};
 		this.content = null;
 	},
 	
@@ -784,25 +772,20 @@ MooEditable.UI.Toolbar= new Class({
 		var act = MooEditable.Actions[action];
 		if (!act) return;
 		var type = act.type || 'button';
-		var item = new MooEditable.UI[type.camelCase().capitalize()]($extend(act.options, {
+		var options = act.options || {};
+		var item = new MooEditable.UI[type.camelCase().capitalize()]($extend(options, {
 			name: action,
 			'class': action + '-item toolbar-' + type + ' toolbar-item',
+			title: act.title,
 			onAction: self.itemAction.bind(self)
 		}));
-		this.items.push(item);
+		this.items[action] = item;
 		$(item).inject(this.el);
 		return item;
 	},
 	
 	getItem: function(action){
-		var item = null;
-		this.items.each(function(i){
-			if (i.name == action){
-				item = i;
-				return;
-			}
-		});
-		return item;
+		return this.items[action];
 	},
 	
 	addSeparator: function(){
@@ -814,14 +797,14 @@ MooEditable.UI.Toolbar= new Class({
 	},
 
 	disable: function(except){
-		this.items.each(function(item){
+		$each(this.items, function(item){
 			(item.name == except) ? item.activate() : item.deactivate().disable();
 		});
 		return this;
 	},
 
 	enable: function(){
-		this.items.each(function(item){
+		$each(this.items, function(item){
 			item.enable();
 		});
 		return this;
@@ -847,6 +830,7 @@ MooEditable.UI.Button = new Class({
 		/*
 		onAction: $empty,
 		*/
+		title: '',
 		name: '',
 		text: 'Button',
 		'class': '',
