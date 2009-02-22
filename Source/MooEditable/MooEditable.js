@@ -290,6 +290,7 @@ var MooEditable = new Class({
 	},
 
 	toggleView: function(){
+		this.fireEvent('beforeToggleView', this);
 		if (this.mode == 'textarea'){
 			this.mode = 'iframe';
 			this.iframe.setStyle('display', '');
