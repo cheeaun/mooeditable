@@ -372,7 +372,6 @@ var MooEditable = new Class({
 				source = source.replace(/\s*<br ?\/?>\s*<\/p>/gi, '</p>');
 			}
 
-
 			// Replace improper BRs (only if XHTML : true)
 			if (this.options.xhtml){
 				source = source.replace(/<br>/gi, "<br />");
