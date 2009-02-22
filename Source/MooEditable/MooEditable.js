@@ -330,10 +330,17 @@ var MooEditable = new Class({
 			var states = MooEditable.Actions[action]['states'];
 			if (!states) return;
 			
+			var el = this.selection.getNode();
+			if (!el) return;
+			
+			// custom checkState
+			if ($type(states) == 'function'){
+				states.attempt(el, item);
+				return;
+			}
+			
 			if (states.tags){
-				var el = this.selection.getNode();
-
-				if (el) do {
+				do {
 					if ($type(el) != 'element') break;
 					var tag = el.tagName.toLowerCase();
 					if (states.tags.contains(tag)) item.activate(tag);
@@ -342,9 +349,7 @@ var MooEditable = new Class({
 			}
 
 			if (states.css){
-				var el = this.selection.getNode();
-
-				if (el) do {
+				do {
 					if ($type(el) != 'element') break;
 					for (var prop in states.css){
 						var css = states.css[prop];
