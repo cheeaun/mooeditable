@@ -6,7 +6,6 @@
 	color: inherit;
 	background-color: #eee;
 	padding: 2px;
-	height: 1%;
 }
 
 .mooeditable-toolbar:after{
@@ -17,17 +16,32 @@
 	visibility: hidden;
 }
 
+.mooeditable-toolbar .toolbar-item,
+.mooeditable-toolbar .toolbar-separator{
+	display: inline-block;
+	vertical-align: middle;
+}
+
 .mooeditable-toolbar .toolbar-button{
 	cursor: pointer;
 	border: 0;
 	width: 24px;
 	height: 24px;
 	margin: 2px;
-	float: left;
 	color: inherit;
 	background: transparent url(images/mooeditable-toolbarbuttons-tango.png) no-repeat;
 	overflow: hidden;
 	text-indent: -999em;
+}
+* html .mooeditable-toolbar .toolbar-button{ /* IE6 */
+	text-indent: 0;
+	font-size: 0;
+	line-height: 99px;
+}
+*:first-child+html .mooeditable-toolbar .toolbar-button{ /* IE7 */
+	text-indent: 0;
+	font-size: 0;
+	line-height: 99px;
 }
 .mooeditable-toolbar .text{
 	text-indent: 0;
@@ -66,7 +80,6 @@
 	width: 1px;
 	height: 24px;
 	margin: 2px;
-	float: left;
 	text-indent: -999em;
 	color: inherit;
 	background-color: #fafafa;
