@@ -28,31 +28,31 @@ MooEditable.Actions.extend({
 		}
 	},
 	
-	justifyLeft:{
+	justifyleft:{
 		title: 'Align Left',
 		states: {
-			css:{'text-align': 'left'}
+			css: {'text-align': 'left'}
 		}
 	},
 	
-	justifyRight:{
+	justifyright:{
 		title: 'Align Right',
 		states: {
-			css:{'text-align': 'right'}
+			css: {'text-align': 'right'}
 		}
 	},
 	
-	justifyCenter:{
+	justifycenter:{
 		title: 'Align Center',
 		states: {
-			css:{'text-align': 'center'}
+			css: {'text-align': 'center'}
 		}
 	},
 	
-	justifyFull:{
+	justifyfull:{
 		title: 'Align Justify',
 		states: {
-			css:{'text-align': 'justify'}
+			css: {'text-align': 'justify'}
 		}
 	}
 
