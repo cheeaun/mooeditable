@@ -349,7 +349,7 @@ var MooEditable = new Class({
 					if ($type(el) != 'element') break;
 					for (var prop in states.css){
 						var css = states.css[prop];
-						if (Element.getStyle(el, prop).contains(css)) item.activate(css, css[prop]);
+						if (Element.getStyle(el, prop).contains(css)) item.activate(css);
 					}
 				}
 				while (el = el.parentNode);
