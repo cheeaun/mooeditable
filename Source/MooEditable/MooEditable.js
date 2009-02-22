@@ -57,8 +57,9 @@ var MooEditable = new Class({
 		this.actions = this.options.actions.clean().split(' ');
 		this.keys = {};
 		this.actions.each(function(action){
-			if (!MooEditable.Actions[action]) return;
-			var key = MooEditable.Actions[action]['shortcut'];
+			var act = MooEditable.Actions[action];
+			if (!act) return;
+			var key = act.options.shortcut;
 			if (key) this.keys[key] = action;
 		}.bind(this));
 		this.render();
@@ -231,8 +232,8 @@ var MooEditable = new Class({
 
 	keyListener: function(e){
 		if (!e.control || !this.keys[e.key]) return;
-		e.stop();
-		this.action(this.keys[e.key]);
+		var item = this.toolbar.getItem(this.keys[e.key]);
+		item.action(e);
 	},
 
 	enterListener: function(e){
