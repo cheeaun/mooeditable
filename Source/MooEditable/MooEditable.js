@@ -114,9 +114,11 @@ var MooEditable = new Class({
 		
 		this.toolbar = new MooEditable.UI.Toolbar({
 			'class': 'mooeditable-toolbar',
-			onItemAction: function(item){
+			onItemAction: function(){
+				var args = $splat(arguments);
+				var item = args[0];
 				self.focus();
-				self.action(item.name);
+				self.action(item.name, Array.slice(args, 1));
 				if (self.mode == 'iframe') self.checkStates();
 			}
 		});
@@ -270,9 +272,8 @@ var MooEditable = new Class({
 		return this;
 	},
 
-	action: function(command){
+	action: function(command, args){
 		var action = MooEditable.Actions[command];
-		var args = action.arguments || [];
 		if (action.command && $type(action.command) == 'function'){
 			action.command.attempt(args, this);
 		} else {
@@ -806,8 +807,8 @@ MooEditable.UI.Toolbar= new Class({
 		return new Element('span', {'class': 'toolbar-separator'}).inject(this.el);
 	},
 	
-	itemAction: function(item){
-		this.fireEvent('itemAction', item);
+	itemAction: function(){
+		this.fireEvent('itemAction', arguments);
 	},
 
 	disable: function(except){
