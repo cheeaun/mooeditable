@@ -730,8 +730,7 @@ MooEditable.Actions = new Hash({
 
 	toggleview: {
 		options: {
-			title: 'Toggle View',
-			shortcut: 't',
+			title: 'Toggle View'
 		},
 		command: function(){
 			(this.mode == 'textarea') ? this.toolbar.enable() : this.toolbar.disable('toggleview');
