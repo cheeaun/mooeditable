@@ -468,6 +468,7 @@ MooEditable.Selection = new Class({
 	},
 
 	getSelection: function(){
+		this.win.focus();
 		return (this.win.getSelection) ? this.win.getSelection() : this.win.document.selection;
 	},
 
