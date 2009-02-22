@@ -8,60 +8,52 @@ License:
 
 MooEditable.Actions.extend({
 
-	h1 :{
-		title: 'H1',
-		tags: ['h1'],
-		arguments: '<h1>',
-		command: 'formatBlock',
-		mode: 'text'
-	},
-	
-	h2 :{
-		title: 'H2',
-		tags: ['h2'],
-		arguments: '<h2>',
-		command: 'formatBlock',
-		mode: 'text'
-	},
-	
-	h3 :{
-		title: 'H3',
-		tags: ['h3'],
-		arguments: '<h3>',
-		command: 'formatBlock',
-		mode: 'text'
-	},
-	
-	paragraph :{
-		title: 'P',
-		tags: ['p'],
-		arguments: '<p>',
-		command: 'formatBlock',
-		mode: 'text'
+	formatBlock: {
+		title: 'Block Formatting',
+		type: 'menu-list',
+		options: {
+			list: [
+				{text: 'Paragraph', value: 'p'},
+				{text: 'Heading 1', value: 'h1'},
+				{text: 'Heading 2', value: 'h2'},
+				{text: 'Heading 3', value: 'h3'}
+			]
+		},
+		states: {
+			tags: ['p', 'h1', 'h2', 'h3']
+		},
+		command: function(name){
+			var argument = '<' + name + '>';
+			this.execute('formatBlock', false, argument);
+		}
 	},
 	
 	justifyLeft:{
-		title: 'left',
-		css:{'text-align': 'left'},
-		mode: 'text'
+		title: 'Align Left',
+		states: {
+			css:{'text-align': 'left'}
+		}
 	},
 	
 	justifyRight:{
-		title: 'right',
-		css:{'text-align': 'right'},
-		mode: 'text'
+		title: 'Align Right',
+		states: {
+			css:{'text-align': 'right'}
+		}
 	},
 	
 	justifyCenter:{
-		title: 'center',
-		css:{'text-align': 'center'},
-		mode: 'text'
+		title: 'Align Center',
+		states: {
+			css:{'text-align': 'center'}
+		}
 	},
 	
 	justifyFull:{
-		title: 'justify',
-		css:{'text-align': 'justify'},
-		mode: 'text'
+		title: 'Align Justify',
+		states: {
+			css:{'text-align': 'justify'}
+		}
 	}
 
 });
