@@ -18,6 +18,7 @@
 
 .mooeditable-toolbar .toolbar-item,
 .mooeditable-toolbar .toolbar-separator{
+	display: -moz-inline-box;
 	display: inline-block;
 	vertical-align: middle;
 }
