@@ -833,8 +833,8 @@ MooEditable.UI.Dialog = new Class({
 		return this.el;
 	},
 	
-	click: function(e){
-		this.fireEvent('click', [self, e.target]);
+	click: function(){
+		this.fireEvent('click', arguments);
 		return this;
 	},
 	
@@ -852,25 +852,20 @@ MooEditable.UI.Dialog = new Class({
 
 });
 
-MooEditable.UI.Dialog.Alert = new Class({
-
-	Extends: MooEditable.UI.Dialog,
-	
-	initialize: function(alertText){
-		var html = alertText + ' <button class="dialog-close-button">OK</button>';
-		this.parent(html, {
-			'class': 'alert-dialog',
-			onOpen: function(){
-				this.el.getElement('.dialog-close-button').focus();
-			},
-			onClick: function(e){
-				if (e.target.tagName.toLowerCase() != 'button') return;
-				if ($(e.target).hasClass('dialog-close-button')) this.close();
-			}
-		});
-	}
-
-});
+MooEditable.UI.AlertDialog = function(alertText){
+	var html = alertText + ' <button class="dialog-close-button">OK</button>';
+	return new MooEditable.UI.Dialog(html, {
+		'class': 'alert-dialog mooeditable-dialog',
+		onOpen: function(){
+			this.el.getElement('.dialog-close-button').focus();
+		},
+		onClick: function(e){
+			e.stop();
+			if (e.target.tagName.toLowerCase() != 'button') return;
+			if ($(e.target).hasClass('dialog-close-button')) this.close();
+		}
+	});
+};
 
 MooEditable.Dialogs = new Hash({
 
@@ -1068,9 +1063,12 @@ MooEditable.Actions = new Hash({
 		states: {
 			tags: ['a']
 		},
+		dialogs: {
+			alert: MooEditable.UI.AlertDialog('Please select the text you wish to hyperlink.')
+		},
 		command: function(){
-			if (this.selection.getSelection() == ''){
-				MooEditable.Dialogs.alert(this, 'createlink', 'Please select the text you wish to hyperlink.');
+			if (this.selection.isCollapsed()){
+				this.dialogs.createlink.alert.open();
 			} else {
 				MooEditable.Dialogs.prompt(this, 'createlink', 'Enter url', 'http://', function(url){
 					this.execute('createlink', false, url.trim());
