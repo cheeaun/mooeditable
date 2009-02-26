@@ -15,21 +15,21 @@ MooEditable.Group = new Class({
     },
         
     initialize : function(toolbarEl,options){
-		this.setOptions(options);
-		this.actions = this.options.actions.clean().split(' ');
+        this.setOptions(options);
+        this.actions = this.options.actions.clean().split(' ');
         // setup toolbar
         var self = this;
-		this.toolbar = new MooEditable.UI.Toolbar({
+        this.toolbar = new MooEditable.UI.Toolbar({
             'class': 'mooeditable-toolbar',
             onItemAction: function(){
                 var args = $splat(arguments);
-				var item = args[0];
-				if(self.activeEditor){
+                var item = args[0];
+                if(self.activeEditor){
                     self.activeEditor.focus();
                     self.activeEditor.action(item.name, Array.slice(args, 1));
                     if (self.activeEditor.mode == 'iframe') self.activeEditor.checkStates();
                 }
-			}
+            }
         });
         $(toolbarEl).adopt(this.toolbar.render(this.actions));
     },
@@ -38,7 +38,7 @@ MooEditable.Group = new Class({
         var editor = new MooEditable.Group.Item(el, this, $merge({toolbar:false},options));
         this.activeEditor = editor;
         return editor;
-	}
+    }
     
 });
 
@@ -58,6 +58,6 @@ MooEditable.Group.Item = new Class({
         this.doc.addEvent((Browser.Engine.webkit) ? 'click' : 'focus',function(event){
             this.group.activeEditor = this;
         }.bindWithEvent(this));
-	}
+    }
 
 });
