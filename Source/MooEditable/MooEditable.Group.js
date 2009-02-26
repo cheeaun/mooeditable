@@ -13,9 +13,7 @@ MooEditable.Group = new Class({
     options : {
         'actions' : 'bold italic underline strikethrough | insertunorderedlist insertorderedlist indent outdent | undo redo | createlink unlink | urlimage | toggleview'
     },
-    
-    elements : [],
-    
+        
     initialize : function(toolbarEl,options){
 		this.setOptions(options);
 		this.actions = this.options.actions.clean().split(' ');
@@ -38,7 +36,6 @@ MooEditable.Group = new Class({
     
     add : function(el,options){
 		var editor = new MooEditable.Group.Item(el, this, $merge({toolbar:false},options));
-		this.elements.push(el);
         this.activeEditor = editor;
 		return editor;
 	}
