@@ -45,6 +45,7 @@ MooEditable.Actions.extend({
 	justifycenter:{
 		title: 'Align Center',
 		states: {
+			tags: ['center'],
 			css: {'text-align': 'center'}
 		}
 	},
