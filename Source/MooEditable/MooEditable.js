@@ -159,9 +159,23 @@ var MooEditable = new Class({
 		
 		this.iframe.setStyle('display', '').inject(this.textarea, 'before');
 		
-		$each(this.dialogs, function(action){
+		$each(this.dialogs, function(action, name){
 			$each(action, function(dialog){
 				$(dialog).inject(self.iframe, 'before');
+				var range;
+				var stop = function(e){ e.stop(); };
+				dialog.addEvents({
+					open: function(){
+						range = self.selection.getRange();
+						self.doc.addEvent('mousedown', stop);
+						self.toolbar.disable(name);
+					},
+					close: function(){
+						self.toolbar.enable();
+						self.doc.removeEvent('mousedown', stop);
+						self.selection.setRange(range);
+					}
+				});
 			});
 		});
 
@@ -853,118 +867,54 @@ MooEditable.UI.Dialog = new Class({
 });
 
 MooEditable.UI.AlertDialog = function(alertText){
-	var html = alertText + ' <button class="dialog-close-button">OK</button>';
-	return new MooEditable.UI.Dialog(html, {
-		'class': 'alert-dialog mooeditable-dialog',
-		onOpen: function(){
-			this.el.getElement('.dialog-close-button').focus();
+	var html = '<div>' + alertText + ' <button class="dialog-ok-button">OK</button></div>';
+	return dialog = new MooEditable.UI.Dialog(html, {
+		'class': 'alert-dialog mooeditable-dialog'
+	}).addEvents({
+		open: function(){
+			var button = this.el.getElement('.dialog-ok-button');
+			(function(){
+				button.focus();
+			}).delay(10);
 		},
-		onClick: function(e){
+		click: function(e){
 			e.stop();
 			if (e.target.tagName.toLowerCase() != 'button') return;
-			if ($(e.target).hasClass('dialog-close-button')) this.close();
+			if ($(e.target).hasClass('dialog-ok-button')) this.close();
 		}
 	});
 };
 
-MooEditable.Dialogs = new Hash({
-
-	alert: function(me, el, str){
-		// Adds the alert bar
-		if (!me.alertbar){
-			me.alertbar = new Element('div', {'class': 'alertbar dialog-toolbar'});
-			me.alertbar.inject(me.iframe, 'before');
-
-			me.alertbar.strLabel = new Element('span', {'class': 'alertbar-label'});
-
-			me.alertbar.okButton = new Element('button', {
-				'class': 'alertbar-ok input-button',
-				text: 'OK',
-				events: {
-					click: function(e){
-						e.stop();
-						me.alertbar.setStyle('display','none');
-						me.toolbar.enable();
-						me.doc.removeEvents('mousedown');
-					}
-				}
-			});
-
-			new Element('div').adopt(me.alertbar.strLabel, me.alertbar.okButton).inject(me.alertbar);
-		} else if (me.alertbar.getStyle('display') == 'none'){
-			me.alertbar.setStyle('display', '');
-		}
-
-		me.alertbar.strLabel.set('text', str);
-		me.alertbar.okButton.focus();
-
-		me.doc.addEvent('mousedown', function(e){ e.stop(); });
-		me.toolbar.disable(el);
-	},
-
-	prompt: function(me, el, q, a, fn){
-		me.range = me.selection.getRange(); // store the range
-
-		// Adds the prompt bar
-		if (!me.promptbar){
-			me.promptbar = new Element('div', {'class': 'promptbar dialog-toolbar'});
-			me.promptbar.inject(me.iframe, 'before');
-
-			me.promptbar.qLabel = new Element('label', {
-				'class': 'promptbar-label',
-				'for': 'promptbar-' + me.container.uid
-			});
-
-			me.promptbar.aInput = new Element('input', {
-				'class': 'promptbar-input input-text',
-				id: 'promptbar-' + me.container.uid,
-				type: 'text'
-			});
-
-			me.promptbar.okButton = new Element('button', {
-				'class': 'promptbar-ok input-button',
-				text: 'OK'
-			});
-
-			me.promptbar.cancelButton = new Element('button', {
-				'class': 'promptbar-cancel input-button',
-				text: 'Cancel',
-				events: {
-					click: function(e){
-						e.stop();
-						me.promptbar.setStyle('display','none');
-						me.toolbar.enable();
-						me.doc.removeEvents('mousedown');
-					}
-				}
-			});
-
-			new Element('div').adopt(me.promptbar.qLabel, me.promptbar.aInput, me.promptbar.okButton, me.promptbar.cancelButton).inject(me.promptbar);
-		} else if (me.promptbar.getStyle('display') == 'none'){
-			me.promptbar.setStyle('display', '');
-		}
-
-		// Update the fn for the OK button event (memory leak?)
-		me.promptbar.okButton.addEvent('click', function(e){
+MooEditable.UI.PromptDialog = function(questionText, answerText){
+	var html = '<div><label class="mooeditable-dialog-label">' + questionText
+		+ ' <input type="text" class="text mooeditable-dialog-input" value="' + answerText + '">'
+		+ '</label> <button class="dialog-ok-button">OK</button>'
+		+ '<button class="dialog-cancel-button">Cancel</button></div>';
+	return new MooEditable.UI.Dialog(html).addEvents({
+		open: function(){
+			var input = this.el.getElement('.mooeditable-dialog-input');
+			(function(){
+				input.focus()
+				input.select();
+			}).delay(10);
+		},
+		click: function(e){
 			e.stop();
-			me.selection.setRange(me.range);
-			fn(me.promptbar.aInput.value);
-			me.promptbar.setStyle('display','none');
-			me.toolbar.enable();
-			me.doc.removeEvents('mousedown');
-			this.removeEvents('click');
-		});
-
-		// Set the label and input
-		me.promptbar.qLabel.set('text', q);
-		me.promptbar.aInput.set('value', a);
-		me.promptbar.aInput.focus();
-
-		// Disables iframe and toolbar
-		me.doc.addEvent('mousedown', function(e){ e.stop(); });
-		me.toolbar.disable(el);
-	}
-});
+			if (e.target.tagName.toLowerCase() != 'button') return;
+			var button = $(e.target);
+			var input = this.el.getElement('.mooeditable-dialog-input');
+			if (button.hasClass('dialog-cancel-button')){
+				input.set('value', answerText);
+				this.close();
+			} else if (button.hasClass('dialog-ok-button')){
+				var answer = input.get('value');
+				input.set('value', answerText);
+				this.close();
+				this.fireEvent('clickOK', answer);
+			}
+		},
+	});
+};
 
 MooEditable.Actions = new Hash({
 
@@ -1064,15 +1014,16 @@ MooEditable.Actions = new Hash({
 			tags: ['a']
 		},
 		dialogs: {
-			alert: MooEditable.UI.AlertDialog('Please select the text you wish to hyperlink.')
+			alert: MooEditable.UI.AlertDialog('Please select the text you wish to hyperlink.'),
+			prompt: MooEditable.UI.PromptDialog('Enter URL', 'http://')
 		},
 		command: function(){
 			if (this.selection.isCollapsed()){
 				this.dialogs.createlink.alert.open();
 			} else {
-				MooEditable.Dialogs.prompt(this, 'createlink', 'Enter url', 'http://', function(url){
+				this.dialogs.createlink.prompt.addEvent('clickOK', function(url){
 					this.execute('createlink', false, url.trim());
-				}.bind(this));
+				}.bind(this)).open();
 			}
 		}
 	},
@@ -1082,10 +1033,13 @@ MooEditable.Actions = new Hash({
 		options: {
 			shortcut: 'm'
 		},
+		dialogs: {
+			prompt: MooEditable.UI.PromptDialog('Enter image URL', 'http://')
+		},
 		command: function(){
-			MooEditable.Dialogs.prompt(this, 'urlimage', 'Enter image url', 'http://', function(url){
+			this.dialogs.urlimage.prompt.addEvent('clickOK', function(url){
 				this.execute("insertimage", false, url.trim());
-			}.bind(this));
+			}.bind(this)).open();
 		}
 	},
 
