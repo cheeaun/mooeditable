@@ -179,7 +179,8 @@ var MooEditable = new Class({
 							mousedown: stop,
 							keydown: stop
 						});
-						self.selection.setRange(range);
+						self.focus();
+						if (range) self.selection.setRange(range);
 					}
 				});
 			});
@@ -859,8 +860,9 @@ MooEditable.UI.Dialog = new Class({
 		return this;
 	},
 	
-	open: function(){
+	open: function(fn){
 		this.el.setStyle('display', '');
+		fn.attempt(null, this);
 		this.fireEvent('open', this);
 		return this;
 	},
@@ -1024,7 +1026,9 @@ MooEditable.Actions = new Hash({
 		},
 		dialogs: {
 			alert: MooEditable.UI.AlertDialog('Please select the text you wish to hyperlink.'),
-			prompt: MooEditable.UI.PromptDialog('Enter URL', 'http://')
+			prompt: MooEditable.UI.PromptDialog('Enter URL', 'http://', function(url){
+				this.execute('createlink', false, url.trim());
+			})
 		},
 		command: function(){
 			if (this.selection.isCollapsed()){
@@ -1032,14 +1036,9 @@ MooEditable.Actions = new Hash({
 			} else {
 				var text = this.selection.getText();
 				var url = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i;
-				this.dialogs.createlink.prompt.addEvents({
-					open: function(){
-						if (url.test(text)) this.el.getElement('.mooeditable-dialog-input').set('value', text);
-					},
-					clickOK: function(url){
-						this.execute('createlink', false, url.trim());
-					}
-				}).open();
+				this.dialogs.createlink.prompt.open(function(){
+					if (url.test(text)) this.el.getElement('.mooeditable-dialog-input').set('value', text);
+				});
 			}
 		}
 	},
