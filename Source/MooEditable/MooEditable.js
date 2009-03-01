@@ -829,7 +829,8 @@ MooEditable.UI.Dialog = new Class({
 		onOpen: $empty,
 		onClose: $empty,
 		*/
-		'class': ''
+		'class': '',
+		contentClass: 'dialog-content'
 	},
 
 	initialize: function(html, options){
@@ -839,7 +840,7 @@ MooEditable.UI.Dialog = new Class({
 		var self = this;
 		this.el = new Element('div', {
 			'class': self.options['class'],
-			html: html,
+			html: '<div class="' + self.options.contentClass + '">' + html + '</div>',
 			styles: {
 				'display': 'none'
 			},
@@ -873,7 +874,7 @@ MooEditable.UI.Dialog = new Class({
 });
 
 MooEditable.UI.AlertDialog = function(alertText){
-	var html = '<div>' + alertText + ' <button class="dialog-ok-button">OK</button></div>';
+	var html = alertText + ' <button class="dialog-ok-button">OK</button>';
 	return dialog = new MooEditable.UI.Dialog(html, {
 		'class': 'alert-dialog mooeditable-dialog'
 	}).addEvents({
@@ -892,10 +893,10 @@ MooEditable.UI.AlertDialog = function(alertText){
 };
 
 MooEditable.UI.PromptDialog = function(questionText, answerText){
-	var html = '<div><label class="mooeditable-dialog-label">' + questionText
+	var html = '<label class="mooeditable-dialog-label">' + questionText
 		+ ' <input type="text" class="text mooeditable-dialog-input" value="' + answerText + '">'
 		+ '</label> <button class="dialog-ok-button">OK</button>'
-		+ '<button class="dialog-cancel-button">Cancel</button></div>';
+		+ '<button class="dialog-cancel-button">Cancel</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'prompt-dialog mooeditable-dialog'
 	}).addEvents({
