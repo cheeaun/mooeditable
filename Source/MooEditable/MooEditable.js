@@ -167,12 +167,18 @@ var MooEditable = new Class({
 				dialog.addEvents({
 					open: function(){
 						range = self.selection.getRange();
-						self.doc.addEvent('mousedown', stop);
+						self.doc.addEvents({
+							mousedown: stop,
+							keydown: stop
+						});
 						self.toolbar.disable(name);
 					},
 					close: function(){
 						self.toolbar.enable();
-						self.doc.removeEvent('mousedown', stop);
+						self.doc.removeEvents({
+							mousedown: stop,
+							keydown: stop
+						});
 						self.selection.setRange(range);
 					}
 				});
@@ -890,7 +896,9 @@ MooEditable.UI.PromptDialog = function(questionText, answerText){
 		+ ' <input type="text" class="text mooeditable-dialog-input" value="' + answerText + '">'
 		+ '</label> <button class="dialog-ok-button">OK</button>'
 		+ '<button class="dialog-cancel-button">Cancel</button></div>';
-	return new MooEditable.UI.Dialog(html).addEvents({
+	return new MooEditable.UI.Dialog(html, {
+		'class': 'prompt-dialog mooeditable-dialog'
+	}).addEvents({
 		open: function(){
 			var input = this.el.getElement('.mooeditable-dialog-input');
 			(function(){

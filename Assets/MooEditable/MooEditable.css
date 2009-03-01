@@ -109,7 +109,7 @@
 	width: 100%;
 }
 
-.dialog-toolbar{
+.mooeditable-dialog{
 	color: inherit;
 	background-color: #ddd;
 	position: absolute;
@@ -120,14 +120,14 @@
 	width: 100%;
 }
 
-.dialog-toolbar div{
+.mooeditable-dialog div{
 	padding: 4px 10px;
 }
 
-.dialog-toolbar input{
+.mooeditable-dialog input{
 	margin: 0 8px;
 }
 
-.dialog-toolbar .input-text{
+.mooeditable-dialog input.text{
 	width: 300px;
 }
