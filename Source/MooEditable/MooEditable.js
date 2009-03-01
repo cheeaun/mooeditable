@@ -862,7 +862,7 @@ MooEditable.UI.Dialog = new Class({
 	
 	open: function(fn){
 		this.el.setStyle('display', '');
-		fn.attempt(null, this);
+		if (fn) fn.attempt(null, this);
 		this.fireEvent('open', this);
 		return this;
 	},
