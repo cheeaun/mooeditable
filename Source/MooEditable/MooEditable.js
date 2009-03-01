@@ -1030,9 +1030,16 @@ MooEditable.Actions = new Hash({
 			if (this.selection.isCollapsed()){
 				this.dialogs.createlink.alert.open();
 			} else {
-				this.dialogs.createlink.prompt.addEvent('clickOK', function(url){
-					this.execute('createlink', false, url.trim());
-				}.bind(this)).open();
+				var text = this.selection.getText();
+				var url = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i;
+				this.dialogs.createlink.prompt.addEvents({
+					open: function(){
+						if (url.test(text)) this.el.getElement('.mooeditable-dialog-input').set('value', text);
+					},
+					clickOK: function(url){
+						this.execute('createlink', false, url.trim());
+					}
+				}).open();
 			}
 		}
 	},
