@@ -65,6 +65,11 @@ var MooEditable = new Class({
 				if (key) this.keys[key] = action;
 			}
 			if(act.dialogs) this.dialogs[action] = act.dialogs;
+            if(act.events){
+                $each(act.events,function(fn,event){
+                    this.addEvent(event,fn.bindWithEvent(this));
+                },this);
+            }
 		}.bind(this));
 		this.render();
 	},
@@ -659,6 +664,11 @@ MooEditable.UI.Toolbar= new Class({
 		*/
 		'class': ''
 	},
+    
+    hello: function(){
+        console.log(this.options);
+        alert('hello');
+    },
 
 	initialize: function(options){
 		this.setOptions(options);
@@ -1030,6 +1040,9 @@ MooEditable.Actions = new Hash({
 				this.execute('createlink', false, url.trim());
 			})
 		},
+        events: {
+            "render": function(){ alert('render'); }
+        },
 		command: function(){
 			if (this.selection.isCollapsed()){
 				this.dialogs.createlink.alert.open();
