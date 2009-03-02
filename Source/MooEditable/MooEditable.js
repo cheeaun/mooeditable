@@ -665,11 +665,6 @@ MooEditable.UI.Toolbar= new Class({
 		'class': ''
 	},
     
-    hello: function(){
-        console.log(this.options);
-        alert('hello');
-    },
-
 	initialize: function(options){
 		this.setOptions(options);
 		this.el = new Element('div', {'class': options['class']});
