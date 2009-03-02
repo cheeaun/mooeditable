@@ -67,7 +67,7 @@ var MooEditable = new Class({
 			if(act.dialogs) this.dialogs[action] = act.dialogs;
             if(act.events){
                 $each(act.events,function(fn,event){
-                    this.addEvent(event,fn.bindWithEvent(this));
+                    this.addEvent(event,fn);
                 },this);
             }
 		}.bind(this));
