@@ -65,11 +65,11 @@ var MooEditable = new Class({
 				if (key) this.keys[key] = action;
 			}
 			if(act.dialogs) this.dialogs[action] = act.dialogs;
-            if(act.events){
-                $each(act.events,function(fn,event){
-                    this.addEvent(event,fn);
-                },this);
-            }
+			if(act.events){
+				$each(act.events, function(fn, event){
+					this.addEvent(event, fn);
+				}, this);
+			}
 		}.bind(this));
 		this.render();
 	},
