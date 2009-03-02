@@ -64,8 +64,8 @@ var MooEditable = new Class({
 				var key = act.options.shortcut;
 				if (key) this.keys[key] = action;
 			}
-			if(act.dialogs) this.dialogs[action] = act.dialogs;
-			if(act.events){
+			if (act.dialogs) this.dialogs[action] = act.dialogs;
+			if (act.events){
 				$each(act.events, function(fn, event){
 					this.addEvent(event, fn);
 				}, this);
