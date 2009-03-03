@@ -1035,9 +1035,6 @@ MooEditable.Actions = new Hash({
 				this.execute('createlink', false, url.trim());
 			})
 		},
-        events: {
-            "render": function(){ alert('render'); }
-        },
 		command: function(){
 			if (this.selection.isCollapsed()){
 				this.dialogs.createlink.alert.open();
