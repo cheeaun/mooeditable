@@ -782,6 +782,7 @@ MooEditable.UI.Button = new Class({
 			}
 		});
 		
+		this.active = false;
 		this.disabled = false;
 
 		// add hover effect for IE
@@ -800,6 +801,7 @@ MooEditable.UI.Button = new Class({
 	},
 	
 	enable: function(){
+		if (this.active) this.el.removeClass('onActive');
 		if (!this.disabled) return;
 		this.disabled = false;
 		this.el.removeClass('disabled').set('opacity', 1);
@@ -815,11 +817,13 @@ MooEditable.UI.Button = new Class({
 	
 	activate: function(){
 		if (this.disabled) return;
+		this.active = true;
 		this.el.addClass('onActive');
 		return this;
 	},
 	
 	deactivate: function(){
+		this.active = false;
 		this.el.removeClass('onActive');
 		return this;
 	}
