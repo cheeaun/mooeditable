@@ -81,44 +81,26 @@ var MooEditable = new Class({
 	render: function(){
 		var self = this;
 		
-		// Styles and dimensions
-		var textareaStyles = this.textarea.getStyles('border-width', 'border-color', 'border-style', 'margin', 'padding');
-		var borderWidths = textareaStyles['border-width'].split(' ').map(function(b){ return (b == 'auto') ? 0 : b.toInt(); });
-		var paddings = textareaStyles['padding'].split(' ').map(function(p){ return (p == 'auto') ? 0 : p.toInt(); })
-		var dimensions = {
-			width: this.textarea.getSize().x - borderWidths[1] - borderWidths[3],
-			height: this.textarea.getSize().y - borderWidths[0] - borderWidths[2]
-		};
+		// Dimensions
+		var dimensions = this.textarea.getSize();
 		
 		// Build the container
 		this.container = new Element('div', {
 			id: (this.textarea.id) ? this.textarea.id + '-container' : null,
 			'class': 'mooeditable-container',
 			styles: {
-				width: dimensions.width,
-				margin: textareaStyles.margin,
-				'border-width': textareaStyles['border-width'],
-				'border-color': textareaStyles['border-color'],
-				'border-style': textareaStyles['border-style']
+				width: dimensions.x
 			}
 		});
 
 		// Override all textarea styles
-		this.textarea.setStyles({
-			margin: 0,
-			border: 0,
-			padding: 0,
-			width: '100%',
-			height: dimensions.height,
-			resize: 'none', // disable resizable textareas in Safari
-			outline: 'none' // disable focus ring in Safari
-		});
+		this.textarea.addClass('mooeditable-textarea').setStyle('height', dimensions.y);
 		
 		// Build the iframe
 		this.iframe = new IFrame({
 			'class': 'mooeditable-iframe',
 			styles: {
-				height: dimensions.height
+				height: dimensions.y
 			}
 		});
 		
@@ -257,7 +239,7 @@ var MooEditable = new Class({
 	
 	detach: function(){
 		this.saveContent();
-		this.textarea.setStyle('display', '').inject(this.container, 'before');
+		this.textarea.setStyle('display', '').removeClass('mooeditable-textarea').inject(this.container, 'before');
 		this.textarea.removeEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener'));
 		this.container.destroy();
 		this.fireEvent('detach', this);

@@ -1,5 +1,6 @@
 .mooeditable-container{
 	position: relative;
+	border: 2px solid #ddd;
 }
 
 .mooeditable-toolbar{
@@ -107,6 +108,15 @@
 	padding: 0;
 	border: 0;
 	width: 100%;
+}
+
+.mooeditable-textarea{
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	width: 100% !important;
+	resize: 'none' !important; /* disable resizable textareas in Safari */
+	outline: 0 !important; /* disable focus ring in Safari */
 }
 
 .mooeditable-dialog{
