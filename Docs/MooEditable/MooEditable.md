@@ -27,14 +27,10 @@ MooEditable Method: constructor {#MooEditable:constructor}
 * paragraphise  - (*boolean*: defaults to true) Whether or not to create `<p>` tags when pressing 'Enter'.
 * xhtml         - (*boolean*: defaults to true) Whether or not to produce XHTML-valid output (empty/void elements with trailing slash).
 * semantics     - (*boolean*: defaults to true) Whether or not to produce semantic markup (strong/em instead of b/i).
-* buttons       - (*string*: defaults to a string shown below) A string indicating the buttons and their arrangement on the toolbar.
+* actions       - (*string*: defaults to a string shown below) A string indicating the toolbar items and their arrangement (space-separated).
 
-		'bold, italic, underline, strikethrough, |, insertunorderedlist, insertorderedlist, indent, outdent, |, undo, redo, |, createlink, unlink, |, urlimage, |, toggleview'
+		'bold italic underline strikethrough | insertunorderedlist insertorderedlist indent outdent | undo redo | createlink unlink, | urlimage | toggleview'
 		
-* mode          - (*string*: defaults to 'icons') Can be 'icons', 'text' and 'icons-text'.
-	* 'icons'      - Iconic buttons.
-	* 'text'       - Textual buttons.
-	* 'icons-text' - Icon and text on the buttons.
 * handleSubmit  - (*boolean*: defaults to true) Whether or not to attach a submit listener to the textarea's parent form, to save content to textarea before submit.
 * handleLabel   - (*boolean*: defaults to true) Whether or not to attach a click listener to the textarea's related label tag, to focus on the iframe instead.
 * baseCSS       - (*string*: defaults to a string shown below) A string indicating the base CSS code.
