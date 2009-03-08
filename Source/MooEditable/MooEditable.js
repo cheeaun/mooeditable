@@ -138,6 +138,9 @@ var MooEditable = new Class({
 
 		// Assign view mode
 		this.mode = 'iframe';
+		
+		// Editor iframe state
+		this.editorDisabled = false;
 
 		// Put textarea inside container
 		this.container.wraps(this.textarea);
@@ -150,22 +153,15 @@ var MooEditable = new Class({
 			$each(action, function(dialog){
 				$(dialog).inject(self.iframe, 'before');
 				var range;
-				var stop = function(e){ e.stop(); };
 				dialog.addEvents({
 					open: function(){
 						range = self.selection.getRange();
-						self.doc.addEvents({
-							mousedown: stop,
-							keydown: stop
-						});
+						self.editorDisabled = true;
 						self.toolbar.disable(name);
 					},
 					close: function(){
 						self.toolbar.enable();
-						self.doc.removeEvents({
-							mousedown: stop,
-							keydown: stop
-						});
+						self.editorDisabled = false;
 						self.focus();
 						if (range) self.selection.setRange(range);
 					}
@@ -199,8 +195,14 @@ var MooEditable = new Class({
 
 		// Bind keyboard shortcuts
 		this.doc.addEvents({
-			keypress: this.keyListener.bind(this),
-			keydown: this.enterListener.bind(this)
+			mouseup: this.handleMouseUp.bind(this),
+			mousedown: this.handleMouseDown.bind(this),
+			contextmenu: this.handleContextMenu.bind(this),
+			click: this.handleClick.bind(this),
+			dbllick: this.handleDoubleClick.bind(this),
+			keypress: this.handleKeyPress.bind(this),
+			keyup: this.handleKeyUp.bind(this),
+			keydown: this.handleKeyDown.bind(this)
 		});
 		this.textarea.addEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener', this.keyListener.bind(this)));
 
@@ -213,19 +215,9 @@ var MooEditable = new Class({
 			this.doc.addEvent('focus', styleCSS);
 		}
 
-		// make images selectable and draggable in Safari
-		if (Browser.Engine.webkit) this.doc.addEvent('click', function(e){
-			var el = e.target;
-			if (el.get('tag') == 'img') self.selectNode(el);
-		});
-
 		if (this.options.toolbar){
 			$(this.toolbar).inject(this.container, 'top');
 			this.toolbar.render(this.actions);
-			this.doc.addEvents({
-				keyup: this.checkStates.bind(this),
-				mouseup: this.checkStates.bind(this)
-			});
 		}
 
 		this.selection = new MooEditable.Selection(this.win);
@@ -245,37 +237,127 @@ var MooEditable = new Class({
 		this.fireEvent('detach', this);
 		return this;
 	},
-
+	
+	handleMouseUp: function(e){
+		this.fireEvent('beforeEditorMouseUp', e);
+		
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		if (this.options.toolbar) this.checkStates();
+		
+		this.fireEvent('editorMouseUp', e);
+	},
+	
+	handleMouseDown: function(e){
+		this.fireEvent('beforeEditorMouseDown', e);
+		
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.fireEvent('editorMouseDown', e);
+	},
+	
+	handleContextMenu: function(e){
+		this.fireEvent('beforeEditorContextMenu', e);
+		
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.fireEvent('editorContextMenu', e);
+	},
+	
+	handleClick: function(e){
+		this.fireEvent('beforeEditorClick', e);
+		
+		// make images selectable and draggable in Safari
+		if (Browser.Engine.webkit){
+			var el = e.target;
+			if (el.get('tag') == 'img'){
+				this.selection.selectNode(el);
+			}
+		}
+		
+		this.fireEvent('editorClick', e);
+	},
+	
+	handleDoubleClick: function(e){
+		this.fireEvent('beforeEditorDoubleClick', e);
+		this.fireEvent('editorDoubleClick', e);
+	},
+	
+	handleKeyPress: function(e){
+		this.fireEvent('beforeEditorKeyPress', e);
+		
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.keyListener(e);
+		
+		this.fireEvent('editorKeyPress', e);
+	},
+	
+	handleKeyUp: function(e){
+		this.fireEvent('beforeEditorKeyUp', e);
+		
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		if (this.options.toolbar) this.checkStates();
+		
+		this.fireEvent('editorKeyUp', e);
+	},
+	
+	handleKeyDown: function(e){
+		this.fireEvent('beforeEditorKeyDown', e);
+		
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		if (e.key == 'enter'){
+			if (this.options.paragraphise && !e.shift){
+				if (Browser.Engine.gecko || Browser.Engine.webkit){
+					var node = this.selection.getNode();
+					var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
+					var isBlock = node.getParents().include(node).some(function(el){
+						return el.nodeName.test(blockEls);
+					});
+					if (!isBlock) this.execute('insertparagraph');
+				}
+			} else {
+				if (Browser.Engine.trident){
+					var r = this.selection.getRange();
+					var node = this.selection.getNode();
+					if (node.get('tag') != 'li'){
+						if (r){
+							this.selection.insertContent('<br>');
+							this.selection.collapse(false);
+						}
+					}
+					e.stop();
+				}
+			}
+		}
+		
+		this.fireEvent('editorKeyDown', e);
+	},
+	
 	keyListener: function(e){
 		if (!e.control || !this.keys[e.key]) return;
 		var item = this.toolbar.getItem(this.keys[e.key]);
 		item.action(e);
-	},
-
-	enterListener: function(e){
-		if (e.key != 'enter') return;
-		if (this.options.paragraphise && !e.shift){
-			if (Browser.Engine.gecko || Browser.Engine.webkit){
-				var node = this.selection.getNode();
-				var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
-				var isBlock = node.getParents().include(node).some(function(el){
-					return el.nodeName.test(blockEls);
-				});
-				if (!isBlock) this.execute('insertparagraph');
-			}
-		} else {
-			if (Browser.Engine.trident){
-				var r = this.selection.getRange();
-				var node = this.selection.getNode();
-				if (node.get('tag') != 'li'){
-					if (r){
-						this.selection.insertContent('<br>');
-						this.selection.collapse(false);
-					}
-				}
-				e.stop();
-			}
-		}
 	},
 
 	focus: function(){
