@@ -115,7 +115,7 @@
 	padding: 0 !important;
 	border: 0 !important;
 	width: 100% !important;
-	resize: 'none' !important; /* disable resizable textareas in Safari */
+	resize: none !important; /* disable resizable textareas in Safari */
 	outline: 0 !important; /* disable focus ring in Safari */
 }
 
