@@ -877,14 +877,20 @@ MooEditable.UI.Button = new Class({
 		if (this.active) this.el.removeClass('onActive');
 		if (!this.disabled) return;
 		this.disabled = false;
-		this.el.removeClass('disabled').set('opacity', 1);
+		this.el.removeClass('disabled').set({
+			disabled: false,
+			opacity: 1
+		});
 		return this;
 	},
 	
 	disable: function(){
 		if (this.disabled) return;
 		this.disabled = true;
-		this.el.addClass('disabled').set('opacity', 0.4);
+		this.el.addClass('disabled').set({
+			disabled: true,
+			opacity: 0.4
+		});
 		return this;
 	},
 	
