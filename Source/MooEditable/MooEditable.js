@@ -124,7 +124,7 @@ var MooEditable = new Class({
 		// Update the event for textarea's corresponding labels
 		if (this.options.handleLabel && this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
 			if (self.mode != 'iframe') return;
-			e.stop();
+			e.preventDefault();
 			self.focus();
 		});
 
@@ -355,7 +355,7 @@ var MooEditable = new Class({
 							this.selection.collapse(false);
 						}
 					}
-					e.stop();
+					e.preventDefault();
 				}
 			}
 		}
@@ -851,7 +851,7 @@ MooEditable.UI.Button = new Class({
 			text: text,
 			events: {
 				click: self.action.bind(self),
-				mousedown: function(e){ e.stop(); }
+				mousedown: function(e){ e.preventDefault(); }
 			}
 		});
 		
@@ -868,7 +868,7 @@ MooEditable.UI.Button = new Class({
 	},
 	
 	action: function(e){
-		e.stop();
+		e.preventDefault();
 		if (this.disabled) return;
 		this.fireEvent('action', this);
 	},
@@ -974,7 +974,7 @@ MooEditable.UI.AlertDialog = function(alertText){
 			}).delay(10);
 		},
 		click: function(e){
-			e.stop();
+			e.preventDefault();
 			if (e.target.tagName.toLowerCase() != 'button') return;
 			if ($(e.target).hasClass('dialog-ok-button')) this.close();
 		}
@@ -997,7 +997,7 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 			}).delay(10);
 		},
 		click: function(e){
-			e.stop();
+			e.preventDefault();
 			if (e.target.tagName.toLowerCase() != 'button') return;
 			var button = $(e.target);
 			var input = this.el.getElement('.mooeditable-dialog-input');
