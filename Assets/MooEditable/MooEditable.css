@@ -134,6 +134,10 @@
 	padding: 4px 10px;
 }
 
+.mooeditable-dialog .dialog-content *{
+	vertical-align: middle;
+}
+
 .mooeditable-dialog input{
 	margin: 0 8px;
 }
