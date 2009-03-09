@@ -70,14 +70,20 @@ MooEditable.UI.MenuList = new Class({
 	enable: function(){
 		if (!this.disabled) return;
 		this.disabled = false;
-		this.el.set('disabled', false).removeClass('disabled').set('opacity', 1);
+		this.el.set('disabled', false).removeClass('disabled').set({
+			disabled: false,
+			opacity: 1
+		});
 		return this;
 	},
 	
 	disable: function(){
 		if (this.disabled) return;
 		this.disabled = true;
-		this.el.set('disabled', true).addClass('disabled').set('opacity', 0.4);
+		this.el.set('disabled', true).addClass('disabled').set({
+			disabled: true,
+			opacity: 0.4
+		});
 		return this;
 	},
 	
