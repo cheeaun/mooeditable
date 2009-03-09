@@ -64,7 +64,14 @@ var MooEditable = new Class({
 				var key = act.options.shortcut;
 				if (key) this.keys[key] = action;
 			}
-			if (act.dialogs) this.dialogs[action] = act.dialogs;
+			if (act.dialogs){
+				$each(act.dialogs, function(dialog, name){
+					if ($type(dialog) == 'function') dialog = dialog.attempt(this);
+					dialog.name = action + ':' + name;
+					if ($type(this.dialogs[action]) != 'object') this.dialogs[action] = {};
+					this.dialogs[action][name] = dialog;
+				}, this);
+			}
 			if (act.events){
 				$each(act.events, function(fn, event){
 					this.addEvent(event, fn);
@@ -158,12 +165,14 @@ var MooEditable = new Class({
 						range = self.selection.getRange();
 						self.editorDisabled = true;
 						self.toolbar.disable(name);
+						self.fireEvent('dialogOpen', this);
 					},
 					close: function(){
 						self.toolbar.enable();
 						self.editorDisabled = false;
 						self.focus();
 						if (range) self.selection.setRange(range);
+						self.fireEvent('dialogClose', this);
 					}
 				});
 			});
@@ -933,9 +942,8 @@ MooEditable.UI.Dialog = new Class({
 		return this;
 	},
 	
-	open: function(fn){
+	open: function(){
 		this.el.setStyle('display', '');
-		if (fn) fn.attempt(null, this);
 		this.fireEvent('open', this);
 		return this;
 	},
@@ -967,7 +975,7 @@ MooEditable.UI.AlertDialog = function(alertText){
 	});
 };
 
-MooEditable.UI.PromptDialog = function(questionText, answerText){
+MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 	var html = '<label class="mooeditable-dialog-label">' + questionText
 		+ ' <input type="text" class="text mooeditable-dialog-input" value="' + answerText + '">'
 		+ '</label> <button class="dialog-ok-button">OK</button>'
@@ -994,7 +1002,7 @@ MooEditable.UI.PromptDialog = function(questionText, answerText){
 				var answer = input.get('value');
 				input.set('value', answerText);
 				this.close();
-				this.fireEvent('clickOK', answer);
+				if (fn) fn.attempt(answer, this);
 			}
 		},
 	});
@@ -1099,9 +1107,11 @@ MooEditable.Actions = new Hash({
 		},
 		dialogs: {
 			alert: MooEditable.UI.AlertDialog('Please select the text you wish to hyperlink.'),
-			prompt: MooEditable.UI.PromptDialog('Enter URL', 'http://', function(url){
-				this.execute('createlink', false, url.trim());
-			})
+			prompt: function(editor){
+				return MooEditable.UI.PromptDialog('Enter URL', 'http://', function(url){
+					editor.execute('createlink', false, url.trim());
+				});
+			}
 		},
 		command: function(){
 			if (this.selection.isCollapsed()){
@@ -1109,9 +1119,9 @@ MooEditable.Actions = new Hash({
 			} else {
 				var text = this.selection.getText();
 				var url = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i;
-				this.dialogs.createlink.prompt.open(function(){
-					if (url.test(text)) this.el.getElement('.mooeditable-dialog-input').set('value', text);
-				});
+				var prompt = this.dialogs.createlink.prompt;
+				if (url.test(text)) prompt.el.getElement('.mooeditable-dialog-input').set('value', text);
+				prompt.open();
 			}
 		}
 	},
@@ -1122,12 +1132,14 @@ MooEditable.Actions = new Hash({
 			shortcut: 'm'
 		},
 		dialogs: {
-			prompt: MooEditable.UI.PromptDialog('Enter image URL', 'http://')
+			prompt: function(editor){
+				return MooEditable.UI.PromptDialog('Enter image URL', 'http://', function(url){
+					editor.execute("insertimage", false, url.trim());
+				});
+			}
 		},
 		command: function(){
-			this.dialogs.urlimage.prompt.addEvent('clickOK', function(url){
-				this.execute("insertimage", false, url.trim());
-			}.bind(this)).open();
+			this.dialogs.urlimage.prompt.open();
 		}
 	},
 
