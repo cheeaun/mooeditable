@@ -1010,7 +1010,7 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 				this.close();
 				if (fn) fn.attempt(answer, this);
 			}
-		},
+		}
 	});
 };
 
