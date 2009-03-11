@@ -45,7 +45,7 @@ MooEditable.UI.MenuList = new Class({
 			title: self.options.title,
 			html: html,
 			events: {
-				change: self.action.bind(self)
+				change: self.change.bind(self)
 			}
 		});
 		
@@ -60,11 +60,15 @@ MooEditable.UI.MenuList = new Class({
 		return this;
 	},
 	
-	action: function(e){
-		e.stop();
+	change: function(e){
+		e.preventDefault();
 		if (this.disabled) return;
 		var name = e.target.value;
-		this.fireEvent('action', [this, name]);
+		this.action(name);
+	},
+	
+	action: function(){
+		this.fireEvent('action', [this].concat($A(arguments)));
 	},
 	
 	enable: function(){

@@ -116,7 +116,7 @@ var MooEditable = new Class({
 			onItemAction: function(){
 				var args = $splat(arguments);
 				var item = args[0];
-				self.action(item.name, Array.slice(args, 1));
+				self.action(item.name, args);
 			}
 		});
 		this.attach();
@@ -242,7 +242,7 @@ var MooEditable = new Class({
 		this.saveContent();
 		this.textarea.setStyle('display', '').removeClass('mooeditable-textarea').inject(this.container, 'before');
 		this.textarea.removeEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener'));
-		this.container.destroy();
+		this.container.dispose();
 		this.fireEvent('detach', this);
 		return this;
 	},
@@ -381,7 +381,7 @@ var MooEditable = new Class({
 	action: function(command, args){
 		var action = MooEditable.Actions[command];
 		if (action.command && $type(action.command) == 'function'){
-			action.command.attempt(args, this);
+			action.command.run(args, this);
 		} else {
 			this.focus();
 			this.execute(command, false, args);
@@ -850,7 +850,7 @@ MooEditable.UI.Button = new Class({
 			title: title,
 			text: text,
 			events: {
-				click: self.action.bind(self),
+				click: self.click.bind(self),
 				mousedown: function(e){ e.preventDefault(); }
 			}
 		});
@@ -867,10 +867,14 @@ MooEditable.UI.Button = new Class({
 		return this;
 	},
 	
-	action: function(e){
+	click: function(e){
 		e.preventDefault();
 		if (this.disabled) return;
-		this.fireEvent('action', this);
+		this.action(e);
+	},
+	
+	action: function(){
+		this.fireEvent('action', [this].concat($A(arguments)));
 	},
 	
 	enable: function(){
@@ -965,15 +969,14 @@ MooEditable.UI.Dialog = new Class({
 MooEditable.UI.AlertDialog = function(alertText){
 	var html = alertText + ' <button class="dialog-ok-button">OK</button>';
 	return dialog = new MooEditable.UI.Dialog(html, {
-		'class': 'alert-dialog mooeditable-dialog'
-	}).addEvents({
-		open: function(){
+		'class': 'alert-dialog mooeditable-dialog',
+		onOpen: function(){
 			var button = this.el.getElement('.dialog-ok-button');
 			(function(){
 				button.focus();
 			}).delay(10);
 		},
-		click: function(e){
+		onClick: function(e){
 			e.preventDefault();
 			if (e.target.tagName.toLowerCase() != 'button') return;
 			if ($(e.target).hasClass('dialog-ok-button')) this.close();
@@ -987,16 +990,15 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 		+ '</label> <button class="dialog-ok-button">OK</button>'
 		+ '<button class="dialog-cancel-button">Cancel</button>';
 	return new MooEditable.UI.Dialog(html, {
-		'class': 'prompt-dialog mooeditable-dialog'
-	}).addEvents({
-		open: function(){
+		'class': 'prompt-dialog mooeditable-dialog',
+		onOpen: function(){
 			var input = this.el.getElement('.mooeditable-dialog-input');
 			(function(){
 				input.focus()
 				input.select();
 			}).delay(10);
 		},
-		click: function(e){
+		onClick: function(e){
 			e.preventDefault();
 			if (e.target.tagName.toLowerCase() != 'button') return;
 			var button = $(e.target);

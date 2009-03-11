@@ -22,9 +22,10 @@ MooEditable.Actions.extend({
 		states: {
 			tags: ['p', 'h1', 'h2', 'h3']
 		},
-		command: function(name){
+		command: function(menulist, name){
 			var argument = '<' + name + '>';
 			this.execute('formatBlock', false, argument);
+			this.focus();
 		}
 	},
 	
