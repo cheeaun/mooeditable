@@ -137,7 +137,7 @@
 	outline: 0 !important; /* disable focus ring in Safari */
 }
 
-.mooeditable-dialog{
+.mooeditable-ui-dialog{
 	color: inherit;
 	background-color: #ddd;
 	position: absolute;
@@ -148,18 +148,18 @@
 	width: 100%;
 }
 
-.mooeditable-dialog .dialog-content{
+.mooeditable-ui-dialog .dialog-content{
 	padding: 4px 10px;
 }
 
-.mooeditable-dialog .dialog-content *{
+.mooeditable-ui-dialog .dialog-content *{
 	vertical-align: middle;
 }
 
-.mooeditable-dialog input{
+.mooeditable-ui-dialog input{
 	margin: 0 8px;
 }
 
-.mooeditable-dialog input.text{
+.mooeditable-ui-dialog input.text{
 	width: 300px;
 }
