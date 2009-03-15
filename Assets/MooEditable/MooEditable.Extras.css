@@ -5,7 +5,7 @@
 	background-image: url(images/mooeditable-extras-toolbarbuttons-tango.png);
 }
 
-.mooeditable-ui-toolbar .justifycenter-item .button-icon{ background-position: 0 -8px; }
-.mooeditable-ui-toolbar .justifyright-item .button-icon{ background-position: 0 -32px; }
-.mooeditable-ui-toolbar .justifyfull-item .button-icon{ background-position: 0 -56px; }
-.mooeditable-ui-toolbar .justifyleft-item .button-icon{ background-position: 0 -80px; }
+.mooeditable-ui-toolbar .justifycenter-item .button-icon{ background-position: 0 0; } 
+.mooeditable-ui-toolbar .justifyfull-item .button-icon{ background-position: 0 -16px; } 
+.mooeditable-ui-toolbar .justifyleft-item .button-icon{ background-position: 0 -32px; } 
+.mooeditable-ui-toolbar .justifyright-item .button-icon{ background-position: 0 -48px; } 
