@@ -93,7 +93,7 @@ var MooEditable = new Class({
 		
 		// Build the container
 		this.container = new Element('div', {
-			id: (this.textarea.id) ? this.textarea.id + '-container' : null,
+			id: (this.textarea.id) ? this.textarea.id + '-mooeditable-container' : null,
 			'class': 'mooeditable-container',
 			styles: {
 				width: dimensions.x
@@ -112,7 +112,6 @@ var MooEditable = new Class({
 		});
 		
 		this.toolbar = new MooEditable.UI.Toolbar({
-			'class': 'mooeditable-toolbar',
 			onItemAction: function(){
 				var args = $splat(arguments);
 				var item = args[0];
@@ -740,7 +739,7 @@ MooEditable.UI.Toolbar= new Class({
     
 	initialize: function(options){
 		this.setOptions(options);
-		this.el = new Element('div', {'class': options['class']});
+		this.el = new Element('div', {'class': 'mooeditable-ui-toolbar ' + this.options['class']});
 		this.items = {};
 		this.content = null;
 	},
@@ -768,7 +767,7 @@ MooEditable.UI.Toolbar= new Class({
 		var options = act.options || {};
 		var item = new MooEditable.UI[type.camelCase().capitalize()]($extend(options, {
 			name: action,
-			'class': action + '-item toolbar-' + type + ' toolbar-item',
+			'class': action + '-item toolbar-item',
 			title: act.title,
 			onAction: self.itemAction.bind(self)
 		}));
@@ -846,7 +845,7 @@ MooEditable.UI.Button = new Class({
 		var text = this.options.title || name;
 		var title = text + shortcut;
 		this.el = new Element('button', {
-			'class': self.options['class'],
+			'class': 'mooeditable-ui-button ' + self.options['class'],
 			title: title,
 			text: text,
 			events: {
@@ -923,7 +922,7 @@ MooEditable.UI.Dialog = new Class({
 		onClose: $empty,
 		*/
 		'class': '',
-		contentClass: 'dialog-content'
+		contentClass: ''
 	},
 
 	initialize: function(html, options){
@@ -932,8 +931,8 @@ MooEditable.UI.Dialog = new Class({
 		
 		var self = this;
 		this.el = new Element('div', {
-			'class': self.options['class'],
-			html: '<div class="' + self.options.contentClass + '">' + html + '</div>',
+			'class': 'mooeditable-ui-dialog ' + self.options['class'],
+			html: '<div class="dialog-content ' + self.options.contentClass + '">' + html + '</div>',
 			styles: {
 				'display': 'none'
 			},
@@ -969,7 +968,7 @@ MooEditable.UI.Dialog = new Class({
 MooEditable.UI.AlertDialog = function(alertText){
 	var html = alertText + ' <button class="dialog-ok-button">OK</button>';
 	return dialog = new MooEditable.UI.Dialog(html, {
-		'class': 'alert-dialog mooeditable-dialog',
+		'class': 'mooeditable-alert-dialog',
 		onOpen: function(){
 			var button = this.el.getElement('.dialog-ok-button');
 			(function(){
@@ -985,14 +984,14 @@ MooEditable.UI.AlertDialog = function(alertText){
 };
 
 MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
-	var html = '<label class="mooeditable-dialog-label">' + questionText
-		+ ' <input type="text" class="text mooeditable-dialog-input" value="' + answerText + '">'
-		+ '</label> <button class="dialog-ok-button">OK</button>'
-		+ '<button class="dialog-cancel-button">Cancel</button>';
+	var html = '<label class="dialog-label">' + questionText
+		+ ' <input type="text" class="text dialog-input" value="' + answerText + '">'
+		+ '</label> <button class="dialog-button dialog-ok-button">OK</button>'
+		+ '<button class="dialog-button dialog-cancel-button">Cancel</button>';
 	return new MooEditable.UI.Dialog(html, {
-		'class': 'prompt-dialog mooeditable-dialog',
+		'class': 'mooeditable-prompt-dialog',
 		onOpen: function(){
-			var input = this.el.getElement('.mooeditable-dialog-input');
+			var input = this.el.getElement('.dialog-input');
 			(function(){
 				input.focus()
 				input.select();
@@ -1002,7 +1001,7 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 			e.preventDefault();
 			if (e.target.tagName.toLowerCase() != 'button') return;
 			var button = $(e.target);
-			var input = this.el.getElement('.mooeditable-dialog-input');
+			var input = this.el.getElement('.dialog-input');
 			if (button.hasClass('dialog-cancel-button')){
 				input.set('value', answerText);
 				this.close();
