@@ -215,7 +215,7 @@ var MooEditable = new Class({
 		this.textarea.addEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener', this.keyListener.bind(this)));
 
 		// styleWithCSS, not supported in IE and Opera
-		if (!['trident', 'presto'].contains(Browser.Engine.name)){
+		if (!(/trident|presto/i).test(Browser.Engine.name)){
 			var styleCSS = function(){
 				self.execute('styleWithCSS', false, false);
 				self.doc.removeEvent('focus', styleCSS);
