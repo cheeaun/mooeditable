@@ -27,34 +27,21 @@
 .mooeditable-ui-toolbar .mooeditable-ui-button{
 	cursor: pointer;
 	border: 0;
-	width: 24px;
-	height: 24px;
+	width: auto;
+	height: auto;
 	margin: 2px;
-	color: inherit;
-	background: transparent url(images/mooeditable-toolbarbuttons-tango.png) no-repeat;
-	overflow: hidden;
-	text-indent: -999em;
+	padding: 2px;
+	vertical-align: middle;
 }
 * html .mooeditable-ui-toolbar .mooeditable-ui-button{ /* IE6 */
-	text-indent: 0;
-	font-size: 0;
-	line-height: 99px;
+	width: 24px;
+	overflow: visible;
+	padding: 2px 4px;
 }
 *:first-child+html .mooeditable-ui-toolbar .mooeditable-ui-button{ /* IE7 */
-	text-indent: 0;
-	font-size: 0;
-	line-height: 99px;
-}
-.mooeditable-ui-toolbar .text{
-	text-indent: 0;
-	width: auto;
-	padding-left: 3px;
-	padding-right: 3px;
-	background-image: none;
-}
-.mooeditable-ui-toolbar .icons-text{
-	text-indent: 16px;
-	width: auto;
+	min-width: 24px;
+	overflow: visible;
+	padding: 2px 4px;
 }
 
 .mooeditable-ui-toolbar .mooeditable-ui-button.active,
@@ -78,6 +65,37 @@
 	background-color: transparent;
 }
 
+.mooeditable-ui-toolbar .mooeditable-ui-button .button-icon{
+	display: -moz-inline-box;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	color: inherit;
+	background: transparent url(images/mooeditable-toolbarbuttons-tango.png) no-repeat 0 -8px;
+}
+
+.mooeditable-ui-toolbar .mooeditable-ui-button .button-text{
+	display: none;
+	font-size: 13px;
+	vertical-align: middle;
+}
+
+.mooeditable-ui-toolbar .mooeditable-ui-button-text .button-icon{
+	display: none;
+}
+.mooeditable-ui-toolbar .mooeditable-ui-button-text .button-text{
+	display: inline;
+}
+
+.mooeditable-ui-toolbar .mooeditable-ui-button-icon-text{
+	width: auto;
+}
+.mooeditable-ui-toolbar .mooeditable-ui-button-icon-text .button-text{
+	display: inline;
+	margin-left: 4px;
+}
+
 .mooeditable-ui-toolbar .toolbar-separator{
 	width: 1px;
 	height: 24px;
@@ -87,21 +105,21 @@
 	background-color: #fafafa;
 }
 
-.mooeditable-ui-toolbar .insertorderedlist-item{ background-position: 4px -4px; } 
-.mooeditable-ui-toolbar .outdent-item{ background-position: 4px -28px; } 
-.mooeditable-ui-toolbar .urlimage-item{ background-position: 4px -52px; } 
-.mooeditable-ui-toolbar .toggleview-item{ background-position: 4px -76px; } 
-.mooeditable-ui-toolbar .underline-item{ background-position: 4px -100px; } 
-.mooeditable-ui-toolbar .italic-item{ background-position: 4px -124px; } 
-.mooeditable-ui-toolbar .strikethrough-item{ background-position: 4px -148px; } 
-.mooeditable-ui-toolbar .redo-item{ background-position: 4px -172px; } 
-.mooeditable-ui-toolbar .undo-item{ background-position: 4px -196px; } 
-.mooeditable-ui-toolbar .unlink-item{ background-position: 4px -220px; } 
-.mooeditable-ui-toolbar .view-refresh-item{ background-position: 4px -244px; } 
-.mooeditable-ui-toolbar .insertunorderedlist-item{ background-position: 4px -268px; } 
-.mooeditable-ui-toolbar .indent-item{ background-position: 4px -292px; } 
-.mooeditable-ui-toolbar .bold-item{ background-position: 4px -316px; } 
-.mooeditable-ui-toolbar .createlink-item{ background-position: 4px -340px; }
+.mooeditable-ui-toolbar .insertorderedlist-item .button-icon{ background-position: 0 -8px; } 
+.mooeditable-ui-toolbar .outdent-item .button-icon{ background-position: 0 -32px; } 
+.mooeditable-ui-toolbar .urlimage-item .button-icon{ background-position: 0 -56px; } 
+.mooeditable-ui-toolbar .toggleview-item .button-icon{ background-position: 0 -80px; } 
+.mooeditable-ui-toolbar .underline-item .button-icon{ background-position: 0 -104px; } 
+.mooeditable-ui-toolbar .italic-item .button-icon{ background-position: 0 -128px; } 
+.mooeditable-ui-toolbar .strikethrough-item .button-icon{ background-position: 0 -152px; } 
+.mooeditable-ui-toolbar .redo-item .button-icon{ background-position: 0 -176px; } 
+.mooeditable-ui-toolbar .undo-item .button-icon{ background-position: 0 -200px; } 
+.mooeditable-ui-toolbar .unlink-item .button-icon{ background-position: 0 -224px; } 
+.mooeditable-ui-toolbar .view-refresh-item .button-icon{ background-position: 0 -248px; } 
+.mooeditable-ui-toolbar .insertunorderedlist-item .button-icon{ background-position: 0 -272px; } 
+.mooeditable-ui-toolbar .indent-item .button-icon{ background-position: 0 -296px; } 
+.mooeditable-ui-toolbar .bold-item .button-icon{ background-position: 0 -320px; } 
+.mooeditable-ui-toolbar .createlink-item .button-icon{ background-position: 0 -344px; }
 
 .mooeditable-iframe{
 	margin: 0;

@@ -826,7 +826,8 @@ MooEditable.UI.Button = new Class({
 		name: '',
 		text: 'Button',
 		'class': '',
-		shortcut: ''
+		shortcut: '',
+		mode: 'icon'
 	},
 
 	initialize: function(options){
@@ -847,12 +848,13 @@ MooEditable.UI.Button = new Class({
 		this.el = new Element('button', {
 			'class': 'mooeditable-ui-button ' + self.options['class'],
 			title: title,
-			text: text,
+			html: '<span class="button-icon"></span><span class="button-text">' + text + '</span>',
 			events: {
 				click: self.click.bind(self),
 				mousedown: function(e){ e.preventDefault(); }
 			}
 		});
+		if (this.options.mode != 'icon') this.el.addClass('mooeditable-ui-button-' + this.options.mode);
 		
 		this.active = false;
 		this.disabled = false;
