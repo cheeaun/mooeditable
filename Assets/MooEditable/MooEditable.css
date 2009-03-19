@@ -164,3 +164,14 @@
 .mooeditable-ui-dialog input.text{
 	width: 300px;
 }
+
+.mooeditable-ui-button-overlay{
+	color: inherit;
+	background-color: #ddd;
+	font-size: 12px;
+	z-index: 100;
+}
+
+.mooeditable-ui-button-overlay .overlay-content{
+	padding: 10px;
+}
