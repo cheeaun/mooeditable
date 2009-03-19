@@ -17,7 +17,6 @@ MooEditable.Group = new Class({
 	initialize: function(toolbarEl, options){
 		this.setOptions(options);
 		this.actions = this.options.actions.clean().split(' ');
-		// setup toolbar
 		var self = this;
 		this.toolbar = new MooEditable.UI.Toolbar({
 			onItemAction: function(){
@@ -33,9 +32,7 @@ MooEditable.Group = new Class({
 	},
 
 	add: function(el, options){
-		var editor = new MooEditable.Group.Item(el, this, $merge({toolbar:false}, options));
-		this.activeEditor = editor;
-		return editor;
+		return this.activeEditor = new MooEditable.Group.Item(el, this, $merge({toolbar: false}, options));
 	}
 	
 });
@@ -48,14 +45,11 @@ MooEditable.Group.Item = new Class({
 	initialize: function(el, group, options){
 		this.group = group;
 		this.parent(el, options);
-		// add focus events
-		this.textarea.addEvent('focus', function(){
+		var focus = function(){
 			this.group.activeEditor = this;
-		}.bind(this));
-		// safari doesnt fire onfocus event, so make it onclick
-		this.win.addEvent('focus', function(){
-			this.group.activeEditor = this;
-		}.bind(this));
+		}.bind(this);
+		this.textarea.addEvent('focus', focus);
+		this.win.addEvent('focus', focus);
 	}
 
 });
