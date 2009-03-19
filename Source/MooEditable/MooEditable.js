@@ -220,7 +220,7 @@ var MooEditable = new Class({
 				self.execute('styleWithCSS', false, false);
 				self.doc.removeEvent('focus', styleCSS);
 			};
-			this.doc.addEvent('focus', styleCSS);
+			this.win.addEvent('focus', styleCSS);
 		}
 
 		if (this.options.toolbar){

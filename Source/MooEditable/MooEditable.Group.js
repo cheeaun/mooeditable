@@ -53,7 +53,7 @@ MooEditable.Group.Item = new Class({
 			this.group.activeEditor = this;
 		}.bind(this));
 		// safari doesnt fire onfocus event, so make it onclick
-		this.doc.addEvent((Browser.Engine.webkit) ? 'click' : 'focus', function(){
+		this.win.addEvent('focus', function(){
 			this.group.activeEditor = this;
 		}.bind(this));
 	}
