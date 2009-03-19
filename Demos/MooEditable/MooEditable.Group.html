@@ -15,6 +15,12 @@
 				padding: 10px;
 				border: 2px solid #ddd;
 			}
+			#textarea-2{
+				width: 600px;
+				height: 300px;
+				padding: 10px;
+				border: 2px solid #ddd;
+			}
 		</style>
 
 		<link rel="stylesheet" type="text/css" href="../../Assets/MooEditable/MooEditable.css">
@@ -25,8 +31,9 @@
 		<script type="text/javascript">
 			window.addEvent('load', function(){
 			
-				var group = new MooEditable.Group($('toolbar'), $('textarea-1'));
-				group.addInstance($('textarea-2'));
+				var group = new MooEditable.Group('toolbar');
+				group.add('textarea-1');
+				group.add('textarea-2');
 				
 				// Post submit
 				$('theForm').addEvent('submit', function(e){
