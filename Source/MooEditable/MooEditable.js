@@ -66,7 +66,7 @@ var MooEditable = new Class({
 			}
 			if (act.dialogs){
 				$each(act.dialogs, function(dialog, name){
-					if ($type(dialog) == 'function') dialog = dialog.attempt(this);
+					dialog = dialog.attempt(this);
 					dialog.name = action + ':' + name;
 					if ($type(this.dialogs[action]) != 'object') this.dialogs[action] = {};
 					this.dialogs[action][name] = dialog;
@@ -1113,7 +1113,7 @@ MooEditable.Actions = new Hash({
 			tags: ['a']
 		},
 		dialogs: {
-			alert: MooEditable.UI.AlertDialog('Please select the text you wish to hyperlink.'),
+			alert: MooEditable.UI.AlertDialog.pass('Please select the text you wish to hyperlink.'),
 			prompt: function(editor){
 				return MooEditable.UI.PromptDialog('Enter URL', 'http://', function(url){
 					editor.execute('createlink', false, url.trim());
