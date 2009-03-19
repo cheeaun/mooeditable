@@ -12,6 +12,11 @@
 			"desc": "UI Class to create a menu list (select) element."
 		},
 	
+		"MooEditable.UI.ButtonOverlay": {
+			"deps": ["MooEditable"],
+			"desc": "UI Class to create a button element with a popup overlay."
+		},
+	
 		"MooEditable.Extras": {
 			"deps": ["MooEditable"],
 			"desc": "Extends MooEditable to include more (simple) toolbar buttons."
