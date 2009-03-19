@@ -232,8 +232,6 @@ var MooEditable = new Class({
 		
 		this.fireEvent('attach', this);
 		
-		this.focus();
-		
 		return this;
 	},
 	
