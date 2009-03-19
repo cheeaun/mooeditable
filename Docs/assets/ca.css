@@ -1,0 +1,206 @@
+/*=====================================
+	caCSS
+	CSS in its simplest form.
+=======================================*/
+
+
+/*=====================================
+	Standard Styles
+=======================================*/
+
+body{
+	color: #000;
+	background-color: #fff;
+	margin: 0;
+	padding: 1.5em;
+	border: 0;
+	font-size: 75%;
+}
+
+html, body, input, select, textarea{ font-family: "Helvetica Neue", helvetica, arial, sans-serif; }
+
+pre, code, samp, kbd, var{ font-family: monaco, "Courier New", courier, monospace; }
+
+a{ text-decoration: none; }
+
+a:hover{ text-decoration: underline; }
+
+img, a img{ border: 0; }
+
+h1, h2, h3, h4, h5, h6{
+	margin: 0;
+	padding: 0;
+	*position: relative;
+}
+
+h1{
+	font-size: 2.667em;
+	margin-bottom: .5625em;
+	line-height: 1em;
+}
+
+h2{
+	font-size: 2.333em;
+	margin-bottom: .643em;
+	line-height: 1em;
+}
+
+h3{
+	font-size: 2em;
+	margin-bottom: .75em;
+	line-height: 1em;
+}
+
+h4{
+	font-size: 1.667em;
+	margin-bottom: .9em;
+	line-height: 1em;
+}
+
+h5{
+	font-size: 1.333em;
+	margin-bottom: 1.125em;
+	line-height: 1.125em;
+}
+
+h6{
+	font-size: 1em;
+	font-weight: bold;
+	margin-bottom: 1.5em;
+	line-height: 1.5em;
+}
+
+p{
+	margin: 0 0 1.5em;
+	padding: 0;
+	line-height: 1.5em;
+}
+
+caption{
+	font-weight: bold;
+	padding: .5em;
+}
+
+table{
+	border-collapse: collapse;
+	border-spacing: 0;
+	margin: 0 0 1.5em;
+}
+
+th, td{
+	vertical-align: top;
+	padding: .3em .5em;
+	line-height: 1.5em;
+}
+
+pre{
+	border: 1px solid #ccc;
+	margin: 0 0 1.5em;
+	padding: 1em;
+	white-space: pre; /* CSS2 */
+	white-space: -moz-pre-wrap; /* Mozilla */
+	white-space: -hp-pre-wrap; /* HP printers */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: pre-wrap; /* CSS 2.1 */
+	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+	word-wrap: break-word; /* IE */
+}
+
+ul, ol{
+	margin: 0 0 1.5em 3em;
+	padding: 0;
+	line-height: 1.5em;
+}
+
+blockquote{
+	margin: 0 0 1.5em;
+	padding: 1em 1em .01em;
+	border: 1px solid #ccc;
+}
+
+dl{
+	margin: 0 0 1.5em;
+	line-height: 1.5em;
+}
+
+dt{
+	margin: 1.5em 0 0;
+	font-weight: bold;
+}
+
+dd{
+	margin: 0 0 0 3em;
+}
+
+dfn{
+	font-style: normal;
+	font-weight: bold;
+}
+
+abbr{ border-bottom: 1px dotted; }
+
+form{
+	margin: 0;
+	padding: 0;
+}
+
+fieldset{
+	border: 1px solid #ccc;
+	padding: 1em;
+	*padding-top: 0;
+}
+
+legend{
+	font-weight: bold;
+	*margin-bottom: 1em;
+}
+
+input, select, textarea, button{
+	font-size: 1em;
+	max-width: 100%;
+	vertical-align: middle;
+	margin: 0;
+}
+
+textarea{ overflow: auto; }
+
+input.button, button{
+	padding: 0 .5em;
+}
+
+input.text{}
+input.button, button{}
+input.checkbox{}
+input.radio{}
+input.file{}
+	
+/* HTML5 */
+article, aside, dialog, figure, footer, header, section { display: block; }
+
+/*=====================================
+	Feature-specific Styles
+=======================================*/
+
+/* Fields container */
+ul.fields{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+ul.fields li{ padding: .3em 0; }
+
+/*=====================================
+	Utility Styles
+=======================================*/
+
+.left{ float: left; }
+.right{ float: right; }
+.clear-left{ clear: left; }
+.clear-right{ clear: right; }
+.clear{ clear: both; }
+.hide{ display: none; }
+
+.note{}
+.example{}
+.error{}
