@@ -23,3 +23,15 @@ title{
 	margin-left: 16em;
 	overflow: hidden;
 }
+
+h1{
+	border-bottom: 3px solid #ccc;
+}
+h2{
+	border-bottom: 1px solid #ccc;
+}
+
+h3, h4, h5, h6{
+	color: #999;
+	background-color: transparent;
+}
