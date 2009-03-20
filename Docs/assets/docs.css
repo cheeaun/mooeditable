@@ -9,12 +9,17 @@ title{
 	border-bottom: 1px solid #000;
 }
 
+#container{
+	width: 70em;
+	margin: auto;
+}
+
 #menu{
 	float: left;
-	width: 15%;
+	width: 15em;
 }
 
 #docs{
-	margin-left: 16%;
+	margin-left: 16em;
 	overflow: hidden;
 }

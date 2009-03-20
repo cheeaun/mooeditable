@@ -30,14 +30,12 @@ MooEditable Method: constructor {#MooEditable:constructor}
 * actions       - (*string*: defaults to a string shown below) A string indicating the toolbar items and their arrangement (space-separated).
 
 		'bold italic underline strikethrough | insertunorderedlist insertorderedlist indent outdent | undo redo | createlink unlink, | urlimage | toggleview'
-		
 * handleSubmit  - (*boolean*: defaults to true) Whether or not to attach a submit listener to the textarea's parent form, to save content to textarea before submit.
 * handleLabel   - (*boolean*: defaults to true) Whether or not to attach a click listener to the textarea's related label tag, to focus on the iframe instead.
 * baseCSS       - (*string*: defaults to a string shown below) A string indicating the base CSS code.
 
 		html{ height: 100%; cursor: text }
 		body{ font-family: sans-serif; border: 0; }
-		
 * extraCSS      - (*string*: defaults to null) A string indicating the extra CSS code besides the base.
 * externalCSS   - (*string*: defaults to null) A string indicating the URL of the external CSS file. No `<link>` tag HTML needed.
 * html          - (*string*: defaults to a string show below) A string indicating the HTML of the iframe content.
