@@ -213,6 +213,11 @@ var MooEditable = new Class({
 			keydown: this.handleKeyDown.bind(this)
 		});
 		this.textarea.addEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener', this.keyListener.bind(this)));
+		
+		// Fix window focus event not firing on Firefox 2
+		if (Browser.Engine.gecko && Browser.Engine.version == 18) this.doc.addEvent('focus', function(){
+			self.win.fireEvent('focus').focus();
+		});
 
 		// styleWithCSS, not supported in IE and Opera
 		if (!(/trident|presto/i).test(Browser.Engine.name)){
