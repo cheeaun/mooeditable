@@ -5,7 +5,7 @@ A simple web-based WYSIWYG editor.
 
 ### Implements:
 
-[Events](http://mootools.net/docs/Class/Class.Extras#Events), [Options](http://mootools.net/docs/Class/Class.Extras#Options)
+[Events][], [Options][]
 
 
 MooEditable Method: constructor {#MooEditable:constructor}
@@ -48,3 +48,192 @@ MooEditable Method: constructor {#MooEditable:constructor}
 		</head>
 		<body>{CONTENT}</body>
 		</html>
+
+### Events:
+
+* render - Executed when the editor is rendered.
+* attach - Executed when the editor is attached.
+* detach - Executed when the editor is detached.
+* beforeEditorMouseUp - Executed before 'mouseup' event is fired on the editor.
+* editorMouseUp - Executed when 'mouseup' event is fired on the editor.
+* beforeEditorMouseDown - Executed before 'mousedown' event is fired on the editor.
+* editorMouseDown - Executed when 'mousedown' event is fired on the editor.
+* beforeEditorContextMenu - Executed before 'contextmenu' event is fired on the editor.
+* editorContextMenu - Executed when 'contextmenu' event is fired on the editor.
+* beforeEditorClick - Executed before 'click' event is fired on the editor.
+* editorClick - Executed when 'click' event is fired on the editor.
+* beforeEditorDoubleClick - Executed before 'doubleclick' event is fired on the editor.
+* editorDoubleClick - Executed when 'doubleclick' event is fired on the editor.
+* beforeEditorKeyPress - Executed before 'keypress' event is fired on the editor.
+* editorKeyPress - Executed when 'keypress' event is fired on the editor.
+* beforeEditorKeyUp - Executed before 'keyup' event is fired on the editor.
+* editorKeyUp - Executed when 'keyup' event is fired on the editor.
+* beforeEditorKeyDown - Executed before 'keydown' event is fired on the editor.
+* editorKeyDown - Executed when 'keydown' event is fired on the editor.
+* dialogOpen - Executed when dialog is opened.
+* dialogClose - Executed when dialog is closed.
+
+### Example:
+
+	var myMooEditable = new MooEditable('myTextarea', {
+		handleSubmit: false,
+		onRender: function(){
+			alert('Done rendering.');
+		}
+	});
+
+
+
+MooEditable Method: attach {#MooEditable:attach}
+------------------------------------------------
+
+Attaches the editor and replace the textarea.
+
+### Syntax:
+
+	myMooEditable.attach();
+	
+### Returns:
+
+* (*object*) This MooEditable instance.
+
+
+
+MooEditable Method: detach {#MooEditable:detach}
+------------------------------------------------
+
+Detaches the editor and replaced the textarea.
+
+### Syntax:
+
+	myMooEditable.detach();
+	
+### Returns:
+
+* (*object*) This MooEditable instance.
+
+
+
+MooEditable Method: toggleView {#MooEditable:toggleView}
+------------------------------------------------
+
+Toggles the editor view of the source or the WYSIWYG content.
+
+### Syntax:
+
+	myMooEditable.toggleView();
+	
+### Returns:
+
+* (*object*) This MooEditable instance.
+
+
+
+MooEditable Method: getContent {#MooEditable:getContent}
+------------------------------------------------
+
+Returns the source of the editor content.
+
+### Syntax:
+
+	myMooEditable.getContent();
+	
+### Returns:
+
+* (*string*) The HTML source of the content
+
+
+
+MooEditable Method: setContent {#MooEditable:setContent}
+------------------------------------------------
+
+Sets the source of the editor content.
+
+### Syntax:
+
+	myMooEditable.setContent('<p>Hello World.</p>');
+	
+### Returns:
+
+* (*object*) This MooEditable instance.
+
+
+
+MooEditable Method: saveContent {#MooEditable:saveContent}
+------------------------------------------------
+
+Saves the source of the WYSIWYG content to the textarea.
+
+### Syntax:
+
+	myMooEditable.saveContent();
+	
+### Returns:
+
+* (*object*) This MooEditable instance.
+
+
+
+Hash: MooEditable.Actions {#MooEditable-Actions}
+================================================
+
+This Hash contains the objects that specifies all 'actions' for the editor. The list of actions are:
+
+* bold
+* italic
+* underline
+* strikethrough
+* insertunorderedlist
+* insertorderedlist
+* indent
+* outdent
+* undo
+* redo
+* unlink
+* createlink
+* urlimage
+* toggleview
+
+
+
+Native: Element {#Element}
+================================================
+
+Custom Native to allow all of its methods to be used with any DOM element via the dollar function [$][].
+
+Element Method: mooEditable
+---------------------------
+
+Initializes the MooEditable instance on the element.
+
+### Syntax:
+
+	var myMooEditable = myElement.mooEditable([options]);
+
+### Arguments:
+
+* options - (*object*, optional) See [MooEditable](#MooEditable) for acceptable options.
+
+### Returns:
+
+* (*object*) The MooEditable instance that was created.
+
+### Examples:
+
+	var myMooEditable = $('myElement').mooEditable({
+		onRender: function(){
+			alert('Done rendering.');
+		}
+	});
+	
+### See Also:
+
+* [MooEditable](#MooEditable)
+
+
+
+[$]: http://mootools.net/docs/Element/Element/#dollar
+[Element:addEvent]: http://mootools.net/docs/Element/Element.Event/#Element:addEvent
+[Events]: http://mootools.net/docs/Class/Class.Extras#Events
+[Chain]: http://mootools.net/docs/Class/Class.Extras#Chain
+[Options]: http://mootools.net/docs/Class/Class.Extras#Options
