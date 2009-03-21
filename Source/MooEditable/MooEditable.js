@@ -958,7 +958,7 @@ MooEditable.UI.Dialog = new Class({
 
 MooEditable.UI.AlertDialog = function(alertText){
 	var html = alertText + ' <button class="dialog-ok-button">OK</button>';
-	return dialog = new MooEditable.UI.Dialog(html, {
+	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-alert-dialog',
 		onOpen: function(){
 			var button = this.el.getElement('.dialog-ok-button');
