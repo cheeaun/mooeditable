@@ -107,7 +107,7 @@ Detaches the editor and replaced by the original textarea.
 
 
 MooEditable Method: focus {#MooEditable:focus}
-------------------------------------------------
+----------------------------------------------
 
 Focus on the editor, regardless of which view is shown.
 
@@ -122,7 +122,7 @@ Focus on the editor, regardless of which view is shown.
 
 
 MooEditable Method: toggleView {#MooEditable:toggleView}
-------------------------------------------------
+--------------------------------------------------------
 
 Toggles the editor view of the source or the WYSIWYG content.
 
@@ -137,7 +137,7 @@ Toggles the editor view of the source or the WYSIWYG content.
 
 
 MooEditable Method: getContent {#MooEditable:getContent}
-------------------------------------------------
+--------------------------------------------------------
 
 Returns the source of the editor content.
 
@@ -152,7 +152,7 @@ Returns the source of the editor content.
 
 
 MooEditable Method: setContent {#MooEditable:setContent}
-------------------------------------------------
+--------------------------------------------------------
 
 Sets the source of the editor content.
 
@@ -167,7 +167,7 @@ Sets the source of the editor content.
 
 
 MooEditable Method: saveContent {#MooEditable:saveContent}
-------------------------------------------------
+----------------------------------------------------------
 
 Saves the source of the WYSIWYG content to the textarea.
 
@@ -178,6 +178,355 @@ Saves the source of the WYSIWYG content to the textarea.
 ### Returns:
 
 * (*object*) This MooEditable instance.
+
+
+
+Object: MooEditable.UI {#MooEditable-UI}
+========================================
+
+This Object contains the interface classes for MooEditable.
+
+
+
+Class: MooEditable.UI.Toolbar {#MooEditable-UI-Toolbar}
+=======================================================
+
+The toolbar interface.
+
+### Implements:
+
+[Events][], [Options][]
+
+
+MooEditable.UI.Toolbar Method: constructor {#MooEditable-UI-Toolbar:constructor}
+--------------------------------------------------------------------------------
+
+### Syntax:
+
+	var myMooEditableToolbar = new MooEditable.UI.Toolbar([options]);
+
+### Arguments:
+
+1. options - (*object*, optional) The options object.
+
+### Options:
+
+* class - (*string*: defaults to null) The class name of the toolbar.
+
+### Events:
+
+* itemAction - Executed when an action of an item on the toolbar is executed.
+
+
+
+MooEditable.UI.Toolbar Method: addItem {#MooEditable-UI-Toolbar:addItem}
+------------------------------------------------------------------------
+
+Add an item to the toolbar.
+
+### Syntax:
+
+	myMooEditableToolbar.addItem('item');
+	
+### Arguments:
+
+1. item - (*string*) An action name that matches one already specified in [MooEditable.Actions](#MooEditable-Actions) hash.
+
+### Returns:
+
+* (*object*) The MooEditable.UI.<var>item</var> instance.
+
+
+
+MooEditable.UI.Toolbar Method: getItem {#MooEditable-UI-Toolbar:getItem}
+------------------------------------------------------------------------
+
+Returns the item from the toolbar.
+
+### Syntax:
+
+	var myItem = myMooEditableToolbar.getItem('item');
+	
+### Arguments:
+
+1. item - (*string*) An action name that matches one already specified in [MooEditable.Actions](#MooEditable-Actions) hash.
+
+### Returns:
+
+* (*object*) The MooEditable.Actions.<var>item</var> object.
+
+
+
+MooEditable.UI.Toolbar Method: addSeparator {#MooEditable-UI-Toolbar:addSeparator}
+----------------------------------------------------------------------------------
+
+Add a separator to the toolbar.
+
+### Syntax:
+
+	myMooEditableToolbar.addSeparator();
+
+### Returns:
+
+* (*object*) The Element object of the separator.
+
+
+
+MooEditable.UI.Toolbar Method: enable {#MooEditable-UI-Toolbar:enable}
+----------------------------------------------------------------------
+
+Enables all the items on the toolbar.
+
+### Syntax:
+
+	myMooEditableToolbar.enable();
+
+### Returns:
+
+* (*object*) This MooEditable.UI.Toolbar instance.
+
+
+
+MooEditable.UI.Toolbar Method: disable {#MooEditable-UI-Toolbar:disable}
+------------------------------------------------------------------------
+
+Disables the items on the toolbar.
+
+### Syntax:
+
+	myMooEditableToolbar.disable(except);
+
+### Arguments:
+
+1. except - (*string*) An action name that matches one already specified in [MooEditable.Actions](#MooEditable-Actions) hash, to be excepted from becoming disabled on the toolbar.
+
+### Returns:
+
+* (*object*) This MooEditable.UI.Toolbar instance.
+
+
+
+MooEditable.UI.Toolbar Method: show {#MooEditable-UI-Toolbar:show}
+------------------------------------------------------------------
+
+Shows the toolbar.
+
+### Syntax:
+
+	myMooEditableToolbar.show();
+
+### Returns:
+
+* (*object*) This MooEditable.UI.Toolbar instance.
+
+
+
+MooEditable.UI.Toolbar Method: hide {#MooEditable-UI-Toolbar:hide}
+------------------------------------------------------------------
+
+Hides the toolbar.
+
+### Syntax:
+
+	myMooEditableToolbar.hide();
+
+### Returns:
+
+* (*object*) This MooEditable.UI.Toolbar instance.
+
+
+
+Class: MooEditable.UI.Button {#MooEditable-UI-Button}
+=====================================================
+
+The button interface.
+
+### Implements:
+
+[Events][], [Options][]
+
+
+MooEditable.UI.Button Method: constructor {#MooEditable-UI-Button:constructor}
+------------------------------------------------------------------------------
+
+### Syntax:
+
+	var myMooEditableButton = new MooEditable.UI.Button([options]);
+
+### Arguments:
+
+1. options - (*object*, optional) The options object.
+
+### Options:
+
+* title    - (*string*: defaults to null) The title of the button.
+* name     - (*string*: defaults to null) The unique name of the button.
+* text     - (*string*: defaults to 'Button') The text shown on the button.
+* class    - (*string*: defaults to null) The class name of the button.
+* shortcut - (*string*: defaults to null) The keyboard shortcut key to trigger the action of the button.
+* mode     - (*string*: defaults to 'icon') Can be 'icon', 'text' or 'icon-text'.
+	* 'icon'      - Iconic button
+	* 'text'      - Textual button
+	* 'icon-text' - Icon and text shown on the button.
+
+### Events:
+
+* action - Executed when the action of the button is executed.
+
+
+
+MooEditable.UI.Button Method: enable {#MooEditable-UI-Button:enable}
+--------------------------------------------------------------------
+
+Enables the button.
+
+### Syntax:
+
+	myMooEditableButton.enable();
+	
+### Returns:
+
+* (*object*) This MooEditable.UI.Button instance.
+
+
+
+MooEditable.UI.Button Method: disable {#MooEditable-UI-Button:disable}
+----------------------------------------------------------------------
+
+Disables the button.
+
+### Syntax:
+
+	myMooEditableButton.disable();
+	
+### Returns:
+
+* (*object*) This MooEditable.UI.Button instance.
+
+
+
+MooEditable.UI.Button Method: activate {#MooEditable-UI-Button:activate}
+------------------------------------------------------------------------
+
+Activates the button.
+
+### Syntax:
+
+	myMooEditableButton.activate();
+	
+### Returns:
+
+* (*object*) This MooEditable.UI.Button instance.
+
+
+
+MooEditable.UI.Button Method: deactivate {#MooEditable-UI-Button:deactivate}
+----------------------------------------------------------------------------
+
+Deactivates the button.
+
+### Syntax:
+
+	myMooEditableButton.deactivate();
+	
+### Returns:
+
+* (*object*) This MooEditable.UI.Button instance.
+
+
+
+Class: MooEditable.UI.Dialog {#MooEditable-UI-Dialog}
+=====================================================
+
+The dialog interface.
+
+### Implements:
+
+[Events][], [Options][]
+
+
+MooEditable.UI.Dialog Method: constructor {#MooEditable-UI-Dialog:constructor}
+------------------------------------------------------------------------------
+
+### Syntax:
+
+	var myMooEditableDialog = new MooEditable.UI.Dialog([options]);
+
+### Arguments:
+
+1. options - (*object*, optional) The options object.
+
+### Options:
+
+* class    - (*string*: defaults to null) The class name of the dialog.
+* contentClass    - (*string*: defaults to null) The class name of the dialog content.
+
+### Events:
+
+* open - Executed when the dialog is opened.
+* close - Executed when the dialog is closed.
+
+
+
+MooEditable.UI.Dialog Method: open {#MooEditable-UI-Dialog:open}
+----------------------------------------------------------------
+
+Opens the dialog.
+
+### Syntax:
+
+	myMooEditableDialog.open();
+	
+### Returns:
+
+* (*object*) This MooEditable.UI.Dialog instance.
+
+
+
+MooEditable.UI.Dialog Method: close {#MooEditable-UI-Dialog:close}
+------------------------------------------------------------------
+
+Closes the dialog.
+
+### Syntax:
+
+	myMooEditableDialog.close();
+	
+### Returns:
+
+* (*object*) This MooEditable.UI.Dialog instance.
+
+
+
+Function: MooEditable.UI.AlertDialog {#MooEditable-UI-AlertDialog}
+==================================================================
+
+The alert dialog interface. Replacement for `alert()`.
+
+### Syntax:
+
+	var myMooEditableAlertDialog = MooEditable.UI.AlertDialog(text);
+
+### Arguments:
+
+1. text - (*string*) A string to be shown on the alert dialog.
+
+
+
+Function: MooEditable.UI.PromptDialog {#MooEditable-UI-PromptDialog}
+==================================================================
+
+The prompt dialog interface. Replacement for `prompt()`.
+
+### Syntax:
+
+	var myMooEditablePromptDialog = MooEditable.UI.PromptDialog(question[, answer, fn]);
+
+### Arguments:
+
+1. question - (*string*) A string to be shown as the question on the prompt dialog.
+2. answer   - (*string*, optional) A string to be shown in the answer field on the prompt dialog.
+3. fn       - (*function*, optional) Executed when the OK button of the prompt dialog is clicked.
 
 
 
