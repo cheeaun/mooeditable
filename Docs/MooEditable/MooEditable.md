@@ -54,21 +54,13 @@ MooEditable Method: constructor {#MooEditable:constructor}
 * render - Executed when the editor is rendered.
 * attach - Executed when the editor is attached.
 * detach - Executed when the editor is detached.
-* beforeEditorMouseUp - Executed before 'mouseup' event is fired on the editor.
 * editorMouseUp - Executed when 'mouseup' event is fired on the editor.
-* beforeEditorMouseDown - Executed before 'mousedown' event is fired on the editor.
 * editorMouseDown - Executed when 'mousedown' event is fired on the editor.
-* beforeEditorContextMenu - Executed before 'contextmenu' event is fired on the editor.
 * editorContextMenu - Executed when 'contextmenu' event is fired on the editor.
-* beforeEditorClick - Executed before 'click' event is fired on the editor.
 * editorClick - Executed when 'click' event is fired on the editor.
-* beforeEditorDoubleClick - Executed before 'doubleclick' event is fired on the editor.
 * editorDoubleClick - Executed when 'doubleclick' event is fired on the editor.
-* beforeEditorKeyPress - Executed before 'keypress' event is fired on the editor.
 * editorKeyPress - Executed when 'keypress' event is fired on the editor.
-* beforeEditorKeyUp - Executed before 'keyup' event is fired on the editor.
 * editorKeyUp - Executed when 'keyup' event is fired on the editor.
-* beforeEditorKeyDown - Executed before 'keydown' event is fired on the editor.
 * editorKeyDown - Executed when 'keydown' event is fired on the editor.
 * dialogOpen - Executed when dialog is opened.
 * dialogClose - Executed when dialog is closed.

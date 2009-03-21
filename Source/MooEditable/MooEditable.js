@@ -203,14 +203,14 @@ var MooEditable = new Class({
 
 		// Bind keyboard shortcuts
 		this.doc.addEvents({
-			mouseup: this.handleMouseUp.bind(this),
-			mousedown: this.handleMouseDown.bind(this),
-			contextmenu: this.handleContextMenu.bind(this),
-			click: this.handleClick.bind(this),
-			dbllick: this.handleDoubleClick.bind(this),
-			keypress: this.handleKeyPress.bind(this),
-			keyup: this.handleKeyUp.bind(this),
-			keydown: this.handleKeyDown.bind(this)
+			mouseup: this.editorMouseUp.bind(this),
+			mousedown: this.editorMouseDown.bind(this),
+			contextmenu: this.editorContextMenu.bind(this),
+			click: this.editorClick.bind(this),
+			dbllick: this.editorDoubleClick.bind(this),
+			keypress: this.editorKeyPress.bind(this),
+			keyup: this.editorKeyUp.bind(this),
+			keydown: this.editorKeyDown.bind(this)
 		});
 		this.textarea.addEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener', this.keyListener.bind(this)));
 		
@@ -249,9 +249,7 @@ var MooEditable = new Class({
 		return this;
 	},
 	
-	handleMouseUp: function(e){
-		this.fireEvent('beforeEditorMouseUp', e);
-		
+	editorMouseUp: function(e){
 		if (this.editorDisabled){
 			e.stop();
 			return;
@@ -262,9 +260,7 @@ var MooEditable = new Class({
 		this.fireEvent('editorMouseUp', e);
 	},
 	
-	handleMouseDown: function(e){
-		this.fireEvent('beforeEditorMouseDown', e);
-		
+	editorMouseDown: function(e){
 		if (this.editorDisabled){
 			e.stop();
 			return;
@@ -273,9 +269,7 @@ var MooEditable = new Class({
 		this.fireEvent('editorMouseDown', e);
 	},
 	
-	handleContextMenu: function(e){
-		this.fireEvent('beforeEditorContextMenu', e);
-		
+	editorContextMenu: function(e){
 		if (this.editorDisabled){
 			e.stop();
 			return;
@@ -284,9 +278,7 @@ var MooEditable = new Class({
 		this.fireEvent('editorContextMenu', e);
 	},
 	
-	handleClick: function(e){
-		this.fireEvent('beforeEditorClick', e);
-		
+	editorClick: function(e){
 		// make images selectable and draggable in Safari
 		if (Browser.Engine.webkit){
 			var el = e.target;
@@ -298,14 +290,11 @@ var MooEditable = new Class({
 		this.fireEvent('editorClick', e);
 	},
 	
-	handleDoubleClick: function(e){
-		this.fireEvent('beforeEditorDoubleClick', e);
+	editorDoubleClick: function(e){
 		this.fireEvent('editorDoubleClick', e);
 	},
 	
-	handleKeyPress: function(e){
-		this.fireEvent('beforeEditorKeyPress', e);
-		
+	editorKeyPress: function(e){
 		if (this.editorDisabled){
 			e.stop();
 			return;
@@ -316,9 +305,7 @@ var MooEditable = new Class({
 		this.fireEvent('editorKeyPress', e);
 	},
 	
-	handleKeyUp: function(e){
-		this.fireEvent('beforeEditorKeyUp', e);
-		
+	editorKeyUp: function(e){
 		if (this.editorDisabled){
 			e.stop();
 			return;
@@ -329,9 +316,7 @@ var MooEditable = new Class({
 		this.fireEvent('editorKeyUp', e);
 	},
 	
-	handleKeyDown: function(e){
-		this.fireEvent('beforeEditorKeyDown', e);
-		
+	editorKeyDown: function(e){
 		if (this.editorDisabled){
 			e.stop();
 			return;
@@ -367,6 +352,7 @@ var MooEditable = new Class({
 	
 	keyListener: function(e){
 		if (!e.control || !this.keys[e.key]) return;
+		e.preventDefault();
 		var item = this.toolbar.getItem(this.keys[e.key]);
 		item.action(e);
 	},
