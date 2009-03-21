@@ -106,6 +106,21 @@ Detaches the editor and replaced by the original textarea.
 
 
 
+MooEditable Method: focus {#MooEditable:focus}
+------------------------------------------------
+
+Focus on the editor, regardless of which view is shown.
+
+### Syntax:
+
+	myMooEditable.focus();
+	
+### Returns:
+
+* (*object*) This MooEditable instance.
+
+
+
 MooEditable Method: toggleView {#MooEditable:toggleView}
 ------------------------------------------------
 
