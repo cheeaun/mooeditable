@@ -94,7 +94,7 @@ Attaches the editor and replace the textarea.
 MooEditable Method: detach {#MooEditable:detach}
 ------------------------------------------------
 
-Detaches the editor and replaced the textarea.
+Detaches the editor and replaced by the original textarea.
 
 ### Syntax:
 
