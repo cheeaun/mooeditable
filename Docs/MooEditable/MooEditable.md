@@ -233,7 +233,5 @@ Initializes the MooEditable instance on the element.
 
 
 [$]: http://mootools.net/docs/Element/Element/#dollar
-[Element:addEvent]: http://mootools.net/docs/Element/Element.Event/#Element:addEvent
 [Events]: http://mootools.net/docs/Class/Class.Extras#Events
-[Chain]: http://mootools.net/docs/Class/Class.Extras#Chain
 [Options]: http://mootools.net/docs/Class/Class.Extras#Options
