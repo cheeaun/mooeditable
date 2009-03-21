@@ -957,6 +957,7 @@ MooEditable.UI.Dialog = new Class({
 });
 
 MooEditable.UI.AlertDialog = function(alertText){
+	if (!alertText) return;
 	var html = alertText + ' <button class="dialog-ok-button">OK</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-alert-dialog',
@@ -975,6 +976,7 @@ MooEditable.UI.AlertDialog = function(alertText){
 };
 
 MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
+	if (!questionText) return;
 	var html = '<label class="dialog-label">' + questionText
 		+ ' <input type="text" class="text dialog-input" value="' + answerText + '">'
 		+ '</label> <button class="dialog-button dialog-ok-button">OK</button>'
