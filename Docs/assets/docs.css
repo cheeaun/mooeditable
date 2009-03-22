@@ -10,18 +10,35 @@ title{
 }
 
 #container{
-	width: 70em;
+	width: 80em;
 	margin: auto;
 }
 
 #menu{
 	float: left;
-	width: 15em;
+	width: 13em;
 }
 
 #docs{
-	margin-left: 16em;
+	float: left;
+	margin-left: 2em;
+	width: 49em;
 	overflow: hidden;
+}
+
+#methods{
+	margin-left: 66em;
+}
+
+#methods ul{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#methods ul ul{
+	list-style-type: disc;
+	margin: 1em;
 }
 
 h1{

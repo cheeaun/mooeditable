@@ -5,23 +5,18 @@ var Docs = {
 		'MooEditable/MooEditable.Extras.md',
 		'MooEditable/MooEditable.Group.md'
 		],
-	currentDoc: '',
-	
 	start: function(){
 		Docs.generateMenu();
 		
-		var hashdoc = function(){
-			var href = window.location.hash.slice(1);
-			if (Docs.currentDoc && href == Docs.currentDoc) return;
-			if (!href || !/(\.md)/.test(href)){
-				href = Docs.urls[0];
-				window.location.hash = href;
-			}
-			Docs.getContent(href, Docs.parse);
-			Docs.currentDoc = href;
-		};
+		var href = window.location.hash.slice(1);
+		if (href && /(\.md)/.test(href)) Docs.getContent(href, Docs.parse);
 		
-		hashdoc.periodical(25);
+		document.addEvent('click', function(e){
+			if (e.target.tagName.toLowerCase() != 'a') return;
+			var href = e.target.href.split('#')[1];
+			if (!href || !/(\.md)/.test(href)) return;
+			Docs.getContent(href, Docs.parse);
+		});
 	},
 	
 	generateMenu: function(){
@@ -78,9 +73,38 @@ var Docs = {
 			h.innerHTML = h.innerHTML.replace(anchor, '');
 		});
 		
+		// hash methods list
+		var headings = sd.getElements('h1');
+		var methods = sd.getElements('h2');
+		
+		var html = '<ul>';
+		headings.each(function(heading){
+			var href = heading.get('id');
+			var text = heading.get('text').split(':')[1].trim();
+			html += '<li><a href="#' + href + '"><strong>' + text + '</strong></a>';
+			html += '<ul>';
+			methods.filter('[id^=' + href + ':]').each(function(method){
+				var href = method.get('id');
+				var text = href.split(':')[1];
+				html += '<li><a href="#' + href + '">' + text + '</a></li>';
+			});
+			html += '</ul></li>';
+		});
+		html += '</ul>';
+		$('methods').set('html', html);
+		
+		// hack some links
+		sd.getElements('a[href^=/]').each(function(a){
+			var href = '#' + a.href.replace('file:///', '') + '.md';
+			a.href = href;
+		});
+		
 		// prettify code
 		sd.getElements('pre').addClass('prettyprint');
 		prettyPrint();
+		
+		// scroll to top
+		window.scrollTo(0, 0);
 	},
 	
 	disposeIframes: function(){
