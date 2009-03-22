@@ -17,7 +17,7 @@ MooEditable Method: constructor {#MooEditable:constructor}
 
 ### Arguments:
 
-1. textarea      - (*mixed*) A string of the id for an Element or an Element reference of the textarea this editor modifies
+1. textarea      - (*mixed*) A string of the id for an Element or an Element reference of the textarea this editor modifies.
 2. options - (*object*, optional) The options object.
 
 ### Options:
@@ -557,8 +557,8 @@ Native: Element {#Element}
 
 Custom Native to allow all of its methods to be used with any DOM element via the dollar function [$][].
 
-Element Method: mooEditable
----------------------------
+Element Method: mooEditable {#Element:mooEditable}
+--------------------------------------------------
 
 Initializes the MooEditable instance on the element.
 
