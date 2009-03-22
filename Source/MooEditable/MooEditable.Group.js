@@ -31,8 +31,8 @@ MooEditable.Group = new Class({
 		$(toolbarEl).adopt(this.toolbar);
 	},
 
-	add: function(el, options){
-		return this.activeEditor = new MooEditable.Group.Item(el, this, $merge({toolbar: false}, this.options, options));
+	add: function(textarea, options){
+		return this.activeEditor = new MooEditable.Group.Item(textarea, this, $merge({toolbar: false}, this.options, options));
 	}
 	
 });
@@ -42,9 +42,9 @@ MooEditable.Group.Item = new Class({
 
 	Extends: MooEditable,
 
-	initialize: function(el, group, options){
+	initialize: function(textarea, group, options){
 		this.group = group;
-		this.parent(el, options);
+		this.parent(textarea, options);
 		var focus = function(){
 			this.group.activeEditor = this;
 		}.bind(this);
