@@ -32,7 +32,7 @@ MooEditable.Group = new Class({
 	},
 
 	add: function(el, options){
-		return this.activeEditor = new MooEditable.Group.Item(el, this, $merge({toolbar: false}, options));
+		return this.activeEditor = new MooEditable.Group.Item(el, this, $merge({toolbar: false}, this.options, options));
 	}
 	
 });
