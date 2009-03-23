@@ -20,7 +20,6 @@ MooEditable.UI.MenuList = new Class({
 		title: '',
 		name: '',
 		'class': '',
-		title: '',
 		list: []
 	},
 
