@@ -3,7 +3,7 @@ var Docs = {
 	urls: [
 		'MooEditable/MooEditable.md',
 		'MooEditable/MooEditable.Extras.md',
-		'MooEditable/MooEditable.Group.md'
+		'MooEditable/MooEditable.Group.md',
 		],
 	start: function(){
 		Docs.generateMenu();
@@ -13,9 +13,15 @@ var Docs = {
 		
 		document.addEvent('click', function(e){
 			if (e.target.tagName.toLowerCase() != 'a') return;
-			var href = e.target.href.split('#')[1];
+			var hrefsplit = e.target.href.split('#');
+			var href = hrefsplit[1];
 			if (!href || !/(\.md)/.test(href)) return;
 			Docs.getContent(href, Docs.parse);
+			if (hrefsplit.length>2) setTimeout(function(){
+				var id = location.hash = hrefsplit[2];
+				var to = $(id.replace(/\./g, '-')).getCoordinates();
+				window.scrollTo(0, to.top);
+			}, 100);
 		});
 	},
 	
@@ -95,7 +101,10 @@ var Docs = {
 		
 		// hack some links
 		sd.getElements('a[href^=/]').each(function(a){
-			var href = '#' + a.href.replace('file:///', '') + '.md';
+			var href = a.href;
+			var hrefsplit = href.split('#');
+			var href = '#' + hrefsplit[0].replace('file:///', '') + '.md';
+			if (hrefsplit.length>1) href += '#' + hrefsplit[1];
 			a.href = href;
 		});
 		
