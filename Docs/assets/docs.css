@@ -10,24 +10,33 @@ title{
 }
 
 #container{
-	width: 80em;
+	max-width: 80em;
 	margin: auto;
 }
 
 #menu{
 	float: left;
-	width: 13em;
+	width: 20%;
+}
+
+#menu ul{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#menu a:focus{
+	font-weight: bold;
 }
 
 #docs{
-	float: left;
-	margin-left: 2em;
-	width: 49em;
+	margin: 0 22%;
 	overflow: hidden;
 }
 
 #methods{
-	margin-left: 66em;
+	float: right;
+	width: 20%;
 }
 
 #methods ul{
@@ -38,7 +47,7 @@ title{
 
 #methods ul ul{
 	list-style-type: disc;
-	margin: 1em;
+	margin: 1em 1.5em;
 }
 
 h1{
