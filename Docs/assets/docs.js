@@ -2,6 +2,8 @@ var Docs = {
 
 	urls: [
 		'MooEditable/MooEditable.md',
+		'MooEditable/MooEditable.UI.MenuList.md',
+		'MooEditable/MooEditable.UI.ButtonOverlay.md',
 		'MooEditable/MooEditable.Extras.md',
 		'MooEditable/MooEditable.Group.md',
 		],
