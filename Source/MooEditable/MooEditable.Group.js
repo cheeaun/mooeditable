@@ -22,10 +22,10 @@ MooEditable.Group = new Class({
 			onItemAction: function(){
 				var args = $splat(arguments);
 				var item = args[0];
-                if (!self.activeEditor) return;
-                self.activeEditor.focus();
-                self.activeEditor.action(item.name, args);
-                if (self.activeEditor.mode == 'iframe') self.activeEditor.checkStates();
+				if (!self.activeEditor) return;
+				self.activeEditor.focus();
+				self.activeEditor.action(item.name, args);
+				if (self.activeEditor.mode == 'iframe') self.activeEditor.checkStates();
 			}
 		}).render(this.actions);
 		$(toolbarEl).adopt(this.toolbar);
