@@ -1,27 +1,19 @@
-0.4 (current)
-- Added more regex for semantic xhtml output
-- Added cssPath and cssClass options to load custom stylesheet
-- Added 3 toolbar display mode (icons, text and icons-text)
-- Removed styleWithCSS option, no longer useful since release of Firefox 3 beta
-- Fixed (really!) the 'Permission denied' error on Internet Explorer 6
-- Fixed 'initial' output from textarea to the iframe
-- Fixed code for adding formatBlock
+MooEditable 0.4 - March 29th, 2009
 
-0.3 (20 Nov 2007)
-- Fixed formatting bugs with Internet Explorer 7
-- Fixed IE bug with inherited margins on form elements
-- Fixed error when cancelling hyperlink prompt dialog
-- Fixed button hover for Internet Explorer 6
-- Tweaked the PNG images to be a little friendlier for Internet Explorer 6
-- Fixed <label> event to focus on iframe instead of textarea in design mode
-
-0.2 (15 Nov 2007)
-- Fixed padding of textareas and iframe's doc for Safari 3 beta
-- Added instant update of content to textareas
-- Added compatibility for Internet Explorer 7
-- Better compatibility with Adobe AIR's webkit
-- More regex to cleanup the messy code made by Internet Explorer
-- Removed mode option, not very useful anyway
-
-0.1 (12 Nov 2007)
-- first initial release
+[ADD] More Regex for semantic XHTML output
+[ADD] More options such as handleSubmit, handleLabel, baseCSS, extraCSS, externalCSS, html
+[ADD] Attach and detach methods
+[ADD] Documentation in Markdown
+[ADD] Demonstration files
+[ADD] Additional classes to extend MooEditable
+[ADD] More events
+[CHG] File/folder structure
+[CHG] Refactor UI-related code to MooEditable.UI
+[CHG] Cleaner generated HTML code
+[CHG] Moved all styles to external stylesheet
+[CHG] Better class names for generated HTML
+[CHG] All individual images compiled into a sprite image
+[FIX] 'Permission denied' error on Internet Explorer 6
+[FIX] 'initial' output from textarea to the iframe
+[FIX] IE selection bug, focusing on the parent 'window'
+[FIX] Window focus event not firing on Firefox 2
