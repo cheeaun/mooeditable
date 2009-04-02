@@ -323,8 +323,35 @@ var MooEditable = new Class({
 		}
 		
 		if (e.key == 'enter'){
-			if (this.options.paragraphise && !e.shift){
-				if (Browser.Engine.gecko || Browser.Engine.webkit){
+			if (this.options.paragraphise){
+				if (e.shift && Browser.Engine.webkit){
+					var s = this.selection;
+					var r = s.getRange();
+					
+					// Insert BR element
+					var br = this.doc.createElement('br');
+					r.insertNode(br);
+					
+					// Place caret after BR
+					r.setStartAfter(br);
+					r.setEndAfter(br);
+					s.setRange(r);
+					
+					// Could not place caret after BR then insert an nbsp entity and move the caret
+					if (s.getSelection().focusNode == br.previousSibling){
+						var nbsp = this.doc.createTextNode('\u00a0');
+						var p = br.parentNode;
+						var ns = br.nextSibling;
+						(ns) ? p.insertBefore(nbsp, ns) : p.appendChild(nbsp);
+						s.selectNode(nbsp);
+						s.collapse(1);
+					}
+					
+					// Scroll to new position, scrollIntoView can't be used due to bug: http://bugs.webkit.org/show_bug.cgi?id=16117
+					this.win.scrollTo(0, Element.getOffsets(s.getRange().startContainer).y);
+					
+					e.preventDefault();
+				} else if (Browser.Engine.gecko || Browser.Engine.webkit){
 					var node = this.selection.getNode();
 					var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
 					var isBlock = node.getParents().include(node).some(function(el){
