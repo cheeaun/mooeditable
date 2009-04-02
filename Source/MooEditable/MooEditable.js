@@ -436,6 +436,13 @@ var MooEditable = new Class({
 				return;
 			}
 			
+			try{
+				if (this.doc.queryCommandState(action)){
+					item.activate();
+					return;
+				}
+			} catch(e) {}
+			
 			if (states.tags){
 				do {
 					if ($type(el) != 'element') break;
