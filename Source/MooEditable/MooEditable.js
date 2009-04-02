@@ -707,14 +707,13 @@ MooEditable.Selection = new Class({
 	},
 
 	insertContent: function(content){
-		var r = this.getRange();
-
-		if (r.insertNode){
-			r.deleteContents();
-			r.insertNode(r.createContextualFragment(content));
+		if (Browser.Engine.trident){
+			var r = this.getRange();
+			r.pasteHTML(content);
+			r.collapse(false);
+			r.select();
 		} else {
-			// Handle text and control range
-			(r.pasteHTML) ? r.pasteHTML(content) : r.item(0).outerHTML = content;
+			this.win.document.execCommand('insertHTML', false, content);
 		}
 	}
 
