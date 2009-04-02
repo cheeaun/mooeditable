@@ -363,11 +363,9 @@ var MooEditable = new Class({
 				if (Browser.Engine.trident){
 					var r = this.selection.getRange();
 					var node = this.selection.getNode();
-					if (node.get('tag') != 'li'){
-						if (r){
-							this.selection.insertContent('<br>');
-							this.selection.collapse(false);
-						}
+					if (r && node.get('tag') != 'li'){
+						this.selection.insertContent('<br>');
+						this.selection.collapse(false);
 					}
 					e.preventDefault();
 				}
