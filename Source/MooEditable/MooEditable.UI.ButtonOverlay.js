@@ -43,7 +43,7 @@ MooEditable.UI.ButtonOverlay = new Class({
 				height: self.options.overlaySize.y
 			},
 			events: {
-				click: self.clickOverlay.bind(self)
+				mousedown: self.clickOverlay.bind(self)
 			}
 		}).inject(document.body).store('MooEditable.UI.ButtonOverlay', this);
 		this.overlayVisible = false;
