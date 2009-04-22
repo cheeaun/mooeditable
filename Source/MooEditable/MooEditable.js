@@ -376,7 +376,8 @@ var MooEditable = new Class({
 	},
 	
 	keyListener: function(e){
-		if (!e.control || !this.keys[e.key]) return;
+		var key = (Browser.Platform.mac) ? e.meta : e.control;
+		if (!key || !this.keys[e.key]) return;
 		e.preventDefault();
 		var item = this.toolbar.getItem(this.keys[e.key]);
 		item.action(e);
@@ -862,7 +863,8 @@ MooEditable.UI.Button = new Class({
 	
 	render: function(){
 		var self = this;
-		var shortcut = (this.options.shortcut) ? ' ( Ctrl+' + this.options.shortcut.toUpperCase() + ' )' : '';
+		var key = (Browser.Platform.mac) ? 'Cmd' : 'Ctrl';
+		var shortcut = (this.options.shortcut) ? ' ( ' + key + '+' + this.options.shortcut.toUpperCase() + ' )' : '';
 		var text = this.options.title || name;
 		var title = text + shortcut;
 		this.el = new Element('button', {
