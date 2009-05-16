@@ -201,7 +201,7 @@ var MooEditable = new Class({
 		if (!this.doc.$family) new Document(this.doc);
 		$(this.doc.body);
 
-		// Bind keyboard shortcuts
+		// Bind all events
 		this.doc.addEvents({
 			mouseup: this.editorMouseUp.bind(this),
 			mousedown: this.editorMouseDown.bind(this),
