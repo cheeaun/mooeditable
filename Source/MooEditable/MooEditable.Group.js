@@ -28,7 +28,7 @@ MooEditable.Group = new Class({
 				if (self.activeEditor.mode == 'iframe') self.activeEditor.checkStates();
 			}
 		}).render(this.actions);
-		$(toolbarEl).adopt(this.toolbar);
+		document.id(toolbarEl).adopt(this.toolbar);
 	},
 
 	add: function(textarea, options){
