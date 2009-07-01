@@ -36,10 +36,10 @@ var MooEditable = new Class({
 		actions: 'bold italic underline strikethrough | insertunorderedlist insertorderedlist indent outdent | undo redo | createlink unlink | urlimage | toggleview',
 		handleSubmit: true,
 		handleLabel: true,
-		baseCSS: 'html{ height: 100%; cursor: text }\ body{ font-family: sans-serif; border: 0; }',
+		baseCSS: 'html{ height: 100%; cursor: text } body{ font-family: sans-serif; border: 0; }',
 		extraCSS: '',
 		externalCSS: '',
-		html: '<html>\ <head>\ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\ <style>{BASECSS} {EXTRACSS}</style>\ {EXTERNALCSS}\ </head>\ <body>{CONTENT}</body>\ </html>'
+		html: '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body>{CONTENT}</body></html>'
 	},
 
 	initialize: function(el, options){
