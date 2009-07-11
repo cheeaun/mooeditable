@@ -110,7 +110,7 @@ var MooEditable = new Class({
 				self.action(item.name, args);
 			}
 		});
-		this.attach();
+		this.attach.delay(1, this);
 		
 		// Update the event for textarea's corresponding labels
 		if (this.options.handleLabel && this.textarea.id) $$('label[for="'+this.textarea.id+'"]').addEvent('click', function(e){
