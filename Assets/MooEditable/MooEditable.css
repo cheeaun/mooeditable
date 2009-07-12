@@ -170,6 +170,9 @@
 	background-color: #ddd;
 	font-size: 12px;
 	z-index: 100;
+	outline: 0;
+	-moz-outline: 0;
+	-webkit-outline: 0;
 }
 
 .mooeditable-ui-button-overlay .overlay-content{

@@ -41,7 +41,7 @@
 					command: function(buttonOverlay, e){
 						var el = e.target;
 						if (el.tagName.toLowerCase() != 'a') return;
-						this.selection.insertContent(el.get('text'));
+						this.selection.insertContent($(el).get('text'));
 					}
 				};
 				
@@ -59,7 +59,7 @@
 					command: function(buttonOverlay, e){
 						var el = e.target;
 						if (el.tagName.toLowerCase() != 'a') return;
-						this.selection.insertContent('number ' + el.get('text'));
+						this.selection.insertContent('number ' + $(el).get('text'));
 					}
 				};
 				

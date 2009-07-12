@@ -36,29 +36,24 @@ MooEditable.UI.ButtonOverlay = new Class({
 		this.overlay = new Element('div', {
 			'class': 'mooeditable-ui-button-overlay ' + self.name + '-overlay ' + self.options.overlayClass,
 			html: '<div class="overlay-content ' + self.options.overlayContentClass + '">' + html + '</div>',
+			tabindex: 0,
 			styles: {
-				display: 'none',
+				left: '-999em',
 				position: 'absolute',
 				width: self.options.overlaySize.x,
 				height: self.options.overlaySize.y
 			},
 			events: {
-				mousedown: self.clickOverlay.bind(self)
+				mousedown: self.clickOverlay.bind(self),
+				focus: self.openOverlay.bind(self),
+				blur: self.closeOverlay.bind(self)
 			}
 		}).inject(document.body).store('MooEditable.UI.ButtonOverlay', this);
 		this.overlayVisible = false;
-		window.addEvent('click', function(e){
-			var el = e.target;
-			if (el == self.el) return;
-			if (Element.hasClass(el, self.name + '-overlay')) return;
-			if (Element.getParents(el, '.' + self.name + '-overlay').length) return;
-			self.closeOverlay();
-		});
 	},
 	
 	openOverlay: function(){
 		if (this.overlayVisible) return;
-		this.overlay.setStyle('display', '');
 		this.overlayVisible = true;
 		this.activate();
 		this.fireEvent('openOverlay', this);
@@ -67,7 +62,7 @@ MooEditable.UI.ButtonOverlay = new Class({
 	
 	closeOverlay: function(){
 		if (!this.overlayVisible) return;
-		this.overlay.setStyle('display', 'none');
+		this.overlay.setStyle('left', '-999em');
 		this.overlayVisible = false;
 		this.deactivate();
 		this.fireEvent('closeOverlay', this);
@@ -75,16 +70,17 @@ MooEditable.UI.ButtonOverlay = new Class({
 	},
 	
 	clickOverlay: function(e){
+		if (e.target == this.overlay || e.target.parentNode == this.overlay) return;
 		e.preventDefault();
 		this.action(e);
-		this.closeOverlay();
+		this.overlay.blur();
 	},
 	
 	click: function(e){
 		e.preventDefault();
 		if (this.disabled) return;
 		if (this.overlayVisible){
-			this.closeOverlay();
+			this.overlay.blur();
 			return;
 		} else {
 			var coords = this.el.getCoordinates();
@@ -92,7 +88,7 @@ MooEditable.UI.ButtonOverlay = new Class({
 				top: coords.bottom,
 				left: coords.left
 			});
-			this.openOverlay();
+			this.overlay.focus();
 		}
 	}
 	
