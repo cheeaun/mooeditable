@@ -380,7 +380,7 @@ var MooEditable = new Class({
 		(function(){ 
 			(this.mode == 'iframe' ? this.win : this.textarea).focus();
 			this.fireEvent('focus', this);
-		}).bind(this).delay(10);
+		}).delay(10, this);
 		return this;
 	},
 
