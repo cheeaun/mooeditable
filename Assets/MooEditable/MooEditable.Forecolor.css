@@ -1,0 +1,16 @@
+
+.mooeditable-ui-toolbar .forecolor-item .button-icon {
+	background: transparent url(images/mooeditable-toolbarbuttons-silk.png) no-repeat top left;
+	background-position: 0 -192px;
+}
+
+.forecolor-overlay .colorPickerColor {
+    font-size: 1px;
+    height: 14px;
+    width: 14px;
+    float: left;
+    position: absolute;
+    -webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
