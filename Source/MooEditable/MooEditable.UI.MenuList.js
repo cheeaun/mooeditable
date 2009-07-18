@@ -37,12 +37,13 @@ MooEditable.UI.MenuList = new Class({
 		var self = this;
 		var html = '';
 		this.options.list.each(function(item){
-			html += '<option value="{value}">{text}</option>'.substitute(item);
+			html += '<option value="{value}" style="{style}">{text}</option>'.substitute(item);
 		});
 		this.el = new Element('select', {
 			'class': self.options['class'],
 			title: self.options.title,
 			html: html,
+			styles: { 'height' : '21px' },
 			events: {
 				change: self.change.bind(self)
 			}
