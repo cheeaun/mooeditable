@@ -586,7 +586,6 @@ var MooEditable = new Class({
 			//remove double <p> tags and empty <p> tags
 			source = source.replace(/<p>(?:\s*)<p>/g, '<p>');
 			source = source.replace(/<\/p>\s*<\/p>/g, '</p>');
-			source = source.replace(/<p>\W*<\/p>/g, '');
 
 			// Final trim
 			source = source.trim();
