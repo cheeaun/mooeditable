@@ -1,0 +1,69 @@
+/*
+ A change to the original MooEditable style
+ 
+ * Famfamfam Silk Iconset
+ * Darker gray color for mouse over selections 
+ * Rounded corners for buttons and overlays (only supported on WebKit and FireFox) 
+ 
+ Usage:
+        Include MooEditable.SilkTheme.css to overwrite the default settings
+        
+ 		<link rel="stylesheet" type="text/css" href="../../Assets/MooEditable/MooEditable.css">
+		<link rel="stylesheet" type="text/css" href="../../Assets/MooEditable/MooEditable.Extras.css">
+		<link rel="stylesheet" type="text/css" href="../../Assets/MooEditable/MooEditable.SilkTheme.css">
+ 
+ 
+ Author: Olivier Refalo
+ */
+
+
+.mooeditable-ui-toolbar .mooeditable-ui-button .button-icon{
+	background: transparent url(images/mooeditable-toolbarbuttons-silk.png) no-repeat 0 -8px;
+}
+
+.mooeditable-ui-toolbar .bold-item .button-icon{ background-position: 0 -16px; } 
+.mooeditable-ui-toolbar .createlink-item .button-icon{ background-position: 0 -32px; } 
+.mooeditable-ui-toolbar .indent-item .button-icon{ background-position: 0 -48px; } 
+.mooeditable-ui-toolbar .insertorderedlist-item .button-icon{ background-position: 0 -64px; } 
+.mooeditable-ui-toolbar .insertunorderedlist-item .button-icon{ background-position: 0 -80px; } 
+.mooeditable-ui-toolbar .italic-item .button-icon{ background-position: 0 -96px; } 
+.mooeditable-ui-toolbar .outdent-item .button-icon{ background-position: 0 -176px; } 
+.mooeditable-ui-toolbar .redo-item .button-icon{ background-position: 0 -208px; } 
+.mooeditable-ui-toolbar .strikethrough-item .button-icon{ background-position: 0 -224px; } 
+.mooeditable-ui-toolbar .toggleview-item .button-icon{ background-position: 0 -240px; } 
+.mooeditable-ui-toolbar .underline-item .button-icon{ background-position: 0 -256px; } 
+.mooeditable-ui-toolbar .undo-item .button-icon{ background-position: 0 -272px; } 
+.mooeditable-ui-toolbar .unlink-item .button-icon{ background-position: 0 -288px; } 
+.mooeditable-ui-toolbar .urlimage-item .button-icon{ background-position: 0 -304px; } 
+
+.mooeditable-ui-toolbar .justifycenter-item .button-icon,
+.mooeditable-ui-toolbar .justifyright-item .button-icon,
+.mooeditable-ui-toolbar .justifyfull-item .button-icon,
+.mooeditable-ui-toolbar .justifyleft-item .button-icon{
+	background-image: url(images/mooeditable-toolbarbuttons-silk.png);
+}
+.mooeditable-ui-toolbar .justifycenter-item .button-icon{ background-position: 0 -112px; } 
+.mooeditable-ui-toolbar .justifyfull-item .button-icon{ background-position: 0 -128px; } 
+.mooeditable-ui-toolbar .justifyleft-item .button-icon{ background-position: 0 -144px; } 
+.mooeditable-ui-toolbar .justifyright-item .button-icon{ background-position: 0 -160px; } 
+
+.mooeditable-ui-toolbar .mooeditable-ui-button:hover,
+.mooeditable-ui-toolbar .mooeditable-ui-button.hover{
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.mooeditable-ui-button-overlay{
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.mooeditable-ui-toolbar .mooeditable-ui-button.active,
+.mooeditable-ui-toolbar .mooeditable-ui-button.onActive{
+	background-color: #bbb;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
