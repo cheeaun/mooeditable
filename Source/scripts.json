@@ -30,6 +30,11 @@
 		"MooEditable.Forecolor": {
 			"deps": ["MooEditable", "MooEditable.UI.ButtonOverlay"],
 			"desc": "Extends MooEditable to change the color of the text from a list a predefined colors."
+		},
+		
+		"MooEditable.Smiley": {
+			"deps": ["MooEditable", "MooEditable.UI.ButtonOverlay"],
+			"desc": "Extends MooEditable to insert smiley/emoticons."
 		}
 		
 	}

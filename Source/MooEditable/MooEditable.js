@@ -249,7 +249,7 @@ var MooEditable = new Class({
 		
 		if (this.options.toolbar) this.checkStates();
 		
-		this.fireEvent('editorMouseUp', e);
+		this.fireEvent('editorMouseUp', [e, this]);
 	},
 	
 	editorMouseDown: function(e){
@@ -258,7 +258,7 @@ var MooEditable = new Class({
 			return;
 		}
 		
-		this.fireEvent('editorMouseDown', e);
+		this.fireEvent('editorMouseDown', [e, this]);
 	},
 	
 	editorContextMenu: function(e){
@@ -267,7 +267,7 @@ var MooEditable = new Class({
 			return;
 		}
 		
-		this.fireEvent('editorContextMenu', e);
+		this.fireEvent('editorContextMenu', [e, this]);
 	},
 	
 	editorClick: function(e){
@@ -279,11 +279,11 @@ var MooEditable = new Class({
 			}
 		}
 		
-		this.fireEvent('editorClick', e);
+		this.fireEvent('editorClick', [e, this]);
 	},
 	
 	editorDoubleClick: function(e){
-		this.fireEvent('editorDoubleClick', e);
+		this.fireEvent('editorDoubleClick', [e, this]);
 	},
 	
 	editorKeyPress: function(e){
@@ -294,7 +294,7 @@ var MooEditable = new Class({
 		
 		this.keyListener(e);
 		
-		this.fireEvent('editorKeyPress', e);
+		this.fireEvent('editorKeyPress', [e, this]);
 	},
 	
 	editorKeyUp: function(e){
@@ -305,7 +305,7 @@ var MooEditable = new Class({
 		
 		if (this.options.toolbar) this.checkStates();
 		
-		this.fireEvent('editorKeyUp', e);
+		this.fireEvent('editorKeyUp', [e, this]);
 	},
 	
 	editorKeyDown: function(e){
@@ -364,7 +364,7 @@ var MooEditable = new Class({
 			}
 		}
 		
-		this.fireEvent('editorKeyDown', e);
+		this.fireEvent('editorKeyDown', [e, this]);
 	},
 	
 	keyListener: function(e){
