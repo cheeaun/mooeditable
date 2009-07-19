@@ -40,7 +40,7 @@ MooEditable.Actions.forecolor = {
 			var html = '';
 			colors.each(function(row){
 				row.each(function(c){
-					html += '<a href="#" class="forecolor-colorpicker-color" style="background-color: #' + c + '" title="#' + c + '"></a>'; 
+					html += '<a href="#" class="forecolor-colorpicker-color" style="background-color: #' + c + '" title="#' + c.toUpperCase() + '"></a>'; 
 				});
 				html += '<span class="forecolor-colorpicker-br"></span>';
 			});

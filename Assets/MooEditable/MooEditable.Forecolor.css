@@ -9,16 +9,19 @@
 
 .forecolor-overlay .forecolor-colorpicker-color{
     line-height: 0;
-	height: 14px;
-	width: 14px;
+	overflow: hidden;
+	height: 12px;
+	width: 12px;
 	float: left;
     margin: 0 4px 4px 0;
+	border: 1px solid #fff;
 	border-radius: 2px;
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
 }
 
 .forecolor-overlay .forecolor-colorpicker-color:hover{
+	border-color: #000;
 }
 
 .forecolor-overlay .forecolor-colorpicker-br{
