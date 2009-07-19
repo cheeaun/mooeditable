@@ -11,14 +11,14 @@ Features
 * Clean interface
 * Customizable buttons
 * Tango icons
-* Lightweight (~20Kb uncompressed)
+* Lightweight
 * Fully degradable when Javascript disabled
-* Works in Internet Explorer 6/7, Firefox 2/3, Opera 9 and Safari 3
+* Works in Internet Explorer 6/7/8, Firefox 2/3, Opera 9/10 and Safari 3/4
 
 Requirements
 ------------
 
-[Mootools 1.2.1 Core](http://mootools.net/download), with minimum requirements of:
+[Mootools 1.2.3 Core](http://mootools.net/download), with minimum requirements of:
 
 * Class.Extras
 * Element.Event
