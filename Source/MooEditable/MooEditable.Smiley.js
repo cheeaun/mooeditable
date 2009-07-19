@@ -25,17 +25,22 @@ Author:
     Olivier Refalo orefalo@yahoo.com
 */
 
+MooEditable.Actions.settings.smiley = {
+	imagesPath: '../../Assets/MooEditable/Smiley/',
+	smileys: ['angryface', 'blush', 'gasp', 'grin', 'halo', 'lipsaresealed', 'smile', 'undecided', 'wink'],
+	fileExt: '.png'
+};
+
 MooEditable.Actions.smiley = {
 	type: 'button-overlay',
-	title: 'Pick a Smiley!',
+	title: 'Insert Smiley',
 	options: {
 		overlaySize: {x: 'auto'},
 		overlayHTML: (function(){
-			var pathToImages = '../../Assets/MooEditable/Smiley/';
-			var smileys = ['angryface', 'blush', 'gasp', 'grin', 'halo', 'lipsaresealed', 'smile', 'undecided', 'wink'];
+			var settings = MooEditable.Actions.settings.smiley;
 			var html = '';
-			smileys.each(function(sm){
-				html += '<img src="'+ pathToImages + sm +'.png" class="smiley-image">'; 
+			settings.smileys.each(function(s){
+				html += '<img src="'+ settings.imagesPath + s + settings.fileExt + '" class="smiley-image">'; 
 			});
 			return html;
 		})()
@@ -44,7 +49,7 @@ MooEditable.Actions.smiley = {
 		var el = e.target;
 		if (el.tagName.toLowerCase() != 'img') return;
 		var src = $(el).get('src');
-		var content = '<img style="border:0;" class="smiley" src="'+src+'">';
+		var content = '<img style="border:0;" class="smiley" src="' + src + '">';
 		this.selection.insertContent(content);
 		this.focus();
 	},
