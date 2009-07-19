@@ -1,6 +1,6 @@
 /*
 Script: MooEditable.UI.Forecolor.js
-	UI Class to change the color of the text from a list a predifined colors.
+	Extends MooEditable to change the color of the text from a list a predefined colors.
 
 Usage:
    Add the following tags in your html
@@ -24,48 +24,33 @@ Author:
     Olivier Refalo orefalo@yahoo.com
 */
 
-
 MooEditable.Actions.forecolor = {
-	
 	type: 'button-overlay',
 	title: 'Change Color',
 	options: {
-		overlaySize: {x:'148px', y:'94px'},
+		overlaySize: {x: 'auto'},
 		overlayHTML: (function(){
 			var html = '';
-			var colors = [['000000', '993300', '333300', '003300', '003366', '000077', '333399', '333333'], ['770000', 'ff6600', '777700', '007700', '007777', '0000ff', '666699', '777777'], ['ff0000', 'ff9900', '99cc00', '339966', '33cccc', '3366f0', '770077', '999999'], ['ff00ff', 'ffcc00', 'ffff00', '00ff00', '00ffff', '00ccff', '993366', 'cccccc'], ['ff99cc', 'ffcc99', 'ffff99', 'ccffcc', 'ccffff', '99ccff', 'cc9977', 'ffffff']];
-						
-			var j = x = y = 0;
+			var colors = [
+				['000000', '993300', '333300', '003300', '003366', '000077', '333399', '333333'],
+				['770000', 'ff6600', '777700', '007700', '007777', '0000ff', '666699', '777777'],
+				['ff0000', 'ff9900', '99cc00', '339966', '33cccc', '3366f0', '770077', '999999'],
+				['ff00ff', 'ffcc00', 'ffff00', '00ff00', '00ffff', '00ccff', '993366', 'cccccc'],
+				['ff99cc', 'ffcc99', 'ffff99', 'ccffcc', 'ccffff', '99ccff', 'cc9977', 'ffffff']
+			];
 			$each(colors, function(row){
 				$each(row, function(c){
-					var top = "top:" + (x * 18 + 4) + "px;";
-					var left = "left:" + (j * 18 + 4) + "px;";
-					var bg = "background-color:#" + c;
-							            
-					html+= '<a href="javascript:void(0)" class="colorPickerColor" style="';
-					html+= top;
-					html+= left;
-					html+= bg;
-					html+= '"></a>'; 
-
-					j++;
-	            },self);
-	            x++;
-	            if (y < j)
-		            y = j;
-	            j = 0;
-	        },self);
+					html += '<a href="#" class="forecolor-colorpicker-color" style="background-color: #' + c + '" title="#' + c + '"></a>'; 
+				});
+				html += '<span class="forecolor-colorpicker-br"></span>';
+			});
 			return html;
 		})()
 	},
-	
 	command: function(buttonOverlay, e){
 		var el = e.target;
 		if (el.tagName.toLowerCase() != 'a') return;
-		
 		var color = $(el).getStyle('background-color');
-		
-		//buttonOverlay.el.setStyle('background-color', color);
 		this.execute('forecolor', false, color);
 		this.focus();
 	}

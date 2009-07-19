@@ -1,16 +1,27 @@
-
-.mooeditable-ui-toolbar .forecolor-item .button-icon {
+.mooeditable-ui-toolbar .forecolor-item .button-icon{
 	background: transparent url(images/mooeditable-toolbarbuttons-silk.png) no-repeat top left;
 	background-position: 0 -192px;
 }
 
-.forecolor-overlay .colorPickerColor {
-    font-size: 1px;
-    height: 14px;
-    width: 14px;
-    float: left;
-    position: absolute;
-    -webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
+.forecolor-overlay .overlay-content{
+    padding: 4px 0 0 4px;
+}
+
+.forecolor-overlay .forecolor-colorpicker-color{
+    line-height: 0;
+	height: 14px;
+	width: 14px;
+	float: left;
+    margin: 0 4px 4px 0;
 	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+}
+
+.forecolor-overlay .forecolor-colorpicker-color:hover{
+}
+
+.forecolor-overlay .forecolor-colorpicker-br{
+    display: block;
+    clear: left;
 }
