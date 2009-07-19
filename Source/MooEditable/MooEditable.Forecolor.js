@@ -30,7 +30,6 @@ MooEditable.Actions.forecolor = {
 	options: {
 		overlaySize: {x: 'auto'},
 		overlayHTML: (function(){
-			var html = '';
 			var colors = [
 				['000000', '993300', '333300', '003300', '003366', '000077', '333399', '333333'],
 				['770000', 'ff6600', '777700', '007700', '007777', '0000ff', '666699', '777777'],
@@ -38,8 +37,9 @@ MooEditable.Actions.forecolor = {
 				['ff00ff', 'ffcc00', 'ffff00', '00ff00', '00ffff', '00ccff', '993366', 'cccccc'],
 				['ff99cc', 'ffcc99', 'ffff99', 'ccffcc', 'ccffff', '99ccff', 'cc9977', 'ffffff']
 			];
-			$each(colors, function(row){
-				$each(row, function(c){
+			var html = '';
+			colors.each(function(row){
+				row.each(function(c){
 					html += '<a href="#" class="forecolor-colorpicker-color" style="background-color: #' + c + '" title="#' + c + '"></a>'; 
 				});
 				html += '<span class="forecolor-colorpicker-br"></span>';
