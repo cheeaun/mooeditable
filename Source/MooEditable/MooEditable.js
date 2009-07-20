@@ -692,8 +692,8 @@ MooEditable.Selection = new Class({
 	getText : function(){
 		var r = this.getRange();
 		var s = this.getSelection();
-
-		return this.isCollapsed() ? '' : r.text || s.toString();
+		
+		return this.isCollapsed() ? '' : r.text || (s.toString ? s.toString() : '');
 	},
 
 	getNode: function(){
