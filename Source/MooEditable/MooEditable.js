@@ -98,6 +98,7 @@ var MooEditable = new Class({
 		// Build the iframe
 		this.iframe = new IFrame({
 			'class': 'mooeditable-iframe',
+			src: 'javascript:""', // Workaround for HTTPs warning in IE6/7
 			styles: {
 				height: dimensions.y
 			}
