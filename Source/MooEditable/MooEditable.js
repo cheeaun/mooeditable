@@ -376,11 +376,8 @@ var MooEditable = new Class({
 	},
 
 	focus: function(){
-		// needs the delay to get focus working
-		(function(){ 
-			(this.mode == 'iframe' ? this.win : this.textarea).focus();
-			this.fireEvent('focus', this);
-		}).delay(10, this);
+		(this.mode == 'iframe' ? this.win : this.textarea).focus();
+		this.fireEvent('focus', this);
 		return this;
 	},
 
@@ -418,7 +415,7 @@ var MooEditable = new Class({
 			this.iframe.setStyle('display', 'none');
 		}
 		this.fireEvent('toggleView', this);
-		this.focus();
+		this.focus.delay(10, this);
 		return this;
 	},
 
