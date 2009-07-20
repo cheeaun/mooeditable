@@ -1177,7 +1177,7 @@ MooEditable.Actions = new Hash({
 
 });
 
-MooEditable.Actions.settings = {};
+MooEditable.Actions.Settings = {};
 
 Element.Properties.mooeditable = {
 

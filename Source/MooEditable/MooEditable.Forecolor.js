@@ -24,7 +24,7 @@ Author:
     Olivier Refalo orefalo@yahoo.com
 */
 
-MooEditable.Actions.settings.forecolor = {
+MooEditable.Actions.Settings.forecolor = {
 	colors: [
 		['000000', '993300', '333300', '003300', '003366', '000077', '333399', '333333'],
 		['770000', 'ff6600', '777700', '007700', '007777', '0000ff', '666699', '777777'],

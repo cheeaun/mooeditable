@@ -25,7 +25,7 @@ Author:
     Olivier Refalo orefalo@yahoo.com
 */
 
-MooEditable.Actions.settings.smiley = {
+MooEditable.Actions.Settings.smiley = {
 	imagesPath: '../../Assets/MooEditable/Smiley/',
 	smileys: ['angryface', 'blush', 'gasp', 'grin', 'halo', 'lipsaresealed', 'smile', 'undecided', 'wink'],
 	fileExt: '.png'
