@@ -37,7 +37,7 @@ MooEditable.Actions.smiley = {
 	options: {
 		overlaySize: {x: 'auto'},
 		overlayHTML: (function(){
-			var settings = MooEditable.Actions.settings.smiley;
+			var settings = MooEditable.Actions.Settings.smiley;
 			var html = '';
 			settings.smileys.each(function(s){
 				html += '<img src="'+ settings.imagesPath + s + settings.fileExt + '" class="smiley-image">'; 

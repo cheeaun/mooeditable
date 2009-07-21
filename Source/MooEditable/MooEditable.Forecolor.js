@@ -41,7 +41,7 @@ MooEditable.Actions.forecolor = {
 		overlaySize: {x: 'auto'},
 		overlayHTML: (function(){
 			var html = '';
-			MooEditable.Actions.settings.forecolor.colors.each(function(row){
+			MooEditable.Actions.Settings.forecolor.colors.each(function(row){
 				row.each(function(c){
 					html += '<a href="#" class="forecolor-colorpicker-color" style="background-color: #' + c + '" title="#' + c.toUpperCase() + '"></a>'; 
 				});
