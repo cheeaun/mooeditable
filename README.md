@@ -31,7 +31,7 @@ Examples
 
 The basic code:
 
-	window.addEvent('load', function(){
+	window.addEvent('domready', function(){
 		$('textarea-1').mooEditable();
 	});
 
