@@ -25,7 +25,6 @@ Requirements
 * Element.Style
 * Element.Dimensions
 * Selectors
-* Request.HTML (if uses AJAX submit)
 
 Examples
 --------
