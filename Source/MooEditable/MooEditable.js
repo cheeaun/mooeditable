@@ -39,7 +39,7 @@ var MooEditable = new Class({
 		baseCSS: 'html{ height: 100%; cursor: text } body{ font-family: sans-serif; border: 0; }',
 		extraCSS: '',
 		externalCSS: '',
-		html: '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body>{CONTENT}</body></html>'
+		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body>{CONTENT}</body></html>'
 	},
 
 	initialize: function(el, options){
