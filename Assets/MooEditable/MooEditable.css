@@ -127,6 +127,7 @@
 	padding: 0;
 	border: 0;
 	width: 100%;
+	vertical-align: top;
 }
 
 .mooeditable-textarea{
