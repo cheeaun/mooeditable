@@ -1,0 +1,3 @@
+table { border: 1px dashed #BBBBBB; font:inherit; }
+table td, table th { border: 1px dashed #BBBBBB; }
+table th { font-weight:bold ; }
