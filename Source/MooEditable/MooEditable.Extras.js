@@ -24,8 +24,8 @@ MooEditable.Actions.extend({
 		},
 		command: function(menulist, name){
 			var argument = '<' + name + '>';
-			this.execute('formatBlock', false, argument);
 			this.focus();
+			this.execute('formatBlock', false, argument);
 		}
 	},
 	
