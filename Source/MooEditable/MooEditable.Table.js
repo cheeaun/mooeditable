@@ -32,8 +32,8 @@ MooEditable.UI.TableDialog = function(editor,dialog){
 		tablerowedit :	'class <input type="text" class="table-c" value="" size="15" /> ',
 		tablecoledit :	'width <input type="text" class="table-w" value="" size="4" /> ' +
 						'class <input type="text" class="table-c" value="" size="15" /> ' +
-						'align <select class="table-a"><option>none</option><option>left</option><option>center</option><option>right</option></select>' +
-						'valign <select class="table-va"><option>none</option><option>top</option><option>middle</option><option>bottom</option></select>' 		
+						'align <select class="table-a"><option>none</option><option>left</option><option>center</option><option>right</option></select> ' +
+						'valign <select class="table-va"><option>none</option><option>top</option><option>middle</option><option>bottom</option></select> ' 		
 	}
 	html[dialog]+= '<button class="dialog-button dialog-ok-button">OK</button>'
 		+ '<button class="dialog-button dialog-cancel-button">Cancel</button>';
@@ -195,7 +195,7 @@ MooEditable.Actions.extend({
 				var index = node.cellIndex;
 				var len = node.getParent().getParent().childNodes.length;
 				for (var i=0;i<len;i++){
-					var ref = node.getParent().getParent().childNodes[i].childNodes[index];
+					var ref = $(node.getParent().getParent().childNodes[i].childNodes[index]);
 					ref.clone().inject(ref,'after');
 				}
 			}
