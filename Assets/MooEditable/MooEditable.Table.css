@@ -1,44 +1,44 @@
 
 .mooeditable-ui-toolbar .tableadd-item .button-icon {
-	background: transparent url(Tango/table-add.png) no-repeat center center;
+	background: transparent url(Other/table-add.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tableedit-item .button-icon {
-	background: transparent url(Tango/table-edit.png) no-repeat center center;
+	background: transparent url(Other/table-edit.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablerowadd-item .button-icon {
-	background: transparent url(Tango/table-rowadd.png) no-repeat center center;
+	background: transparent url(Other/table-rowadd.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablerowedit-item .button-icon {
-	background: transparent url(Tango/table-rowedit.png) no-repeat center center;
+	background: transparent url(Other/table-rowedit.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablerowspan-item .button-icon {
-	background: transparent url(Tango/table-rowspan.png) no-repeat center center;
+	background: transparent url(Other/table-rowspan.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablerowspan-item .button-icon {
-	background: transparent url(Tango/table-rowspan.png) no-repeat center center;
+	background: transparent url(Other/table-rowspan.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablerowdelete-item .button-icon {
-	background: transparent url(Tango/table-rowdelete.png) no-repeat center center;
+	background: transparent url(Other/table-rowdelete.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablecoladd-item .button-icon {
-	background: transparent url(Tango/table-coladd.png) no-repeat center center;
+	background: transparent url(Other/table-coladd.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablecoledit-item .button-icon {
-	background: transparent url(Tango/table-coledit.png) no-repeat center center;
+	background: transparent url(Other/table-coledit.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablecolspan-item .button-icon {
-	background: transparent url(Tango/table-colspan.png) no-repeat center center;
+	background: transparent url(Other/table-colspan.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablecoldelete-item .button-icon {
-	background: transparent url(Tango/table-coldelete.png) no-repeat center center;
+	background: transparent url(Other/table-coldelete.png) no-repeat center center;
 }
