@@ -55,15 +55,15 @@ MooEditable.UI.ImageDialog = function(editor){
 				this.close();
 				var node = editor.selection.getNode();
 				if(node.get('tag')=='img'){
-					node.set('url',this.el.getElement('.dialog-url').get('value').trim());
+					node.set('src',this.el.getElement('.dialog-url').get('value').trim());
 					node.set('alt',this.el.getElement('.dialog-alt').get('value').trim());
 					node.className = this.el.getElement('.dialog-class').get('value').trim();
 					node.set('align',this.el.getElement('.dialog-align').get('value'));
 				} else {
 					var div = new Element('div');
 					new Element('img',{
-						'src': this.el.getElement('.dialog-url').get('value').trim(),
-						'alt': this.el.getElement('.dialog-alt').get('value').trim(),
+						'src' : this.el.getElement('.dialog-url').get('value').trim(),
+						'alt' : this.el.getElement('.dialog-alt').get('value').trim(),
 						'class' : this.el.getElement('.dialog-class').get('value').trim(),
 						'align' : this.el.getElement('.dialog-align').get('value')
 					}).inject(div);
