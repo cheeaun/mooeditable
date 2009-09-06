@@ -1,6 +1,6 @@
 /*
 Script: MooEditable.Image.js
-	Image manipulation
+	Extends MooEditable to insert image with manipulation options.
 
 Usage:
    Add the following tags in your html

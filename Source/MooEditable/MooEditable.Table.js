@@ -1,6 +1,6 @@
 /*
 Script: MooEditable.Table.js
-	Table manipulation
+	Extends MooEditable to insert table with manipulation options.
 
 Usage:
    Add the following tags in your html

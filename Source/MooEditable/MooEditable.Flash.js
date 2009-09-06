@@ -1,6 +1,6 @@
 /*
 Script: MooEditable.Flash.js
-	Flash embed
+	Extends MooEditable to embed Flash.
 
 Usage:
    Add the following tags in your html

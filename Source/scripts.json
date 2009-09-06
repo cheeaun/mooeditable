@@ -35,6 +35,21 @@
 		"MooEditable.Smiley": {
 			"deps": ["MooEditable", "MooEditable.UI.ButtonOverlay"],
 			"desc": "Extends MooEditable to insert smiley/emoticons."
+		},
+		
+		"MooEditable.Table": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable to insert table with manipulation options."
+		},
+		
+		"MooEditable.Image": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable to insert image with manipulation options."
+		},
+		
+		"MooEditable.Flash": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable to embed Flash."
 		}
 		
 	}
