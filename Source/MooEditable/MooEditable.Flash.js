@@ -26,9 +26,9 @@ Author:
 */
 
 MooEditable.UI.FlashDialog = function(editor){
-	var html = 'embed <textarea class="dialog-f" value="" rows="2" cols="40" /></textarea> ' +
-		'<button class="dialog-button dialog-ok-button">OK</button> '+
-		'<button class="dialog-button dialog-cancel-button">Cancel</button>';
+	var html = 'embed <textarea class="dialog-f" value="" rows="2" cols="40" /></textarea> '
+		+ '<button class="dialog-button dialog-ok-button">OK</button> '
+		+ '<button class="dialog-button dialog-cancel-button">Cancel</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-prompt-dialog',
 		onOpen: function(){
@@ -41,10 +41,11 @@ MooEditable.UI.FlashDialog = function(editor){
 		onClick: function(e){
 			if (e.target.tagName.toLowerCase() == 'button') e.preventDefault();
 			var button = document.id(e.target);
-			if (button.hasClass('dialog-cancel-button')) this.close();
-			else if (button.hasClass('dialog-ok-button')){
+			if (button.hasClass('dialog-cancel-button')){
 				this.close();
-				var div = new Element('div').set('html',this.el.getElement('.dialog-f').get('value').trim());
+			} else if (button.hasClass('dialog-ok-button')){
+				this.close();
+				var div = new Element('div').set('html', this.el.getElement('.dialog-f').get('value').trim());
 				editor.selection.insertContent(div.get('html'));
 			}
 		}
