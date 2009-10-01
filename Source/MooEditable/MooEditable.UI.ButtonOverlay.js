@@ -71,9 +71,9 @@ MooEditable.UI.ButtonOverlay = new Class({
 	
 	clickOverlay: function(e){
 		if (e.target == this.overlay || e.target.parentNode == this.overlay) return;
+		this.overlay.blur();
 		e.preventDefault();
 		this.action(e);
-		this.overlay.blur();
 	},
 	
 	click: function(e){
