@@ -68,7 +68,7 @@ MooEditable.Actions.smiley = {
 		editorMouseDown: function(e, editor){
 			var el = e.target;
 			var isSmiley = (el.tagName.toLowerCase() == 'img') && $(el).hasClass('smiley');
-			editor.doc.execCommand('enableObjectResizing', false, !isSmiley);
+			try {editor.doc.execCommand('enableObjectResizing', false, !isSmiley);} catch (ex) {}
 		}
 	}
 };
