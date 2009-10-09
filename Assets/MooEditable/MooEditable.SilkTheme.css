@@ -35,6 +35,10 @@
 .mooeditable-ui-toolbar .undo-item .button-icon{ background-position: 0 -272px; } 
 .mooeditable-ui-toolbar .unlink-item .button-icon{ background-position: 0 -288px; } 
 .mooeditable-ui-toolbar .urlimage-item .button-icon{ background-position: 0 -304px; } 
+.mooeditable-ui-toolbar .forecolor-item .button-icon{background-position: 0 -192px;}
+.mooeditable-ui-toolbar .smiley-item .button-icon{
+	background: transparent url(Smiley/smile.png) no-repeat top left;
+}
 
 .mooeditable-ui-toolbar .justifycenter-item .button-icon,
 .mooeditable-ui-toolbar .justifyright-item .button-icon,
