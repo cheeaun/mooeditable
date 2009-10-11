@@ -40,7 +40,7 @@ MooEditable.Actions.smiley = {
 			var settings = MooEditable.Actions.Settings.smiley;
 			var html = '';
 			settings.smileys.each(function(s){
-				html += '<img src="'+ settings.imagesPath + s + settings.fileExt + '" class="smiley-image">'; 
+				html += '<img src="'+ settings.imagesPath + s + settings.fileExt + '" alt="" class="smiley-image">'; 
 			});
 			return html;
 		})()
@@ -49,7 +49,7 @@ MooEditable.Actions.smiley = {
 		var el = e.target;
 		if (el.tagName.toLowerCase() != 'img') return;
 		var src = $(el).get('src');
-		var content = '<img style="border:0;" class="smiley" src="' + src + '">';
+		var content = '<img style="border:0;" class="smiley" src="' + src + '" alt="">';
 		this.selection.insertContent(content);
 		this.focus();
 	},
