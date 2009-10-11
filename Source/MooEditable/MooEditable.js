@@ -577,15 +577,9 @@ var MooEditable = new Class({
 				   return match;
 			});
 
-			//make img tags xhtml compatable
-			//           if (this.options.xhtml){
-			//                source = source.replace(/(<(?:img|input)[^/>]*)>/g, '$1 />');
-			//           }
-
-			
 			//make img tags xhtml compatible <img>,<img></img> -> <img/>
 			if (this.options.xhtml){
-				source = source.replace(/<img([^>]+)(\s*[^\/])>(<\/img>)*/gi, '<img $1$2/>');
+				source = source.replace(/<img([^>]+)(\s*[^\/])>(<\/img>)*/gi, '<img $1$2 />');
 			}
 			
 			//remove double <p> tags and empty <p> tags
