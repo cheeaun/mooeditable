@@ -300,12 +300,18 @@ var MooEditable = new Class({
 	},
 	
 	editorKeyUp: function(e){
+		
 		if (this.editorDisabled){
 			e.stop();
 			return;
 		}
 		
-		if (this.options.toolbar) this.checkStates();
+		if (this.options.toolbar){
+			// Delay for less cpu usage when you are typing
+			var self = this;
+			$clear(this.keyuptimer); 
+			this.keyuptimer = (function(){ self.checkStates(); }).delay(500); 
+		}
 		
 		this.fireEvent('editorKeyUp', [e, this]);
 	},
