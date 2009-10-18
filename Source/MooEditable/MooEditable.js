@@ -23,7 +23,12 @@ Credits:
 	- Additional Tango icons from Jimmacs' [Tango OpenOffice](http://www.gnome-look.org/content/show.php/Tango+OpenOffice?content=54799)
 */
 
-var MooEditable = new Class({
+(function(){
+	
+var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/i;
+var urlRegex = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i;
+
+this.MooEditable = new Class({
 
 	Implements: [Events, Options],
 
@@ -356,7 +361,6 @@ var MooEditable = new Class({
 					e.preventDefault();
 				} else if (Browser.Engine.gecko || Browser.Engine.webkit){
 					var node = this.selection.getNode();
-					var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
 					var isBlock = node.getParents().include(node).some(function(el){
 						return el.nodeName.test(blockEls);
 					});
@@ -445,7 +449,10 @@ var MooEditable = new Class({
 	},
 
 	checkStates: function(){
-		console.log('cs')
+		var element = this.selection.getNode();
+		if (!element) return;
+		if ($type(element) != 'element') return;
+		
 		this.actions.each(function(action){
 			var item = this.toolbar.getItem(action);
 			if (!item) return;
@@ -454,12 +461,9 @@ var MooEditable = new Class({
 			var states = MooEditable.Actions[action]['states'];
 			if (!states) return;
 			
-			var el = this.selection.getNode();
-			if (!el) return;
-			
 			// custom checkState
 			if ($type(states) == 'function'){
-				states.attempt(el, item);
+				states.attempt(document.id(el), item);
 				return;
 			}
 			
@@ -468,35 +472,34 @@ var MooEditable = new Class({
 					item.activate();
 					return;
 				}
-			} catch(e) {}
+			} catch(e){}
 			
 			if (states.tags){
+				var el = element;
 				do {
-					if ($type(el) != 'element') break;
 					var tag = el.tagName.toLowerCase();
 					if (states.tags.contains(tag)){
 						item.activate(tag);
 						break;
 					}
 				}
-				while (el = el.parentNode);
+				while ((el = Element.getParent(el)) != null);
 			}
 
 			if (states.css){
-				var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/;
+				var el = element;
 				do {
-					if ($type(el) != 'element') break;
 					var found = false;
 					for (var prop in states.css){
 						var css = states.css[prop];
-						if (document.id(el).getStyle(prop).contains(css)){
+						if (Element.getStyle(el, prop).contains(css)){
 							item.activate(css);
 							found = true;
 						}
 					}
 					if (found || el.tagName.test(blockEls)) break;
 				}
-				while (el = el.parentNode);
+				while ((el = Element.getParent(el)) != null);
 			}
 		}.bind(this));
 	},
@@ -1155,9 +1158,8 @@ MooEditable.Actions = new Hash({
 				this.dialogs.createlink.alert.open();
 			} else {
 				var text = this.selection.getText();
-				var url = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i;
 				var prompt = this.dialogs.createlink.prompt;
-				if (url.test(text)) prompt.el.getElement('.mooeditable-dialog-input').set('value', text);
+				if (urlRegex.test(text)) prompt.el.getElement('.mooeditable-dialog-input').set('value', text);
 				prompt.open();
 			}
 		}
@@ -1215,3 +1217,5 @@ Element.implement({
 	}
 
 });
+
+})();
