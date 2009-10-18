@@ -300,17 +300,20 @@ var MooEditable = new Class({
 	},
 	
 	editorKeyUp: function(e){
-		
 		if (this.editorDisabled){
 			e.stop();
 			return;
 		}
 		
-		if (this.options.toolbar){
-			// Delay for less cpu usage when you are typing
-			var self = this;
-			$clear(this.keyuptimer); 
-			this.keyuptimer = (function(){ self.checkStates(); }).delay(500); 
+		var c = e.code;
+		// 33-36 = pageup, pagedown, end, home; 45 = insert
+		if (this.options.toolbar && (/^enter|left|up|right|down|delete|backspace$/i.test(e.key) || (c >= 33 && c <= 36) || c == 45 || e.meta || e.control)){
+			if (Browser.Engines.trident4){ // Delay for less cpu usage when you are typing
+				$clear(this.checkStatesDelay);
+				this.checkStatesDelay = this.checkStates.delay(500, this);
+			} else {
+				this.checkStates();
+			}
 		}
 		
 		this.fireEvent('editorKeyUp', [e, this]);
@@ -442,6 +445,7 @@ var MooEditable = new Class({
 	},
 
 	checkStates: function(){
+		console.log('cs')
 		this.actions.each(function(action){
 			var item = this.toolbar.getItem(action);
 			if (!item) return;
