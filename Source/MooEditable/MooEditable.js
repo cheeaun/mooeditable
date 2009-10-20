@@ -11,6 +11,7 @@ authors:
 - Lim Chee Aun
 - Radovan Lozej
 - Ryan Mitchell
+- Olivier Refalo 
 - T.J. Leahy
 
 requires:
