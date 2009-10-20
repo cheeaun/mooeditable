@@ -1,26 +1,37 @@
 /*
-Script: MooEditable.Image.js
-	Extends MooEditable to insert image with manipulation options.
+---
 
-Usage:
-   Add the following tags in your html
-   <link rel="stylesheet" type="text/css" href="MooEditable.Table.css">
-   <script type="text/javascript" src="mootools.js"></script>
-   <script type="text/javascript" src="MooEditable.js"></script>
-   <script type="text/javascript" src="MooEditable.Image.js"></script>
+script: MooEditable.Image.js
 
-   <script type="text/javascript">
-	window.addEvent('load', function(){
+description: Extends MooEditable to insert image with manipulation options.
+
+license: MIT-style license
+
+authors:
+- Radovan Lozej
+
+requires:
+- /MooEditable
+- /MooEditable.UI
+- /MooEditable.Actions
+
+usage:
+	Add the following tags in your html
+	<link rel="stylesheet" href="MooEditable.css">
+	<link rel="stylesheet" href="MooEditable.Image.css">
+	<script src="mootools.js"></script>
+	<script src="MooEditable.js"></script>
+	<script src="MooEditable.Image.js"></script>
+
+	<script>
+	window.addEvent('domready', function(){
 		var mooeditable = $('textarea-1').mooEditable({
 			actions: 'bold italic underline strikethrough | image | toggleview'
 		});
-   </script>
+	});
+	</script>
 
-License:
-	MIT-style license.
-
-Author:
-    Radovan Lozej <radovan lozej gmail com>
+...
 */
 
 MooEditable.UI.ImageDialog = function(editor){

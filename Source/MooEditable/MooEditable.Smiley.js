@@ -1,28 +1,39 @@
 /*
-Script: MooEditable.UI.Smiley.js
-	Extends MooEditable to insert smiley/emoticons.
-	You may want to change the path of absolute path of the images
+---
 
-Usage:
-   Add the following tags in your html
-   <link rel="stylesheet" type="text/css" href="MooEditable.Smiley.css">
-   <script type="text/javascript" src="mootools.js"></script>
-   <script type="text/javascript" src="MooEditable.js"></script>
-   <script type="text/javascript" src="MooEditable.UI.ButtonOverlay.js"></script>
-   <script type="text/javascript" src="MooEditable.Smiley.js"></script>
+script: MooEditable.Smiley.js
 
-   <script type="text/javascript">
-	window.addEvent('load', function(){
+description: Extends MooEditable to insert smiley/emoticons.
+
+license: MIT-style license
+
+authors:
+- Olivier Refalo
+
+requires:
+- /MooEditable
+- /MooEditable.UI
+- /MooEditable.UI.ButtonOverlay
+- /MooEditable.Actions
+
+usage:
+	Add the following tags in your html
+	<link rel="stylesheet" href="MooEditable.css">
+	<link rel="stylesheet" href="MooEditable.Smiley.css">
+	<script src="mootools.js"></script>
+	<script src="MooEditable.js"></script>
+	<script src="MooEditable.UI.ButtonOverlay.js"></script>
+	<script src="MooEditable.Smiley.js"></script>
+
+	<script>
+	window.addEvent('domready', function(){
 		var mooeditable = $('textarea-1').mooEditable({
 			actions: 'bold italic underline strikethrough | smiley | toggleview'
 		});
-   </script>
+	});
+	</script>
 
-License:
-	MIT-style license.
-
-Author:
-    Olivier Refalo orefalo@yahoo.com
+...
 */
 
 MooEditable.Actions.Settings.smiley = {

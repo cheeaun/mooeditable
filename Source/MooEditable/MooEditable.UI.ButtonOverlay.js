@@ -1,12 +1,22 @@
 /*
-Script: MooEditable.UI.ButtonOverlay.js
-	UI Class to create a button element with a popup overlay.
+---
 
-License:
-	MIT-style license.
+script: MooEditable.UI.ButtonOverlay.js
 
-Copyright:
-	Copyright (c) 2007-2009 [Lim Chee Aun](http://cheeaun.com).
+description: UI Class to create a button element with a popup overlay.
+
+license: MIT-style license
+
+authors:
+- Lim Chee Aun
+
+requires:
+- /MooEditable
+- /MooEditable.UI
+
+provides: [MooEditable.UI.ButtonOverlay]
+
+...
 */
 
 MooEditable.UI.ButtonOverlay = new Class({

@@ -1,9 +1,21 @@
 /*
-Script: MooEditable.Extras.js
-	Extends MooEditable to include more (simple) toolbar buttons.
+---
 
-License:
-	MIT-style license.
+script: MooEditable.Extras.js
+
+description: Extends MooEditable to include more (simple) toolbar buttons.
+
+license: MIT-style license
+
+authors:
+- Lim Chee Aun
+
+requires:
+- /MooEditable
+- /MooEditable.UI
+- /MooEditable.UI.MenuList
+
+...
 */
 
 MooEditable.Actions.extend({

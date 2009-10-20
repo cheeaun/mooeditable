@@ -1,26 +1,41 @@
 /*
-Script: MooEditable.js
-	Class for creating a WYSIWYG editor, for contentEditable-capable browsers.
+---
 
-License:
-	MIT-style license.
+script: MooEditable.js
 
-Copyright:
-	Copyright (c) 2007-2009 [Lim Chee Aun](http://cheeaun.com).
-	
-Build: %build%
+description: Class for creating a WYSIWYG editor, for contentEditable-capable browsers.
 
-Credits:
-	- Code inspired by Stefan's work [Safari Supports Content Editing!](http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html) from [safari gets contentEditable](http://walkah.net/blog/walkah/safari-gets-contenteditable)
-	- Main reference from Peter-Paul Koch's [execCommand compatibility](http://www.quirksmode.org/dom/execCommand.html)
-	- Some ideas and code inspired by [TinyMCE](http://tinymce.moxiecode.com/)
-	- Some functions inspired by Inviz's [Most tiny wysiwyg you ever seen](http://forum.mootools.net/viewtopic.php?id=746), [mooWyg (Most tiny WYSIWYG 2.0)](http://forum.mootools.net/viewtopic.php?id=5740)
-	- Some regex from Cameron Adams's [widgEditor](http://widgeditor.googlecode.com/)
-	- Some code from Juan M Martinez's [jwysiwyg](http://jwysiwyg.googlecode.com/)
-	- Some reference from MoxieForge's [PunyMCE](http://punymce.googlecode.com/)
-	- IE support referring Robert Bredlau's [Rich Text Editing](http://www.rbredlau.com/drupal/node/6)
-	- Tango icons from the [Tango Desktop Project](http://tango.freedesktop.org/)
-	- Additional Tango icons from Jimmacs' [Tango OpenOffice](http://www.gnome-look.org/content/show.php/Tango+OpenOffice?content=54799)
+license: MIT-style license
+
+authors:
+- Lim Chee Aun
+- Radovan Lozej
+- Ryan Mitchell
+- T.J. Leahy
+
+requires:
+- core:1.2.4/Events
+- core:1.2.4/Options
+- core:1.2.4/Element.Event
+- core:1.2.4/Element.Style
+- core:1.2.4/Element.Dimensions
+- core:1.2.4/Selectors
+
+inspiration:
+- Code inspired by Stefan's work [Safari Supports Content Editing!](http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html) from [safari gets contentEditable](http://walkah.net/blog/walkah/safari-gets-contenteditable)
+- Main reference from Peter-Paul Koch's [execCommand compatibility](http://www.quirksmode.org/dom/execCommand.html)
+- Some ideas and code inspired by [TinyMCE](http://tinymce.moxiecode.com/)
+- Some functions inspired by Inviz's [Most tiny wysiwyg you ever seen](http://forum.mootools.net/viewtopic.php?id=746), [mooWyg (Most tiny WYSIWYG 2.0)](http://forum.mootools.net/viewtopic.php?id=5740)
+- Some regex from Cameron Adams's [widgEditor](http://widgeditor.googlecode.com/)
+- Some code from Juan M Martinez's [jwysiwyg](http://jwysiwyg.googlecode.com/)
+- Some reference from MoxieForge's [PunyMCE](http://punymce.googlecode.com/)
+- IE support referring Robert Bredlau's [Rich Text Editing](http://www.rbredlau.com/drupal/node/6)
+- Tango icons from the [Tango Desktop Project](http://tango.freedesktop.org/)
+- Additional Tango icons from Jimmacs' [Tango OpenOffice](http://www.gnome-look.org/content/show.php/Tango+OpenOffice?content=54799)
+
+provides: [MooEditable, MooEditable.Selection, MooEditable.UI, MooEditable.Actions]
+
+...
 */
 
 (function(){

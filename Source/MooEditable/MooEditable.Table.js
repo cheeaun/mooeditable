@@ -1,26 +1,37 @@
 /*
-Script: MooEditable.Table.js
-	Extends MooEditable to insert table with manipulation options.
+---
 
-Usage:
-   Add the following tags in your html
-   <link rel="stylesheet" type="text/css" href="MooEditable.Table.css">
-   <script type="text/javascript" src="mootools.js"></script>
-   <script type="text/javascript" src="MooEditable.js"></script>
-   <script type="text/javascript" src="MooEditable.Table.js"></script>
+script: MooEditable.Table.js
 
-   <script type="text/javascript">
-	window.addEvent('load', function(){
+description: Extends MooEditable to insert table with manipulation options.
+
+license: MIT-style license
+
+authors:
+- Radovan Lozej
+
+requires:
+- /MooEditable
+- /MooEditable.UI
+- /MooEditable.Actions
+
+usage:
+	Add the following tags in your html
+	<link rel="stylesheet" href="MooEditable.css">
+	<link rel="stylesheet" href="MooEditable.Table.css">
+	<script src="mootools.js"></script>
+	<script src="MooEditable.js"></script>
+	<script src="MooEditable.Table.js"></script>
+
+	<script>
+	window.addEvent('domready', function(){
 		var mooeditable = $('textarea-1').mooEditable({
 			actions: 'bold italic underline strikethrough | table | toggleview'
 		});
-   </script>
+	});
+	</script>
 
-License:
-	MIT-style license.
-
-Author:
-    Radovan Lozej <radovan lozej gmail com>
+...
 */
 
 MooEditable.UI.TableDialog = function(editor, dialog){

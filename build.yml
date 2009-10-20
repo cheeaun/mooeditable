@@ -1,0 +1,7 @@
+# list of paths to necessary scripts.json
+:dependency_paths:
+  - './assets/core/Source'  # Mootools Core
+  - './Source'                       # This project
+
+# output file path
+:build_path: './mooeditable.js'

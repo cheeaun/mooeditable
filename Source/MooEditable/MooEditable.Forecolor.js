@@ -1,27 +1,39 @@
 /*
-Script: MooEditable.UI.Forecolor.js
-	Extends MooEditable to change the color of the text from a list a predefined colors.
+---
 
-Usage:
-   Add the following tags in your html
-   <link rel="stylesheet" type="text/css" href="MooEditable.Forecolor.css">
-   <script type="text/javascript" src="mootools.js"></script>
-   <script type="text/javascript" src="MooEditable.js"></script>
-   <script type="text/javascript" src="MooEditable.UI.ButtonOverlay.js"></script>
-   <script type="text/javascript" src="MooEditable.Forecolor.js"></script>
+script: MooEditable.Forecolor.js
 
-   <script type="text/javascript">
-	window.addEvent('load', function(){
+description: Extends MooEditable to change the color of the text from a list a predefined colors.
+
+license: MIT-style license
+
+authors:
+- Olivier Refalo
+
+requires:
+- /MooEditable
+- /MooEditable.UI
+- /MooEditable.UI.ButtonOverlay
+- /MooEditable.Actions
+
+usage:
+	Add the following tags in your html
+	<link rel="stylesheet" href="MooEditable.css">
+	<link rel="stylesheet" href="MooEditable.Forecolor.css">
+	<script src="mootools.js"></script>
+	<script src="MooEditable.js"></script>
+	<script src="MooEditable.UI.ButtonOverlay.js"></script>
+	<script src="MooEditable.Forecolor.js"></script>
+
+	<script>
+	window.addEvent('domready', function(){
 		var mooeditable = $('textarea-1').mooEditable({
 			actions: 'bold italic underline strikethrough | forecolor | toggleview'
 		});
-   </script>
+	});
+	</script>
 
-License:
-	MIT-style license.
-
-Author:
-    Olivier Refalo orefalo@yahoo.com
+...
 */
 
 MooEditable.Actions.Settings.forecolor = {

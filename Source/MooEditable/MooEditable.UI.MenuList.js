@@ -1,12 +1,22 @@
 /*
-Script: MooEditable.UI.MenuList.js
-	UI Class to create a menu list (select) element.
+---
 
-License:
-	MIT-style license.
+script: MooEditable.UI.MenuList.js
 
-Copyright:
-	Copyright (c) 2007-2009 [Lim Chee Aun](http://cheeaun.com).
+description: UI Class to create a menu list (select) element.
+
+license: MIT-style license
+
+authors:
+- Lim Chee Aun
+
+requires:
+- /MooEditable
+- /MooEditable.UI
+
+provides: [MooEditable.UI.MenuList]
+
+...
 */
 
 MooEditable.UI.MenuList = new Class({
