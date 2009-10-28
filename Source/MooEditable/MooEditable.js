@@ -60,7 +60,8 @@ this.MooEditable = new Class({
 		baseCSS: 'html{ height: 100%; cursor: text; } body{ font-family: sans-serif; }',
 		extraCSS: '',
 		externalCSS: '',
-		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body>{CONTENT}</body></html>'
+		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body>{CONTENT}</body></html>',
+		rootElement: 'p'
 	},
 
 	initialize: function(el, options){
@@ -455,12 +456,17 @@ this.MooEditable = new Class({
 	},
 
 	setContent: function(newContent){
+		if(newContent.charAt(0) != '<') newContent = '<' + this.options.rootElement + '>' + newContent + '</' + this.options.rootElement + '>';
 		this.doc.body.set('html', newContent);
 		return this;
 	},
 
 	saveContent: function(){
-		if (this.mode == 'iframe') this.textarea.set('value', this.getContent());
+		if (this.mode == 'iframe'){
+			var val = this.getContent();
+			if(val.charAt(0) != '<') val = '<' + this.options.rootElement + '>' + val + '</' + this.options.rootElement + '>';
+			this.textarea.set('value', val);
+		}
 		return this;
 	},
 
