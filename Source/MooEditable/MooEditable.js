@@ -608,7 +608,7 @@ this.MooEditable = new Class({
 
 			//make img tags xhtml compatible <img>,<img></img> -> <img/>
 			if (this.options.xhtml){
-				source = source.replace(/<img([^>]+)(\s*[^\/])>(<\/img>)*/gi, '<img $1$2 />');
+				source = source.replace(/<img([^>]+)(\s*[^\/])>(<\/img>)*/gi, '<img$1$2 />');
 			}
 			
 			//remove double <p> tags and empty <p> tags
