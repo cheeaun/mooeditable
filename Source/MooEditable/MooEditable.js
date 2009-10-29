@@ -596,6 +596,11 @@ this.MooEditable = new Class({
 			source = source.replace(/<b\b[^>]*>(.*?)<\/b[^>]*>/gi, '<strong>$1</strong>');
 			source = source.replace(/<i\b[^>]*>(.*?)<\/i[^>]*>/gi, '<em>$1</em>');
 			source = source.replace(/<u\b[^>]*>(.*?)<\/u[^>]*>/gi, '<span style="text-decoration: underline;">$1</span>');
+			source = source.replace(/<strong><span style="font-weight: normal;">(.*)<\/span><\/strong>/gi, '$1');
+			source = source.replace(/<em><span style="font-weight: normal;">(.*)<\/span><\/em>/gi, '$1');
+			source = source.replace(/<span style="text-decoration: underline;"><span style="font-weight: normal;">(.*)<\/span><\/span>/gi, '$1');
+			source = source.replace(/<strong style="font-weight: normal;">(.*)<\/strong>/gi, '$1');
+			source = source.replace(/<em style="font-weight: normal;">(.*)<\/em>/gi, '$1');
 
 			// Replace uppercase element names with lowercase
 			source = source.replace(/<[^> ]*/g, function(match){return match.toLowerCase();});
@@ -1080,6 +1085,25 @@ MooEditable.Actions = new Hash({
 		states: {
 			tags: ['b', 'strong'],
 			css: {'font-weight': 'bold'}
+		},
+		events: {
+			beforeToggleView: function(){
+				if(Browser.Engine.gecko){
+					var s = this.textarea.get('value')
+					.replace(/<strong([^>]*)>/gi, '<b$1>')
+					.replace(/<\/strong>/gi, '</b>')
+                	this.textarea.set('value',s);
+                }
+			},
+			attach: function(){
+				if(Browser.Engine.gecko){
+					var s = this.textarea.get('value')
+					.replace(/<strong([^>]*)>/gi, '<b$1>')
+					.replace(/<\/strong>/gi, '</b>')
+                	this.textarea.set('value',s);
+                	this.setContent(s);
+                }
+			}
 		}
 	},
 	
@@ -1091,6 +1115,29 @@ MooEditable.Actions = new Hash({
 		states: {
 			tags: ['i', 'em'],
 			css: {'font-style': 'italic'}
+		},
+		events: {
+			beforeToggleView: function(){
+				if(Browser.Engine.gecko){
+					var s = this.textarea.get('value')
+					.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
+					.replace(/<em([^>]*)>/gi, '<i$1>')
+					.replace(/<tmpembed([^>]*)>/gi, '<embed$1>')
+					.replace(/<\/em>/gi, '</i>');            	
+                	this.textarea.set('value',s);
+                }
+			},
+			attach: function(){
+				if(Browser.Engine.gecko){
+					var s = this.textarea.get('value')
+					.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
+					.replace(/<em([^>]*)>/gi, '<i$1>')
+					.replace(/<tmpembed([^>]*)>/gi, '<embed$1>')
+					.replace(/<\/em>/gi, '</i>');            	
+                	this.textarea.set('value',s);
+                	this.setContent(s);
+                }
+			}
 		}
 	},
 	
