@@ -19,6 +19,10 @@
 	background: transparent url(Other/table-rowspan.png) no-repeat center center;
 }
 
+.mooeditable-ui-toolbar .tablerowsplit-item .button-icon {
+	background: transparent url(Other/table-rowsplit.png) no-repeat center center;
+}
+
 .mooeditable-ui-toolbar .tablerowspan-item .button-icon {
 	background: transparent url(Other/table-rowspan.png) no-repeat center center;
 }
@@ -37,6 +41,10 @@
 
 .mooeditable-ui-toolbar .tablecolspan-item .button-icon {
 	background: transparent url(Other/table-colspan.png) no-repeat center center;
+}
+
+.mooeditable-ui-toolbar .tablecolsplit-item .button-icon {
+	background: transparent url(Other/table-colsplit.png) no-repeat center center;
 }
 
 .mooeditable-ui-toolbar .tablecoldelete-item .button-icon {

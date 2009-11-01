@@ -9,6 +9,7 @@ license: MIT-style license
 
 authors:
 - Radovan Lozej
+- Ryan Mitchell
 
 requires:
 - /MooEditable
@@ -197,6 +198,25 @@ MooEditable.Actions.extend({
 		}
 	},
 	
+	tablerowsplit:{
+		title: 'Spit Row',
+		command: function(){
+			var node = this.selection.getNode();
+			if (node.get('tag') != 'td') node = node.getParent('td');
+			if (node){
+				var index = node.cellIndex;
+				var row = node.getParent().rowIndex;
+				if(node.getProperty('rowspan')){
+					var rows = parseInt(node.getProperty('rowspan'));
+					for (i=1;i<rows;i++){
+						node.getParent().getParent().childNodes[row+i].insertCell(index);
+					}
+					node.removeProperty('rowspan');
+				}
+			}
+		}	
+	},
+	
 	tablerowdelete:{
 		title: 'Delete Row',
 		command: function(){
@@ -243,6 +263,24 @@ MooEditable.Actions.extend({
 				if (node.getParent().childNodes[index]){
 					node.getParent().deleteCell(index);
 					node.colSpan++;
+				}
+			}
+		}
+	},
+		
+	tablecolsplit:{
+		title: 'Split Cell',
+		command: function(){
+			var node = this.selection.getNode();
+			if (node.get('tag')!='td') node = node.getParent('td');
+			if (node){
+				var index = node.cellIndex + 1;
+				if(node.getProperty('colspan')){
+					var cols = parseInt(node.getProperty('colspan'));
+					for (i=1;i<cols;i++){
+						node.getParent().insertCell(index+i);
+					}
+					node.removeProperty('colspan');
 				}
 			}
 		}
