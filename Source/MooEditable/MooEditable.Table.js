@@ -199,7 +199,7 @@ MooEditable.Actions.extend({
 	},
 	
 	tablerowsplit:{
-		title: 'Spit Row',
+		title: 'Split Row',
 		command: function(){
 			var node = this.selection.getNode();
 			if (node.get('tag') != 'td') node = node.getParent('td');
@@ -212,6 +212,14 @@ MooEditable.Actions.extend({
 						node.getParent().getParent().childNodes[row+i].insertCell(index);
 					}
 					node.removeProperty('rowspan');
+				}
+			}
+		},
+		states: function(node){
+			if (node.get('tag')!='td') return;
+			if (node){
+				if (node.getProperty('rowspan') && parseInt(node.getProperty('rowspan')) > 1){
+					this.el.addClass('onActive');
 				}
 			}
 		}	
@@ -281,6 +289,14 @@ MooEditable.Actions.extend({
 						node.getParent().insertCell(index+i);
 					}
 					node.removeProperty('colspan');
+				}
+			}
+		},
+		states: function(node){
+			if (node.get('tag')!='td') return;
+			if (node){
+				if (node.getProperty('colspan') && parseInt(node.getProperty('colspan')) > 1){
+					this.el.addClass('onActive');
 				}
 			}
 		}
