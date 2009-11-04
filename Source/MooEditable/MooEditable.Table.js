@@ -40,7 +40,7 @@ MooEditable.UI.TableDialog = function(editor, dialog){
 			+ 'rows <input type="text" class="table-r" value="" size="4" /> ',
 		tableedit: 'width <input type="text" class="table-w" value="" size="4" /> '
 			+ 'class <input type="text" class="table-c" value="" size="15" /> ',
-		tablerowedit: 'class <input type="text" class="table-c" value="" size="15" /> ',
+		tablerowedit: 'class <input type="text" class="table-c" value="" size="15" /> type <select class="table-c-type"><option value="th">Header</option><option value="td">Cell</option></select> ',
 		tablecoledit: 'width <input type="text" class="table-w" value="" size="4" /> '
 			+ 'class <input type="text" class="table-c" value="" size="15" /> '
 			+ 'align <select class="table-a"><option>none</option><option>left</option><option>center</option><option>right</option></select> '
@@ -82,10 +82,17 @@ MooEditable.UI.TableDialog = function(editor, dialog){
 			load: function(e){
 				var node = editor.selection.getNode().getParent('tr');
 				this.el.getElement('.table-c').set('value', node.className);
+				this.el.getElement('.table-c-type').set('value', editor.selection.getNode().get('tag'));
 			},
 			click: function(e){
 				var node = editor.selection.getNode().getParent('tr');
 				node.className = this.el.getElement('.table-c').value;
+				node.getElements('td,th').each(function(c){
+					if (this.el.getElement('.table-c-type') != c.get('tag')){
+						var n = editor.doc.createElement(this.el.getElement('.table-c-type').get('value'));
+						$(n).set('html',c.get('html')).replaces(c);
+					}
+				},this);
 			}
 		},
 		tablecoledit: {
