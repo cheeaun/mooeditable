@@ -1175,7 +1175,7 @@ MooEditable.Actions = new Hash({
 			} else {
 				var text = this.selection.getText();
 				var prompt = this.dialogs.createlink.prompt;
-				if (urlRegex.test(text)) prompt.el.getElement('.mooeditable-dialog-input').set('value', text);
+				if (urlRegex.test(text)) prompt.el.getElement('.dialog-input').set('value', text);
 				prompt.open();
 			}
 		}
