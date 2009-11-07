@@ -479,7 +479,7 @@ this.MooEditable = new Class({
 			
 			// custom checkState
 			if ($type(states) == 'function'){
-				states.attempt([document.id(element), item, this]);
+				states.attempt([document.id(element), item], this);
 				return;
 			}
 			
