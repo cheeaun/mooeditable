@@ -473,7 +473,7 @@ this.MooEditable = new Class({
 			if (val.indexOf('<div') != -1){
 				end = val.indexOf('<div');
 			}
-			if(val.indexOf('<p') != -1 && val.indexOf('<p') < end){
+			if (val.indexOf('<p') != -1 && val.indexOf('<p') < end){
 				end = val.indexOf('<p');
 			}
 			val = '<' + this.options.rootElement + '>' + val.substr(0,end) + '</' + this.options.rootElement + '>' + val.substr(end);
