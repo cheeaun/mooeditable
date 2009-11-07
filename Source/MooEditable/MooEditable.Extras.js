@@ -9,6 +9,7 @@ license: MIT-style license
 
 authors:
 - Lim Chee Aun
+- Ryan Mitchell
 
 requires:
 - /MooEditable
@@ -67,6 +68,14 @@ MooEditable.Actions.extend({
 		title: 'Align Justify',
 		states: {
 			css: {'text-align': 'justify'}
+		}
+	},
+	
+	removeformatting: {
+		title: 'Remove formatting',
+		mode: 'text',
+		command: function() {
+			this.execute('removeformat',false,'');
 		}
 	}
 

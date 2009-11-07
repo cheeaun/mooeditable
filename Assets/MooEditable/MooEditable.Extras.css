@@ -9,3 +9,5 @@
 .mooeditable-ui-toolbar .justifyfull-item .button-icon{ background-position: 0 -16px; } 
 .mooeditable-ui-toolbar .justifyleft-item .button-icon{ background-position: 0 -32px; } 
 .mooeditable-ui-toolbar .justifyright-item .button-icon{ background-position: 0 -48px; } 
+
+.mooeditable-ui-toolbar .removeformatting-item .button-icon { background: transparent url(Other/delete.png) no-repeat center center; }
