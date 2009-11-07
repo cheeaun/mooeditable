@@ -475,11 +475,11 @@ this.MooEditable = new Class({
 			var html = '';
 			var length = el.childNodes.length;
 			for (i=0;i<length;i++){
-				if (!['p','div'].contains(el.childNodes[i].nodeName.toLowerCase())){
+				if (!el.childNodes[i].nodeName.test(blockEls)){
 					if (el.childNodes[i].nodeName === '#text'){
 						if (el.childNodes[i].nodeValue.trim()){
 							if(start < 0) start = i;
-							html += el.childNodes[i].nodeValue.trim();
+							html += el.childNodes[i].nodeValue;
 						}				
 					} else {
 						if(start < 0) start = i;
@@ -488,7 +488,7 @@ this.MooEditable = new Class({
 				} else {
 					create = true;	
 				}				
-				if(i==(length-1)) create = true;
+				if (i==(length-1)) create = true;
 				if (start >= 0 && create){
 					var newel = new Element(this.options.rootElement,{html:html});
 					el.replaceChild(newel,el.childNodes[start]);
