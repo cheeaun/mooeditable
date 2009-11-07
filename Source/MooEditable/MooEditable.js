@@ -470,12 +470,35 @@ this.MooEditable = new Class({
 	ensureRootElement: function(val){
 		if (this.options.rootElement){
 			var el = new Element('div',{html:val.trim()});
-			for (i=0;i<el.childNodes.length;i++){
-				if (el.childNodes[i].nodeName === '#text'){
-					if (el.childNodes[i].nodeValue.trim()){
-						var newel = new Element(this.options.rootElement,{html:el.childNodes[i].nodeValue.trim()});
-						el.replaceChild(newel,el.childNodes[i]);
+			var start = -1;
+			var create = false;
+			var html = '';
+			var length = el.childNodes.length;
+			for (i=0;i<length;i++){
+				if (!['p','div'].contains(el.childNodes[i].nodeName.toLowerCase())){
+					if (el.childNodes[i].nodeName === '#text'){
+						if (el.childNodes[i].nodeValue.trim()){
+							if(start < 0) start = i;
+							html += el.childNodes[i].nodeValue.trim();
+						}				
+					} else {
+						if(start < 0) start = i;
+						html += new Element('div').adopt($(el.childNodes[i]).clone()).get('html');
 					}
+				} else {
+					create = true;	
+				}				
+				if(i==(length-1)) create = true;
+				if (start >= 0 && create){
+					var newel = new Element(this.options.rootElement,{html:html});
+					el.replaceChild(newel,el.childNodes[start]);
+					for (k=start+1;k<=i;k++){ 
+						el.removeChild(el.childNodes[k]);
+						length--; i--; k--;
+					}					
+					start = -1;
+					create = false;
+					html = '';
 				}
 			}
 			val = el.get('html');
