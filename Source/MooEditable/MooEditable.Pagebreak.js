@@ -54,7 +54,7 @@ MooEditable.Actions.extend({
                 }
             },
 			render: function(){
-				this.options.extraCSS += 'img.mooeditable-pagebreak { display:block; width:100%; height:16px; background: url(../../Assets/MooEditable/Other/pagebreak.gif) repeat-x; }';
+				this.options.extraCSS = 'img.mooeditable-pagebreak { display:block; width:100%; height:16px; background: url(../../Assets/MooEditable/Other/pagebreak.gif) repeat-x; }' + this.options.extraCSS;
 			}
 		}
 	}
