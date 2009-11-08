@@ -475,7 +475,7 @@ this.MooEditable = new Class({
 			var html = '';
 			var length = el.childNodes.length;
 			for (i=0;i<length;i++){
-				if (!el.childNodes[i].nodeName.test(blockEls)){
+				if (!el.childNodes[i].nodeName.test(blockEls) && el.childNodes[i].nodeName !== '#comment'){
 					if (el.childNodes[i].nodeName === '#text'){
 						if (el.childNodes[i].nodeValue.trim()){
 							if(start < 0) start = i;
@@ -501,7 +501,7 @@ this.MooEditable = new Class({
 					html = '';
 				}
 			}
-			val = el.get('html');
+			val = el.get('html').replace(/\n\n/g,'');
 		}		
 		return val;
 	},
