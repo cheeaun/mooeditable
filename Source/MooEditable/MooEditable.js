@@ -477,7 +477,6 @@ this.MooEditable = new Class({
 			for (i=0; i<length; i++){
 				var childNode = el.childNodes[i];
 				var nodeName = childNode.nodeName;
-				console.log(nodeName);
 				if (!nodeName.test(blockEls) && nodeName !== '#comment'){
 					if (nodeName === '#text'){
 						if (childNode.nodeValue.trim()){
