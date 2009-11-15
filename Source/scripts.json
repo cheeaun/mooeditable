@@ -50,6 +50,16 @@
 		"MooEditable.Flash": {
 			"deps": ["MooEditable"],
 			"desc": "Extends MooEditable to embed Flash."
+		},
+		
+		"MooEditable.Charmap": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable with a characters map"
+		},
+		
+		"MooEditable.Pagebreak": {
+			"deps": ["MooEditable"],
+			"desc": "Extends MooEditable with pagebreak plugin"
 		}
 		
 	}

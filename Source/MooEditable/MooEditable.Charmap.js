@@ -3,7 +3,7 @@
 
 script: MooEditable.Charmap.js
 
-description: Extends MooEditable with additional characters
+description: Extends MooEditable with a characters map
 
 license: MIT-style license
 
