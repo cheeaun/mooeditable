@@ -456,18 +456,29 @@ this.MooEditable = new Class({
 	},
 
 	setContent: function(newContent){
-		if(newContent.charAt(0) != '<') newContent = '<' + this.options.rootElement + '>' + newContent + '</' + this.options.rootElement + '>';
-		this.doc.body.set('html', newContent);
+		this.doc.body.set('html', this.ensureRootElement(newContent));
 		return this;
 	},
 
 	saveContent: function(){
 		if (this.mode == 'iframe'){
-			var val = this.getContent();
-			if(val.charAt(0) != '<') val = '<' + this.options.rootElement + '>' + val + '</' + this.options.rootElement + '>';
-			this.textarea.set('value', val);
+			this.textarea.set('value', this.ensureRootElement(this.getContent()));
 		}
 		return this;
+	},
+	
+	ensureRootElement: function(val){
+		if (this.options.rootElement && val.charAt(0) != '<'){
+			var end = val.length - 1;
+			if (val.indexOf('<div') != -1){
+				end = val.indexOf('<div');
+			}
+			if(val.indexOf('<p') != -1 && val.indexOf('<p') < end){
+				end = val.indexOf('<p');
+			}
+			val = '<' + this.options.rootElement + '>' + val.substr(0,end) + '</' + this.options.rootElement + '>' + val.substr(end);
+		}
+		return val;
 	},
 
 	checkStates: function(){
