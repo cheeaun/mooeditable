@@ -41,7 +41,7 @@ provides: [MooEditable, MooEditable.Selection, MooEditable.UI, MooEditable.Actio
 
 (function(){
 	
-var blockEls = /^(H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/i;
+var blockEls = /^(H[1-6]|HR|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/i;
 var urlRegex = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i;
 
 this.MooEditable = new Class({
@@ -469,40 +469,45 @@ this.MooEditable = new Class({
 	
 	ensureRootElement: function(val){
 		if (this.options.rootElement){
-			var el = new Element('div',{html:val.trim()});
+			var el = new Element('div', {html: val.trim()});
 			var start = -1;
 			var create = false;
 			var html = '';
 			var length = el.childNodes.length;
-			for (i=0;i<length;i++){
-				if (!el.childNodes[i].nodeName.test(blockEls) && el.childNodes[i].nodeName !== '#comment'){
-					if (el.childNodes[i].nodeName === '#text'){
-						if (el.childNodes[i].nodeValue.trim()){
-							if(start < 0) start = i;
-							html += el.childNodes[i].nodeValue;
-						}				
+			for (i=0; i<length; i++){
+				var childNode = el.childNodes[i];
+				var nodeName = childNode.nodeName;
+				console.log(nodeName);
+				if (!nodeName.test(blockEls) && nodeName !== '#comment'){
+					if (nodeName === '#text'){
+						if (childNode.nodeValue.trim()){
+							if (start < 0) start = i;
+							html += childNode.nodeValue;
+						}
 					} else {
-						if(start < 0) start = i;
-						html += new Element('div').adopt($(el.childNodes[i]).clone()).get('html');
+						if (start < 0) start = i;
+						html += new Element('div').adopt($(childNode).clone()).get('html');
 					}
 				} else {
-					create = true;	
-				}				
-				if (i==(length-1)) create = true;
+					create = true;
+				}
+				if (i == (length-1)) create = true;
 				if (start >= 0 && create){
-					var newel = new Element(this.options.rootElement,{html:html});
-					el.replaceChild(newel,el.childNodes[start]);
-					for (k=start+1;k<=i;k++){ 
+					var newel = new Element(this.options.rootElement, {html: html});
+					el.replaceChild(newel, el.childNodes[start]);
+					for (k=start+1; k<=i; k++){ 
 						el.removeChild(el.childNodes[k]);
-						length--; i--; k--;
-					}					
+						length--;
+						i--;
+						k--;
+					}
 					start = -1;
 					create = false;
 					html = '';
 				}
 			}
-			val = el.get('html').replace(/\n\n/g,'');
-		}		
+			val = el.get('html').replace(/\n\n/g, '');
+		}
 		return val;
 	},
 
@@ -604,16 +609,16 @@ this.MooEditable = new Class({
 					source = source.replace(/<\/(ol|ul)>\s*(?!<(?:p|ol|ul|img).*?>)((?:<[^>]*>)?\w.*)$/g, '</$1><p>$2</p>');
 				}
 
-				source = source.replace(/<br[^>]*><\/p>/g, '</p>');			//remove <br>'s that end a paragraph here.
-				source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n'); 	//if a <p> only contains <img>, remove the <p> tags
+				source = source.replace(/<br[^>]*><\/p>/g, '</p>'); // remove <br>'s that end a paragraph here.
+				source = source.replace(/<p>\s*(<img[^>]+>)\s*<\/p>/ig, '$1\n'); // if a <p> only contains <img>, remove the <p> tags
 
 				//format the source
-				source = source.replace(/<p([^>]*)>(.*?)<\/p>(?!\n)/g, '<p$1>$2</p>\n');  	//break after paragraphs
-				source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '</$1>\n'); 			//break after </p></ol></ul> tags
-				source = source.replace(/><li>/g, '>\n\t<li>'); 				//break and indent <li>
-				source = source.replace(/([^\n])<\/(ol|ul)>/g, '$1\n</$2>');  			//break before </ol></ul> tags
-				source = source.replace(/([^\n])<img/ig, '$1\n<img'); 				//move images to their own line
-				source = source.replace(/^\s*$/g, '');						//delete empty lines in the source code (not working in opera)
+				source = source.replace(/<p([^>]*)>(.*?)<\/p>(?!\n)/g, '<p$1>$2</p>\n'); // break after paragraphs
+				source = source.replace(/<\/(ul|ol|p)>(?!\n)/g, '</$1>\n'); // break after </p></ol></ul> tags
+				source = source.replace(/><li>/g, '>\n\t<li>'); // break and indent <li>
+				source = source.replace(/([^\n])<\/(ol|ul)>/g, '$1\n</$2>'); //break before </ol></ul> tags
+				source = source.replace(/([^\n])<img/ig, '$1\n<img'); // move images to their own line
+				source = source.replace(/^\s*$/g, ''); // delete empty lines in the source code (not working in opera)
 			}
 
 			// Remove leading and trailing BRs
@@ -1154,23 +1159,23 @@ MooEditable.Actions = new Hash({
 		},
 		events: {
 			beforeToggleView: function(){
-				if(Browser.Engine.gecko){
+				if (Browser.Engine.gecko){
 					var s = this.textarea.get('value')
-					.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
-					.replace(/<em([^>]*)>/gi, '<i$1>')
-					.replace(/<tmpembed([^>]*)>/gi, '<embed$1>')
-					.replace(/<\/em>/gi, '</i>');            	
-					this.textarea.set('value',s);
+						.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
+						.replace(/<em([^>]*)>/gi, '<i$1>')
+						.replace(/<tmpembed([^>]*)>/gi, '<embed$1>')
+						.replace(/<\/em>/gi, '</i>');
+					this.textarea.set('value', s);
 				}
 			},
 			attach: function(){
-				if(Browser.Engine.gecko){
+				if (Browser.Engine.gecko){
 					var s = this.textarea.get('value')
-					.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
-					.replace(/<em([^>]*)>/gi, '<i$1>')
-					.replace(/<tmpembed([^>]*)>/gi, '<embed$1>')
-					.replace(/<\/em>/gi, '</i>');            	
-					this.textarea.set('value',s);
+						.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
+						.replace(/<em([^>]*)>/gi, '<i$1>')
+						.replace(/<tmpembed([^>]*)>/gi, '<embed$1>')
+						.replace(/<\/em>/gi, '</i>');
+					this.textarea.set('value', s);
 					this.setContent(s);
 				}
 			}

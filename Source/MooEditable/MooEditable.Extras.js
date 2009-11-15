@@ -71,11 +71,17 @@ MooEditable.Actions.extend({
 		}
 	},
 	
-	removeformatting: {
-		title: 'Remove formatting',
-		mode: 'text',
-		command: function() {
-			this.execute('removeformat',false,'');
+	removeformat: {
+		title: 'Remove Formatting'
+	},
+	
+	insertHorizontalRule: {
+		title: 'Insert Horizontal Rule',
+		states: {
+			tags: ['hr']
+		},
+		command: function(){
+			this.selection.insertContent('<hr>');
 		}
 	}
 

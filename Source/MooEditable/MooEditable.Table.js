@@ -206,9 +206,9 @@ MooEditable.Actions.extend({
 			if (node){
 				var index = node.cellIndex;
 				var row = node.getParent().rowIndex;
-				if(node.getProperty('rowspan')){
+				if (node.getProperty('rowspan')){
 					var rows = parseInt(node.getProperty('rowspan'));
-					for (i=1;i<rows;i++){
+					for (i=1; i<rows; i++){
 						node.getParent().getParent().childNodes[row+i].insertCell(index);
 					}
 					node.removeProperty('rowspan');
@@ -216,13 +216,13 @@ MooEditable.Actions.extend({
 			}
 		},
 		states: function(node){
-			if (node.get('tag')!='td') return;
+			if (node.get('tag') != 'td') return;
 			if (node){
 				if (node.getProperty('rowspan') && parseInt(node.getProperty('rowspan')) > 1){
 					this.el.addClass('onActive');
 				}
 			}
-		}	
+		}
 	},
 	
 	tablerowdelete:{

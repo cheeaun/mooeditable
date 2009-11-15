@@ -44,15 +44,15 @@ MooEditable.Actions.extend({
 			this.selection.insertContent('<img class="mooeditable-visual-aid mooeditable-pagebreak" />');
 		},
 		events: {
-            beforeToggleView: function(){ // code to run when switching from iframe to textarea
-                if(this.mode == 'iframe'){
-                    var s = this.getContent().replace(/<img([^>]*)class="mooeditable-visual-aid mooeditable-pagebreak"([^>]*)>/gi,'<!-- page break -->');
-                    this.setContent(s);
-                } else {
-                    var s = this.textarea.get('value').replace(/<!-- page break -->/gi,'<img class="mooeditable-visual-aid mooeditable-pagebreak" />');
-                    this.textarea.set('value',s);	
-                }
-            },
+			beforeToggleView: function(){ // code to run when switching from iframe to textarea
+				if (this.mode == 'iframe'){
+					var s = this.getContent().replace(/<img([^>]*)class="mooeditable-visual-aid mooeditable-pagebreak"([^>]*)>/gi, '<!-- page break -->');
+					this.setContent(s);
+				} else {
+					var s = this.textarea.get('value').replace(/<!-- page break -->/gi, '<img class="mooeditable-visual-aid mooeditable-pagebreak" />');
+					this.textarea.set('value', s);
+				}
+			},
 			render: function(){
 				this.options.extraCSS = 'img.mooeditable-pagebreak { display:block; width:100%; height:16px; background: url(../../Assets/MooEditable/Other/pagebreak.gif) repeat-x; }' + this.options.extraCSS;
 			}
