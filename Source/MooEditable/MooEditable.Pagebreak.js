@@ -35,11 +35,14 @@ usage:
 ...
 */
 
+MooEditable.Actions.Settings.pagebreak = {
+	imageFile: '../../Assets/MooEditable/Other/pagebreak.gif'
+};
+
 MooEditable.Actions.extend({
 	
 	pagebreak: {
 		title: 'Page break',
-		mode: 'text',
 		command: function(){
 			this.selection.insertContent('<img class="mooeditable-visual-aid mooeditable-pagebreak" />');
 		},
@@ -54,7 +57,9 @@ MooEditable.Actions.extend({
 				}
 			},
 			render: function(){
-				this.options.extraCSS = 'img.mooeditable-pagebreak { display:block; width:100%; height:16px; background: url(../../Assets/MooEditable/Other/pagebreak.gif) repeat-x; }' + this.options.extraCSS;
+				this.options.extraCSS = 'img.mooeditable-pagebreak { display:block; width:100%; height:16px; background: url('
+					+ MooEditable.Actions.Settings.pagebreak.imageFile + ') repeat-x; }'
+					+ this.options.extraCSS;
 			}
 		}
 	}
