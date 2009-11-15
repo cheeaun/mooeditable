@@ -311,7 +311,6 @@ MooEditable.Actions.extend({
 	
 	charmap: {
 		title: 'Insert custom character',
-		mode: 'text',
 		dialogs: {
 			prompt: function(editor){
 				return MooEditable.UI.CharacterDialog(editor);
