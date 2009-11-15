@@ -18,7 +18,7 @@ Features
 Requirements
 ------------
 
-[Mootools 1.2.3 Core](http://mootools.net/download), with minimum requirements of:
+[Mootools 1.2.4 Core](http://mootools.net/download), with minimum requirements of:
 
 * Class.Extras
 * Element.Event
