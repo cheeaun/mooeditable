@@ -221,12 +221,21 @@ this.MooEditable = new Class({
 		this.doc.addEvents({
 			mouseup: this.editorMouseUp.bind(this),
 			mousedown: this.editorMouseDown.bind(this),
+			mouseover: this.editorMouseOver.bind(this),
+			mouseout: this.editorMouseOut.bind(this),
+			mouseenter: this.editorMouseEnter.bind(this),
+			mouseleave: this.editorMouseLeave.bind(this),
 			contextmenu: this.editorContextMenu.bind(this),
 			click: this.editorClick.bind(this),
 			dbllick: this.editorDoubleClick.bind(this),
 			keypress: this.editorKeyPress.bind(this),
 			keyup: this.editorKeyUp.bind(this),
-			keydown: this.editorKeyDown.bind(this)
+			keydown: this.editorKeyDown.bind(this),
+			focus: this.editorFocus.bind(this),
+			blur: this.editorBlur.bind(this)
+		});
+		['cut', 'copy', 'paste'].each(function(event){
+			self.doc.body.addListener(event, self['editor' + event.capitalize()].bind(self));
 		});
 		this.textarea.addEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener', this.keyListener.bind(this)));
 		
@@ -251,6 +260,8 @@ this.MooEditable = new Class({
 
 		this.selection = new MooEditable.Selection(this.win);
 		
+		this.oldContent = this.getContent();
+		
 		this.fireEvent('attach', this);
 		
 		return this;
@@ -263,6 +274,16 @@ this.MooEditable = new Class({
 		this.container.dispose();
 		this.fireEvent('detach', this);
 		return this;
+	},
+	
+	editorFocus: function(e){
+		this.oldContent = '';
+		this.fireEvent('editorFocus', [e, this]);
+	},
+	
+	editorBlur: function(e){
+		this.oldContent = this.saveContent().getContent();
+		this.fireEvent('editorBlur', [e, this]);
 	},
 	
 	editorMouseUp: function(e){
@@ -283,6 +304,47 @@ this.MooEditable = new Class({
 		}
 		
 		this.fireEvent('editorMouseDown', [e, this]);
+	},
+	
+	editorMouseOver: function(e){
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.fireEvent('editorMouseOver', [e, this]);
+	},
+	
+	editorMouseOut: function(e){
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.fireEvent('editorMouseOut', [e, this]);
+	},
+	
+	editorMouseEnter: function(e){
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		if (this.oldContent && this.getContent() != this.oldContent){
+			this.focus();
+			this.fireEvent('editorPaste', [e, this]);
+		}
+		
+		this.fireEvent('editorMouseEnter', [e, this]);
+	},
+	
+	editorMouseLeave: function(e){
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.fireEvent('editorMouseLeave', [e, this]);
 	},
 	
 	editorContextMenu: function(e){
@@ -396,7 +458,45 @@ this.MooEditable = new Class({
 			}
 		}
 		
+		if (Browser.Engine.presto){
+			var ctrlmeta = e.control || e.meta;
+			if (ctrlmeta && e.key == 'x'){
+				this.fireEvent('editorCut', [e, this]);
+			} else if (ctrlmeta && e.key == 'c'){
+				this.fireEvent('editorCopy', [e, this]);
+			} else if ((ctrlmeta && e.key == 'v') || (e.shift && e.code == 45)){
+				this.fireEvent('editorPaste', [e, this]);
+			}
+		}
+		
 		this.fireEvent('editorKeyDown', [e, this]);
+	},
+	
+	editorCut: function(e){
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.fireEvent('editorCut', [e, this]);
+	},
+	
+	editorCopy: function(e){
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.fireEvent('editorCopy', [e, this]);
+	},
+	
+	editorPaste: function(e){
+		if (this.editorDisabled){
+			e.stop();
+			return;
+		}
+		
+		this.fireEvent('editorPaste', [e, this]);
 	},
 	
 	keyListener: function(e){
