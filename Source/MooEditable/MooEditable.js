@@ -767,7 +767,7 @@ this.MooEditable = new Class({
 			source = source.replace(/<\/p>\s*<\/p>/g, '</p>');
 			
 			// Replace <br>s inside <pre> automatically added by some browsers
-			source = source.replace(/<pre>.*?<\/pre>/gi, function(match){
+			source = source.replace(/<pre[^>]*>.*?<\/pre>/gi, function(match){
 				return match.replace(/<br ?\/?>/gi, '\n');
 			});
 
