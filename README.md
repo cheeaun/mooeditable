@@ -1,9 +1,22 @@
 MooEditable
 ===========
 
-About
------
 A simple web-based WYSIWYG editor, written in [MooTools](http://mootools.net/).
+
+![Screenshot](http://cheeaun.github.com/mooeditable/mooeditable-screenshot.png)
+
+How to Use
+----------
+
+There are two ways. Note that `textarea-1` is the `id` of a `textarea` element. This is the simple one:
+
+	#JS
+	$('textarea-1').mooEditable();
+
+And this is the classic one:
+
+	#JS
+	new MooEditable('textarea-1');
 
 Features
 --------
@@ -14,24 +27,3 @@ Features
 * Lightweight
 * Fully degradable when Javascript disabled
 * Works in Internet Explorer 6/7/8, Firefox 2/3, Opera 9/10 and Safari 3/4
-
-Requirements
-------------
-
-[Mootools 1.2.4 Core](http://mootools.net/download), with minimum requirements of:
-
-* Class.Extras
-* Element.Event
-* Element.Style
-* Element.Dimensions
-* Selectors
-
-Examples
---------
-
-The basic code:
-
-	window.addEvent('domready', function(){
-		$('textarea-1').mooEditable();
-	});
-
