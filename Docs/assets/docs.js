@@ -1,12 +1,17 @@
 var Docs = {
-
 	urls: [
 		'MooEditable/MooEditable.md',
 		'MooEditable/MooEditable.UI.MenuList.md',
 		'MooEditable/MooEditable.UI.ButtonOverlay.md',
 		'MooEditable/MooEditable.Extras.md',
 		'MooEditable/MooEditable.Group.md',
-		],
+	],
+	remote: false,
+	githubAPI: {
+		branches: 'http://github.com/api/v2/json/repos/show/cheeaun/mooeditable/branches',
+		blob: 'http://github.com/api/v2/json/blob/show/cheeaun/mooeditable/{sha}/Docs/{path}'
+	},
+	
 	start: function(){
 		Docs.generateMenu();
 		
@@ -40,6 +45,12 @@ var Docs = {
 	
 	// inspired by http://cssgallery.info/mootools-ajax-request-for-local-files/
 	getContent: function(url, fn){
+		if (!Docs.contentCache) Docs.contentCache = {};
+		if (Docs.contentCache[url]){
+			fn(url, Docs.contentCache[url]);
+			return;
+		}
+		
 		if (document.location.protocol == 'file:'){
 			var mdIFrame = new IFrame({
 				'class': 'md-iframe',
@@ -53,16 +64,46 @@ var Docs = {
 				events: {
 					load: function(){
 						var doc = $(this.contentWindow.document.body).getElement('pre').get('text');
+						Docs.contentCache[url] = doc;
 						fn(url, doc);
 						Docs.disposeIframes();
 					}
 				}
 			}).inject(document.body);
+		} else if (Docs.remote){
+			var run = function(){
+				new Request.JSONP({
+					url: Docs.githubAPI.blob.substitute({
+						sha: Docs.masterTree,
+						path: url
+					}),
+					onSuccess: function(doc){
+						var data = doc.blob.data;
+						Docs.contentCache[url] = data;
+						fn(url, data);
+					}
+				}).send();
+			}
+			
+			if (Docs.masterTree){
+				run();
+			} else {
+				// get master tree SHA
+				new Request.JSONP({
+					url: Docs.githubAPI.branches,
+					onSuccess: function(data){
+						if (!data || !data.branches || !data.branches.master) return;
+						Docs.masterTree = data.branches.master;
+						run();
+					}
+				}).send();
+			}
 		} else {
 			new Request({
 				url: url,
 				method: 'get',
 				onSuccess: function(doc){
+					Docs.contentCache[url] = doc;
 					fn(url, doc);
 				}
 			}).send();
