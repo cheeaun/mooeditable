@@ -15,6 +15,8 @@ requires:
 - /MooEditable.UI
 - /MooEditable.Actions
 
+provides: [MooEditable.UI.FlashDialog]
+
 usage: |
   Add the following tags in your html
   <link rel="stylesheet" href="MooEditable.css">

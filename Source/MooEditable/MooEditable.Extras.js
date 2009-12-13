@@ -16,6 +16,8 @@ requires:
 - /MooEditable.UI
 - /MooEditable.UI.MenuList
 
+provides:
+
 ...
 */
 
