@@ -1,7 +1,7 @@
 name: MooEditable
 author: cheeaun
-category: Interface
+category: Widgets
 tags: [wysiwyg, editor, rte]
-#docs: 
+docs: http://cheeaun.github.com/mooeditable/docs.html
 demo: http://cheeaun.github.com/mooeditable/
 current: 0.4
