@@ -11,8 +11,8 @@ authors:
 - Lim Chee Aun
 
 requires:
-- /MooEditable
-- /MooEditable.UI
+- MooEditable
+- MooEditable.UI
 
 provides: [MooEditable.UI.ButtonOverlay]
 

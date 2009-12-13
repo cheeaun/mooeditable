@@ -11,9 +11,9 @@ authors:
 - Radovan Lozej
 
 requires:
-- /MooEditable
-- /MooEditable.UI
-- /MooEditable.Actions
+- MooEditable
+- MooEditable.UI
+- MooEditable.Actions
 
 provides: [MooEditable.UI.ImageDialog]
 

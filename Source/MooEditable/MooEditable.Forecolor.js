@@ -11,10 +11,10 @@ authors:
 - Olivier Refalo
 
 requires:
-- /MooEditable
-- /MooEditable.UI
-- /MooEditable.UI.ButtonOverlay
-- /MooEditable.Actions
+- MooEditable
+- MooEditable.UI
+- MooEditable.UI.ButtonOverlay
+- MooEditable.Actions
 
 provides:
 
