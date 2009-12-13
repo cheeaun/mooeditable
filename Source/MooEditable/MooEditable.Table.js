@@ -16,21 +16,21 @@ requires:
 - /MooEditable.UI
 - /MooEditable.Actions
 
-usage:
-	Add the following tags in your html
-	<link rel="stylesheet" href="MooEditable.css">
-	<link rel="stylesheet" href="MooEditable.Table.css">
-	<script src="mootools.js"></script>
-	<script src="MooEditable.js"></script>
-	<script src="MooEditable.Table.js"></script>
+usage: |
+  Add the following tags in your html
+  <link rel="stylesheet" href="MooEditable.css">
+  <link rel="stylesheet" href="MooEditable.Table.css">
+  <script src="mootools.js"></script>
+  <script src="MooEditable.js"></script>
+  <script src="MooEditable.Table.js"></script>
 
-	<script>
-	window.addEvent('domready', function(){
-		var mooeditable = $('textarea-1').mooEditable({
-			actions: 'bold italic underline strikethrough | table | toggleview'
-		});
-	});
-	</script>
+  <script>
+  window.addEvent('domready', function(){
+    var mooeditable = $('textarea-1').mooEditable({
+      actions: 'bold italic underline strikethrough | table | toggleview'
+    });
+  });
+  </script>
 
 ...
 */

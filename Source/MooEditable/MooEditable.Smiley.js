@@ -16,22 +16,22 @@ requires:
 - /MooEditable.UI.ButtonOverlay
 - /MooEditable.Actions
 
-usage:
-	Add the following tags in your html
-	<link rel="stylesheet" href="MooEditable.css">
-	<link rel="stylesheet" href="MooEditable.Smiley.css">
-	<script src="mootools.js"></script>
-	<script src="MooEditable.js"></script>
-	<script src="MooEditable.UI.ButtonOverlay.js"></script>
-	<script src="MooEditable.Smiley.js"></script>
+usage: |
+  Add the following tags in your html
+  <link rel="stylesheet" href="MooEditable.css">
+  <link rel="stylesheet" href="MooEditable.Smiley.css">
+  <script src="mootools.js"></script>
+  <script src="MooEditable.js"></script>
+  <script src="MooEditable.UI.ButtonOverlay.js"></script>
+  <script src="MooEditable.Smiley.js"></script>
 
-	<script>
-	window.addEvent('domready', function(){
-		var mooeditable = $('textarea-1').mooEditable({
-			actions: 'bold italic underline strikethrough | smiley | toggleview'
-		});
-	});
-	</script>
+  <script>
+  window.addEvent('domready', function(){
+    var mooeditable = $('textarea-1').mooEditable({
+      actions: 'bold italic underline strikethrough | smiley | toggleview'
+    });
+  });
+  </script>
 
 ...
 */

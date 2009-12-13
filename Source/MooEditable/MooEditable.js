@@ -15,12 +15,13 @@ authors:
 - T.J. Leahy
 
 requires:
-- core:1.2.4/Events
-- core:1.2.4/Options
-- core:1.2.4/Element.Event
-- core:1.2.4/Element.Style
-- core:1.2.4/Element.Dimensions
-- core:1.2.4/Selectors
+  core/1.2.4:
+  - Events
+  - Options
+  - Element.Event
+  - Element.Style
+  - Element.Dimensions
+  - Selectors
 
 inspiration:
 - Code inspired by Stefan's work [Safari Supports Content Editing!](http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html) from [safari gets contentEditable](http://walkah.net/blog/walkah/safari-gets-contenteditable)

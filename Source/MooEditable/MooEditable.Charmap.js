@@ -15,22 +15,22 @@ requires:
 - /MooEditable.UI
 - /MooEditable.Actions
 
-usage:
-	Add the following tags in your html
-	<link rel="stylesheet" href="MooEditable.css">
-	<link rel="stylesheet" href="MooEditable.Charmap.css">
-	<script src="mootools.js"></script>
-	<script src="MooEditable.js"></script>
-	<script src="MooEditable.Charmap.js"></script>
+usage: |
+  Add the following tags in your html
+  <link rel="stylesheet" href="MooEditable.css">
+  <link rel="stylesheet" href="MooEditable.Charmap.css">
+  <script src="mootools.js"></script>
+  <script src="MooEditable.js"></script>
+  <script src="MooEditable.Charmap.js"></script>
 
-	<script>
-	window.addEvent('domready', function(){
-		var mooeditable = $('textarea-1').mooEditable({
-			actions: 'bold italic underline strikethrough | charmap | toggleview',
-			externalCSS: '../../Assets/MooEditable/Editable.css'
-		});
-	});
-	</script>
+  <script>
+  window.addEvent('domready', function(){
+    var mooeditable = $('textarea-1').mooEditable({
+      actions: 'bold italic underline strikethrough | charmap | toggleview',
+      externalCSS: '../../Assets/MooEditable/Editable.css'
+    });
+  });
+  </script>
 
 ...
 */

@@ -15,21 +15,21 @@ requires:
 - /MooEditable.UI
 - /MooEditable.Actions
 
-usage:
-	Add the following tags in your html
-	<link rel="stylesheet" href="MooEditable.css">
-	<link rel="stylesheet" href="MooEditable.Image.css">
-	<script src="mootools.js"></script>
-	<script src="MooEditable.js"></script>
-	<script src="MooEditable.Image.js"></script>
+usage: |
+  Add the following tags in your html
+  <link rel="stylesheet" href="MooEditable.css">
+  <link rel="stylesheet" href="MooEditable.Image.css">
+  <script src="mootools.js"></script>
+  <script src="MooEditable.js"></script>
+  <script src="MooEditable.Image.js"></script>
 
-	<script>
-	window.addEvent('domready', function(){
-		var mooeditable = $('textarea-1').mooEditable({
-			actions: 'bold italic underline strikethrough | image | toggleview'
-		});
-	});
-	</script>
+  <script>
+  window.addEvent('domready', function(){
+    var mooeditable = $('textarea-1').mooEditable({
+      actions: 'bold italic underline strikethrough | image | toggleview'
+    });
+  });
+  </script>
 
 ...
 */
