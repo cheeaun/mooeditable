@@ -28,7 +28,7 @@ var Docs = {
 				var id = location.hash = hrefsplit[2];
 				var to = $(id.replace(/\./g, '-')).getCoordinates();
 				window.scrollTo(0, to.top);
-			}, 100);
+			}, 1000);
 		});
 	},
 	
@@ -144,7 +144,7 @@ var Docs = {
 		
 		// hack some links
 		sd.getElements('a[href^=/]').each(function(a){
-			var href = a.href;
+			var href = Docs.remote ? a.get('href').slice(1) : a.href;
 			var hrefsplit = href.split('#');
 			var href = '#' + hrefsplit[0].replace('file:///', '') + '.md';
 			if (hrefsplit.length>1) href += '#' + hrefsplit[1];
