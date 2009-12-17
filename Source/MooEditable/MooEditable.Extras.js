@@ -12,9 +12,9 @@ authors:
 - Ryan Mitchell
 
 requires:
-- MooEditable
-- MooEditable.UI
-- MooEditable.UI.MenuList
+# - MooEditable
+# - MooEditable.UI
+# - MooEditable.UI.MenuList
 
 provides:
 
