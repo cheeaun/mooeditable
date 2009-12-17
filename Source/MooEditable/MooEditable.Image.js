@@ -15,7 +15,7 @@ requires:
 # - MooEditable.UI
 # - MooEditable.Actions
 
-provides: [MooEditable.UI.ImageDialog]
+provides: [MooEditable.UI.ImageDialog, MooEditable.Actions.image]
 
 usage: |
   Add the following tags in your html

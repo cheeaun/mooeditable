@@ -15,7 +15,7 @@ requires:
 # - MooEditable.UI
 # - MooEditable.Actions
 
-provides: [MooEditable.UI.FlashDialog]
+provides: [MooEditable.UI.FlashDialog, MooEditable.Actions.flash]
 
 usage: |
   Add the following tags in your html

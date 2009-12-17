@@ -16,7 +16,14 @@ requires:
 # - MooEditable.UI
 # - MooEditable.UI.MenuList
 
-provides:
+provides: 
+- MooEditable.Actions.formatBlock
+- MooEditable.Actions.justifyleft
+- MooEditable.Actions.justifyright
+- MooEditable.Actions.justifycenter
+- MooEditable.Actions.justifyfull
+- MooEditable.Actions.removeformat
+- MooEditable.Actions.insertHorizontalRule
 
 ...
 */

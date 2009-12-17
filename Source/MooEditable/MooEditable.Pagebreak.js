@@ -15,7 +15,7 @@ requires:
 # - MooEditable.UI
 # - MooEditable.Actions
 
-provides:
+provides: [MooEditable.Actions.pagebreak]
 
 usage: |
   Add the following tags in your html

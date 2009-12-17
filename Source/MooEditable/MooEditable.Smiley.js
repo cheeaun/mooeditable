@@ -16,7 +16,7 @@ requires:
 # - MooEditable.UI.ButtonOverlay
 # - MooEditable.Actions
 
-provides:
+provides: [MooEditable.Actions.smiley]
 
 usage: |
   Add the following tags in your html

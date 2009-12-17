@@ -15,7 +15,7 @@ requires:
 # - MooEditable.UI
 # - MooEditable.Actions
 
-provides: [MooEditable.UI.CharacterDialog]
+provides: [MooEditable.UI.CharacterDialog, MooEditable.Actions.charmap]
 
 usage: |
   Add the following tags in your html
