@@ -11,7 +11,6 @@ authors:
 - Ryan Mitchell
 
 requires:
-- core:1.2.4/Options
 # - MooEditable
 # - MooEditable.UI
 # - MooEditable.Actions
