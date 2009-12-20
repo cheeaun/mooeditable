@@ -4,7 +4,7 @@ var Docs = {
 		'MooEditable/MooEditable.UI.MenuList.md',
 		'MooEditable/MooEditable.UI.ButtonOverlay.md',
 		'MooEditable/MooEditable.Extras.md',
-		'MooEditable/MooEditable.Group.md',
+		'MooEditable/MooEditable.Group.md'
 	],
 	remote: false,
 	githubAPI: {
@@ -146,7 +146,8 @@ var Docs = {
 		sd.getElements('a[href^=/]').each(function(a){
 			var href = Docs.remote ? a.get('href').slice(1) : a.href;
 			var hrefsplit = href.split('#');
-			var href = '#' + hrefsplit[0].replace('file:///', '') + '.md';
+			var path = hrefsplit[0].replace(/([a-z:\/]+:\/{1,3})/i, '');
+			var href = '#' + path + '.md';
 			if (hrefsplit.length>1) href += '#' + hrefsplit[1];
 			a.href = href;
 		});
