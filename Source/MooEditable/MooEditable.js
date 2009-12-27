@@ -595,7 +595,7 @@ this.MooEditable = new Class({
 				if (start >= 0 && create){
 					var newel = new Element(this.options.rootElement, {html: html});
 					el.replaceChild(newel, el.childNodes[start]);
-					for (k=start+1; k<=i; k++){ 
+					for (k=start+1; k<i; k++){ 
 						el.removeChild(el.childNodes[k]);
 						length--;
 						i--;
