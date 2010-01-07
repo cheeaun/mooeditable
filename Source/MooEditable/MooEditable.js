@@ -235,6 +235,10 @@ this.MooEditable = new Class({
 			focus: this.editorFocus.bind(this),
 			blur: this.editorBlur.bind(this)
 		});
+		this.win.addEvents({
+			focus: this.editorFocus.bind(this),
+			blur: this.editorBlur.bind(this)
+		});
 		['cut', 'copy', 'paste'].each(function(event){
 			self.doc.body.addListener(event, self['editor' + event.capitalize()].bind(self));
 		});
