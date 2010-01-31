@@ -58,6 +58,7 @@ this.MooEditable = new Class({
 		actions: 'bold italic underline strikethrough | insertunorderedlist insertorderedlist indent outdent | undo redo | createlink unlink | urlimage | toggleview',
 		handleSubmit: true,
 		handleLabel: true,
+		disabled: false,
 		baseCSS: 'html{ height: 100%; cursor: text; } body{ font-family: sans-serif; }',
 		extraCSS: '',
 		externalCSS: '',
@@ -262,6 +263,8 @@ this.MooEditable = new Class({
 			document.id(this.toolbar).inject(this.container, 'top');
 			this.toolbar.render(this.actions);
 		}
+		
+		if (this.options.disabled) this.disable();
 
 		this.selection = new MooEditable.Selection(this.win);
 		
@@ -278,6 +281,18 @@ this.MooEditable = new Class({
 		this.textarea.removeEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener'));
 		this.container.dispose();
 		this.fireEvent('detach', this);
+		return this;
+	},
+	
+	enable: function(){
+		this.editorDisabled = false;
+		this.toolbar.enable();
+		return this;
+	},
+	
+	disable: function(){
+		this.editorDisabled = true;
+		this.toolbar.disable();
 		return this;
 	},
 	
