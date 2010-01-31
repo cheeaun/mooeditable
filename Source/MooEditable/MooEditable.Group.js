@@ -57,13 +57,16 @@ MooEditable.Group.Item = new Class({
 	Extends: MooEditable,
 
 	initialize: function(textarea, group, options){
+		var self = this;
 		this.group = group;
 		this.parent(textarea, options);
-		var focus = function(){
-			this.group.activeEditor = this;
-		}.bind(this);
-		this.textarea.addEvent('focus', focus);
-		this.win.addEvent('focus', focus);
+		this.addEvent('attach', function(){
+			var focus = function(){
+				self.group.activeEditor = self;
+			};
+			self.textarea.addEvent('focus', focus);
+			self.win.addEvent('focus', focus);
+		});
 	}
 
 });
