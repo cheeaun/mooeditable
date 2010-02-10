@@ -745,7 +745,7 @@ this.MooEditable = new Class({
 			source = source.replace(/^<br ?\/?>/gi, '');
 
 			// Remove useless BRs
-			source = source.replace(/><br ?\/?>/gi, '>');
+			if (this.options.paragraphise) source = source.replace(/><br ?\/?>/gi, '>');
 
 			// Remove BRs right before the end of blocks
 			source = source.replace(/<br ?\/?>\s*<\/(h1|h2|h3|h4|h5|h6|li|p)/gi, '</$1');
