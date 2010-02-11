@@ -48,6 +48,7 @@ MooEditable Method: constructor {#MooEditable:constructor}
 		</head>
 		<body>{CONTENT}</body>
 		</html>
+* rootElement   - (*string*: defaults to 'p') A string indicating the root element of the editor content.
 
 ### Events:
 
