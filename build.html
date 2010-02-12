@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<title>MooEditable Builder</title>
+<link rel="stylesheet" href="http://cheeaun.github.com/cacss/ca.min.css">
+<style>
+ul.fields li{ list-style: none; display: inline; }
+ul.fields li label{ padding: .5em; border-top: 1px solid #ccc; display: block; }
+ul.fields li label:hover{ color: inherit; background-color: #ffc; }
+ul.fields li:first-child label{ border: 0; }
+.file{ font-weight: bold; margin: 0 1em; }
+.desc{ color: #aaa; background-color: transparent; }
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
+<script src="mootools-more.js"></script>
+<script>
+window.addEvent('domready', function(){
+	var branchesURL = 'http://github.com/api/v2/json/repos/show/cheeaun/mooeditable/branches';
+	var blobURL = 'http://github.com/api/v2/json/blob/show/cheeaun/mooeditable/{sha}/Source/scripts.json';
+	var jsRawURL = 'http://github.com/cheeaun/mooeditable/raw/master/Source/MooEditable/{filename}.js';
+	new Request.JSONP({
+		url: branchesURL,
+		onSuccess: function(data){
+			if (!data || !data.branches || !data.branches.master) return;
+			var masterTree = data.branches.master;
+			new Request.JSONP({
+				url: blobURL.substitute({
+					sha: masterTree
+				}),
+				onSuccess: function(data){
+					if (!data || !data.blob || !data.blob.data) return;
+					var json = JSON.decode(data.blob.data);
+					var html = '<fieldset>';
+					$each(json, function(files, k){
+						html += '<legend>' + k + '</legend><ul class="fields">'
+						$each(files, function(v, f){
+							var url = jsRawURL.substitute({filename: f});
+							var id = 'check-' + f.replace(/\./g, '-');
+							html += '<li>'
+								+ '<label for="' + id + '">'
+									+ '<input type="checkbox" name="code_url" id="' + id + '" value="' + url + '" checked> '
+									+ '<span class="file">' + f + '</span> '
+									+ '<span class="desc">' + v.desc + '</span>'
+								+ '</label>'
+								+ '</li>';
+						});
+						html += '</ul></li>';
+					});
+					html += '</fieldset>';
+					var codeURLs = $('code-urls').set('html', html);
+					$('build-button').removeProperty('disabled');
+					$('build-form').addEvent('submit', function(e){
+						if (!codeURLs.getElements('input[type=checkbox]:checked').length) e.stop();
+					});
+				}
+			}).send();
+
+		}
+	}).send();
+});
+</script>
+<h1>MooEditable Builder</h1>
+<div id="builder">
+</div>
+<form action="http://closure-compiler.appspot.com/compile" method="POST" id="build-form">
+<div id="code-urls"></div>
+<p>
+<input type="hidden" name="compilation_level" value="SIMPLE_OPTIMIZATIONS">
+<input type="hidden" name="output_format" value="text">
+<input type="hidden" name="output_info" value="compiled_code">
+<input type="submit" value="Build" id="build-button" disabled> then <b>Save</b>.
+</p>
+</form>
+<p>Powered by <a href="http://closure-compiler.appspot.com/home">Closure Compiler</a>.</p>
