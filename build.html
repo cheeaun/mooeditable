@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="http://cheeaun.github.com/cacss/ca.min.css">
 <style>
 ul.fields li{ list-style: none; display: inline; }
-ul.fields li label{ padding: .5em; border-top: 1px solid #ccc; display: block; }
+ul.fields li label{ padding: .5em; border-top: 1px solid #ccc; display: block; cursor: pointer; }
 ul.fields li label:hover{ color: inherit; background-color: #ffc; }
 ul.fields li:first-child label{ border: 0; }
 .file{ font-weight: bold; margin: 0 1em; }
@@ -28,12 +28,16 @@ window.addEvent('domready', function(){
 				onSuccess: function(data){
 					if (!data || !data.blob || !data.blob.data) return;
 					var json = JSON.decode(data.blob.data);
+					var deps = {};
 					var html = '<fieldset>';
 					$each(json, function(files, k){
 						html += '<legend>' + k + '</legend><ul class="fields">'
 						$each(files, function(v, f){
 							var url = jsRawURL.substitute({filename: f});
 							var id = 'check-' + f.replace(/\./g, '-');
+							deps[id] = v.deps.map(function(d){
+								return 'check-' + d.replace(/\./g, '-');
+							});
 							html += '<li>'
 								+ '<label for="' + id + '">'
 									+ '<input type="checkbox" name="code_url" id="' + id + '" value="' + url + '" checked> '
@@ -45,10 +49,37 @@ window.addEvent('domready', function(){
 						html += '</ul></li>';
 					});
 					html += '</fieldset>';
+					
 					var codeURLs = $('code-urls').set('html', html);
 					$('build-button').removeProperty('disabled');
 					$('build-form').addEvent('submit', function(e){
 						if (!codeURLs.getElements('input[type=checkbox]:checked').length) e.stop();
+					});
+					
+					var provides = {};
+					$each(deps, function(dep, id){
+						dep.each(function(d){
+							if (!provides[d]) provides[d] = [];
+							provides[d].push(id);
+						});
+					});
+					
+					codeURLs.getElements('input[type=checkbox]').addEvent('change', function(e){
+						var id = this.id;
+						if (this.checked){
+							var dep = deps[id];
+							if (!dep || !dep.length) return;
+							dep.each(function(d){
+								if (id == 'check-' + d) return;
+								$(d).checked = true;
+							});
+						} else {
+							var prov = provides[id];
+							if (!prov || !prov.length) return;
+							prov.each(function(p){
+								$(p).checked = false;
+							});
+						}
 					});
 				}
 			}).send();
