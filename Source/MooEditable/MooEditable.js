@@ -594,7 +594,7 @@ this.MooEditable = new Class({
 			var create = false;
 			var html = '';
 			var length = el.childNodes.length;
-			for (i=0; i<length; i++){
+			for (var i=0; i<length; i++){
 				var childNode = el.childNodes[i];
 				var nodeName = childNode.nodeName;
 				if (!nodeName.test(blockEls) && nodeName !== '#comment'){
@@ -614,7 +614,7 @@ this.MooEditable = new Class({
 				if (start >= 0 && create){
 					var newel = new Element(this.options.rootElement, {html: html});
 					el.replaceChild(newel, el.childNodes[start]);
-					for (k=start+1; k<i; k++){ 
+					for (var k=start+1; k<i; k++){ 
 						el.removeChild(el.childNodes[k]);
 						length--;
 						i--;
