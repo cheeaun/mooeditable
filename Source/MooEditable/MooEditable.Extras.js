@@ -28,17 +28,31 @@ provides:
 ...
 */
 
+MooEditable.lang.set({
+	blockFormatting: 'Block Formatting',
+	paragraph: 'Paragraph',
+	heading1: 'Heading 1',
+	heading2: 'Heading 2',
+	heading3: 'Heading 3',
+	alignLeft: 'Align Left',
+	alignRight: 'Align Right',
+	alignCenter: 'Align Center',
+	alignJustify: 'Align Justify',
+	removeFormatting: 'Remove Formatting',
+	insertHorizontalRule: 'Insert Horizontal Rule'
+});
+
 MooEditable.Actions.extend({
 
 	formatBlock: {
-		title: 'Block Formatting',
+		title: MooEditable.lang.get('blockFormatting'),
 		type: 'menu-list',
 		options: {
 			list: [
-				{text: 'Paragraph', value: 'p'},
-				{text: 'Heading 1', value: 'h1', style: 'font-size:24px; font-weight:bold;'},
-				{text: 'Heading 2', value: 'h2', style: 'font-size:18px; font-weight:bold;'},
-				{text: 'Heading 3', value: 'h3', style: 'font-size:14px; font-weight:bold;'}
+				{text: MooEditable.lang.get('paragraph'), value: 'p'},
+				{text: MooEditable.lang.get('heading1'), value: 'h1', style: 'font-size:24px; font-weight:bold;'},
+				{text: MooEditable.lang.get('heading2'), value: 'h2', style: 'font-size:18px; font-weight:bold;'},
+				{text: MooEditable.lang.get('heading3'), value: 'h3', style: 'font-size:14px; font-weight:bold;'}
 			]
 		},
 		states: {
@@ -52,21 +66,21 @@ MooEditable.Actions.extend({
 	},
 	
 	justifyleft:{
-		title: 'Align Left',
+		title: MooEditable.lang.get('alignLeft'),
 		states: {
 			css: {'text-align': 'left'}
 		}
 	},
 	
 	justifyright:{
-		title: 'Align Right',
+		title: MooEditable.lang.get('alignRight'),
 		states: {
 			css: {'text-align': 'right'}
 		}
 	},
 	
 	justifycenter:{
-		title: 'Align Center',
+		title: MooEditable.lang.get('alignCenter'),
 		states: {
 			tags: ['center'],
 			css: {'text-align': 'center'}
@@ -74,18 +88,18 @@ MooEditable.Actions.extend({
 	},
 	
 	justifyfull:{
-		title: 'Align Justify',
+		title: MooEditable.lang.get('alignJustify'),
 		states: {
 			css: {'text-align': 'justify'}
 		}
 	},
 	
 	removeformat: {
-		title: 'Remove Formatting'
+		title: MooEditable.lang.get('removeFormatting')
 	},
 	
 	insertHorizontalRule: {
-		title: 'Insert Horizontal Rule',
+		title: MooEditable.lang.get('insertHorizontalRule'),
 		states: {
 			tags: ['hr']
 		},

@@ -48,9 +48,13 @@ MooEditable.Actions.Settings.forecolor = {
 	]
 };
 
+MooEditable.lang.set({
+	changeColor: 'Change Color'
+});
+
 MooEditable.Actions.forecolor = {
 	type: 'button-overlay',
-	title: 'Change Color',
+	title: MooEditable.lang.get('changeColor'),
 	options: {
 		overlaySize: {x: 'auto'},
 		overlayHTML: (function(){

@@ -36,16 +36,32 @@ usage: |
 ...
 */
 
+MooEditable.lang.set({
+	imageAlt: 'alt',
+	imageClass: 'class',
+	imageAlign: 'align',
+	imageAlignNone: 'none',
+	imageAlignLeft: 'left',
+	imageAlignCenter: 'center',
+	imageAlignRight: 'right',
+	addEditImage: 'Add/Edit Image'
+});
+
 MooEditable.UI.ImageDialog = function(editor){
-	var html = 'url <input type="text" class="dialog-url" value="" size="15" /> '
-		+ 'alt <input type="text" class="dialog-alt" value="" size="8" /> '
-		+ 'class <input type="text" class="dialog-class" value="" size="8" /> '
-		+ 'align <select class="dialog-align"><option>none</option><option>left</option><option>center</option><option>right</option></select> '
-		+ '<button class="dialog-button dialog-ok-button">OK</button> '
-		+ '<button class="dialog-button dialog-cancel-button">Cancel</button>';
+	var html = MooEditable.lang.get('enterImageURL') + ' <input type="text" class="dialog-url" value="" size="15"> '
+		+ MooEditable.lang.get('imageAlt') + ' <input type="text" class="dialog-alt" value="" size="8"> '
+		+ MooEditable.lang.get('imageClass') + ' <input type="text" class="dialog-class" value="" size="8"> '
+		+ MooEditable.lang.get('imageAlign') + ' <select class="dialog-align">'
+			+ '<option>' + MooEditable.lang.get('imageAlignNone') + '</option>'
+			+ '<option>' + MooEditable.lang.get('imageAlignLeft') + '</option>'
+			+ '<option>' + MooEditable.lang.get('imageAlignCenter') + '</option>'
+			+ '<option>' + MooEditable.lang.get('imageAlignRight') + '</option>'
+		+ '</select> '
+		+ '<button class="dialog-button dialog-ok-button">' + MooEditable.lang.get('ok') + '</button> '
+		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.lang.get('cancel') + '</button>';
 		
 	return new MooEditable.UI.Dialog(html, {
-		'class': 'mooeditable-prompt-dialog',
+		'class': 'mooeditable-image-dialog',
 		onOpen: function(){
 			var input = this.el.getElement('.dialog-url');
 			var node = editor.selection.getNode();
@@ -76,10 +92,10 @@ MooEditable.UI.ImageDialog = function(editor){
 				} else {
 					var div = new Element('div');
 					new Element('img', {
-						'src' : this.el.getElement('.dialog-url').get('value').trim(),
-						'alt' : this.el.getElement('.dialog-alt').get('value').trim(),
-						'class' : this.el.getElement('.dialog-class').get('value').trim(),
-						'align' : this.el.getElement('.dialog-align').get('value')
+						src: this.el.getElement('.dialog-url').get('value').trim(),
+						alt: this.el.getElement('.dialog-alt').get('value').trim(),
+						'class': this.el.getElement('.dialog-class').get('value').trim(),
+						align: this.el.getElement('.dialog-align').get('value')
 					}).inject(div);
 					editor.selection.insertContent(div.get('html'));
 				}
@@ -91,7 +107,7 @@ MooEditable.UI.ImageDialog = function(editor){
 MooEditable.Actions.extend({
 	
 	image: {
-		title: 'Add/Edit Image',
+		title: MooEditable.lang.get('addEditImage'),
 		options: {
 			shortcut: 'm'
 		},

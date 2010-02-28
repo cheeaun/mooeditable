@@ -37,12 +37,17 @@ usage: |
 ...
 */
 
+MooEditable.lang.set({
+	embed: 'Enter embed code',
+	flashEmbed: 'Flash Embed'
+});
+
 MooEditable.UI.FlashDialog = function(editor){
-	var html = 'embed <textarea class="dialog-f" value="" rows="2" cols="40" /></textarea> '
-		+ '<button class="dialog-button dialog-ok-button">OK</button> '
-		+ '<button class="dialog-button dialog-cancel-button">Cancel</button>';
+	var html = MooEditable.lang.get('embed') + ' <textarea class="dialog-f" value="" rows="2" cols="40"></textarea> '
+		+ '<button class="dialog-button dialog-ok-button">' + MooEditable.lang.get('ok') + '</button> '
+		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.lang.get('cancel') + '</button>';
 	return new MooEditable.UI.Dialog(html, {
-		'class': 'mooeditable-prompt-dialog',
+		'class': 'mooeditable-flash-dialog',
 		onOpen: function(){
 			var input = this.el.getElement('.dialog-f');
 			(function(){
@@ -67,7 +72,7 @@ MooEditable.UI.FlashDialog = function(editor){
 MooEditable.Actions.extend({
 	
 	flash: {
-		title: 'Flash embed',
+		title: MooEditable.lang.get('flashEmbed'),
 		dialogs: {
 			prompt: function(editor){
 				return MooEditable.UI.FlashDialog(editor);

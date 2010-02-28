@@ -41,12 +41,16 @@ MooEditable.Actions.Settings.pagebreak = {
 	imageFile: '../../Assets/MooEditable/Other/pagebreak.gif'
 };
 
+MooEditable.lang.set({
+	pageBreak: 'Page break'
+});
+
 MooEditable.Actions.extend({
 	
 	pagebreak: {
-		title: 'Page break',
+		title: MooEditable.lang.get('pageBreak'),
 		command: function(){
-			this.selection.insertContent('<img class="mooeditable-visual-aid mooeditable-pagebreak" />');
+			this.selection.insertContent('<img class="mooeditable-visual-aid mooeditable-pagebreak">');
 		},
 		events: {
 			beforeToggleView: function(){ // code to run when switching from iframe to textarea
@@ -54,7 +58,7 @@ MooEditable.Actions.extend({
 					var s = this.getContent().replace(/<img([^>]*)class="mooeditable-visual-aid mooeditable-pagebreak"([^>]*)>/gi, '<!-- page break -->');
 					this.setContent(s);
 				} else {
-					var s = this.textarea.get('value').replace(/<!-- page break -->/gi, '<img class="mooeditable-visual-aid mooeditable-pagebreak" />');
+					var s = this.textarea.get('value').replace(/<!-- page break -->/gi, '<img class="mooeditable-visual-aid mooeditable-pagebreak">');
 					this.textarea.set('value', s);
 				}
 			},

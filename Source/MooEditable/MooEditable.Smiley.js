@@ -44,9 +44,13 @@ MooEditable.Actions.Settings.smiley = {
 	fileExt: '.png'
 };
 
+MooEditable.lang.set({
+	insertSmiley: 'Insert Smiley'
+});
+
 MooEditable.Actions.smiley = {
 	type: 'button-overlay',
-	title: 'Insert Smiley',
+	title: MooEditable.lang.get('insertSmiley'),
 	options: {
 		overlaySize: {x: 'auto'},
 		overlayHTML: (function(){

@@ -939,6 +939,45 @@ MooEditable.Selection = new Class({
 
 });
 
+// Avoiding MooTools.lang dependency
+// Wrapper functions to be used internally and for plugins, defaults to en-US
+var phrases = {};
+MooEditable.lang = {
+	
+	set: function(members){
+		if (MooTools.lang) MooTools.lang.set('en-US', 'MooEditable', members);
+		$extend(phrases, members);
+	},
+	
+	get: function(key){
+		if (MooTools.lang) return MooTools.lang.get('MooEditable', key);
+		return key ? phrases[key] : '';
+	}
+	
+};
+
+MooEditable.lang.set({
+	ok: 'OK',
+	cancel: 'Cancel',
+	bold: 'Bold',
+	italic: 'Italic',
+	underline: 'Underline',
+	strikethrough: 'Strikethrough',
+	unorderedList: 'Unordered List',
+	orderedList: 'Ordered List',
+	indent: 'Indent',
+	outdent: 'Outdent',
+	undo: 'Undo',
+	redo: 'Redo',
+	removeHyperlink: 'Remove Hyperlink',
+	addHyperlink: 'Add Hyperlink',
+	selectTextHyperlink: 'Please select the text you wish to hyperlink.',
+	enterURL: 'Enter URL',
+	enterImageURL: 'Enter image URL',
+	addImage: 'Add Image',
+	toggleView: 'Toggle View'
+});
+
 MooEditable.UI = {};
 
 MooEditable.UI.Toolbar= new Class({
@@ -1185,7 +1224,7 @@ MooEditable.UI.Dialog = new Class({
 
 MooEditable.UI.AlertDialog = function(alertText){
 	if (!alertText) return;
-	var html = alertText + ' <button class="dialog-ok-button">OK</button>';
+	var html = alertText + ' <button class="dialog-ok-button">' + MooEditable.lang.get('ok') + '</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-alert-dialog',
 		onOpen: function(){
@@ -1206,8 +1245,8 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 	if (!questionText) return;
 	var html = '<label class="dialog-label">' + questionText
 		+ ' <input type="text" class="text dialog-input" value="' + answerText + '">'
-		+ '</label> <button class="dialog-button dialog-ok-button">OK</button>'
-		+ '<button class="dialog-button dialog-cancel-button">Cancel</button>';
+		+ '</label> <button class="dialog-button dialog-ok-button">' + MooEditable.lang.get('ok') + '</button>'
+		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.lang.get('cancel') + '</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-prompt-dialog',
 		onOpen: function(){
@@ -1238,7 +1277,7 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 MooEditable.Actions = new Hash({
 
 	bold: {
-		title: 'Bold',
+		title: MooEditable.lang.get('bold'),
 		options: {
 			shortcut: 'b'
 		},
@@ -1268,7 +1307,7 @@ MooEditable.Actions = new Hash({
 	},
 	
 	italic: {
-		title: 'Italic',
+		title: MooEditable.lang.get('italic'),
 		options: {
 			shortcut: 'i'
 		},
@@ -1302,7 +1341,7 @@ MooEditable.Actions = new Hash({
 	},
 	
 	underline: {
-		title: 'Underline',
+		title: MooEditable.lang.get('underline'),
 		options: {
 			shortcut: 'u'
 		},
@@ -1313,7 +1352,7 @@ MooEditable.Actions = new Hash({
 	},
 	
 	strikethrough: {
-		title: 'Strikethrough',
+		title: MooEditable.lang.get('strikethrough'),
 		options: {
 			shortcut: 's'
 		},
@@ -1324,50 +1363,50 @@ MooEditable.Actions = new Hash({
 	},
 	
 	insertunorderedlist: {
-		title: 'Unordered List',
+		title: MooEditable.lang.get('unorderedList'),
 		states: {
 			tags: ['ul']
 		}
 	},
 	
 	insertorderedlist: {
-		title: 'Ordered List',
+		title: MooEditable.lang.get('orderedList'),
 		states: {
 			tags: ['ol']
 		}
 	},
 	
 	indent: {
-		title: 'Indent',
+		title: MooEditable.lang.get('indent'),
 		states: {
 			tags: ['blockquote']
 		}
 	},
 	
 	outdent: {
-		title: 'Outdent'
+		title: MooEditable.lang.get('outdent')
 	},
 	
 	undo: {
-		title: 'Undo',
+		title: MooEditable.lang.get('undo'),
 		options: {
 			shortcut: 'z'
 		}
 	},
 	
 	redo: {
-		title: 'Redo',
+		title: MooEditable.lang.get('redo'),
 		options: {
 			shortcut: 'y'
 		}
 	},
 	
 	unlink: {
-		title: 'Remove Hyperlink'
+		title: MooEditable.lang.get('removeHyperlink')
 	},
 
 	createlink: {
-		title: 'Add Hyperlink',
+		title: MooEditable.lang.get('addHyperlink'),
 		options: {
 			shortcut: 'l'
 		},
@@ -1375,9 +1414,9 @@ MooEditable.Actions = new Hash({
 			tags: ['a']
 		},
 		dialogs: {
-			alert: MooEditable.UI.AlertDialog.pass('Please select the text you wish to hyperlink.'),
+			alert: MooEditable.UI.AlertDialog.pass(MooEditable.lang.get('selectTextHyperlink')),
 			prompt: function(editor){
-				return MooEditable.UI.PromptDialog('Enter URL', 'http://', function(url){
+				return MooEditable.UI.PromptDialog(MooEditable.lang.get('enterURL'), 'http://', function(url){
 					editor.execute('createlink', false, url.trim());
 				});
 			}
@@ -1395,14 +1434,14 @@ MooEditable.Actions = new Hash({
 	},
 
 	urlimage: {
-		title: 'Add Image',
+		title: MooEditable.lang.get('addImage'),
 		options: {
 			shortcut: 'm'
 		},
 		dialogs: {
 			prompt: function(editor){
-				return MooEditable.UI.PromptDialog('Enter image URL', 'http://', function(url){
-					editor.execute("insertimage", false, url.trim());
+				return MooEditable.UI.PromptDialog(MooEditable.lang.get('enterImageURL'), 'http://', function(url){
+					editor.execute('insertimage', false, url.trim());
 				});
 			}
 		},
@@ -1412,7 +1451,7 @@ MooEditable.Actions = new Hash({
 	},
 
 	toggleview: {
-		title: 'Toggle View',
+		title: MooEditable.lang.get('toggleView'),
 		command: function(){
 			(this.mode == 'textarea') ? this.toolbar.enable() : this.toolbar.disable('toggleview');
 			this.toggleView();
