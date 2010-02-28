@@ -60,6 +60,10 @@ MooEditable.UI.ButtonOverlay = new Class({
 			}
 		}).inject(document.body).store('MooEditable.UI.ButtonOverlay', this);
 		this.overlayVisible = false;
+		
+		window.addEvent('resize', function(){
+			if (self.overlayVisible) self.positionOverlay();
+		});
 	},
 	
 	openOverlay: function(){
@@ -93,13 +97,18 @@ MooEditable.UI.ButtonOverlay = new Class({
 			this.overlay.blur();
 			return;
 		} else {
-			var coords = this.el.getCoordinates();
-			this.overlay.setStyles({
-				top: coords.bottom,
-				left: coords.left
-			});
+			this.positionOverlay();
 			this.overlay.focus();
 		}
+	},
+	
+	positionOverlay: function(){
+		var coords = this.el.getCoordinates();
+		this.overlay.setStyles({
+			top: coords.bottom,
+			left: coords.left
+		});
+		return this;
 	}
 	
 });
