@@ -1422,11 +1422,21 @@ MooEditable.Actions = new Hash({
 			}
 		},
 		command: function(){
-			if (this.selection.isCollapsed()){
-				this.dialogs.createlink.alert.open();
+			var selection = this.selection;
+			var dialogs = this.dialogs.createlink;
+			if (selection.isCollapsed()){
+				var node = selection.getNode();
+				if (node.get('tag') == 'a' && node.get('href')){
+					selection.selectNode(node);
+					var prompt = dialogs.prompt;
+					prompt.el.getElement('.dialog-input').set('value', node.get('href'));
+					prompt.open();
+				} else {
+					dialogs.alert.open();
+				}
 			} else {
-				var text = this.selection.getText();
-				var prompt = this.dialogs.createlink.prompt;
+				var text = selection.getText();
+				var prompt = dialogs.prompt;
 				if (urlRegex.test(text)) prompt.el.getElement('.dialog-input').set('value', text);
 				prompt.open();
 			}
