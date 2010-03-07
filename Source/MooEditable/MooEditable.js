@@ -42,7 +42,7 @@ provides: [MooEditable, MooEditable.Selection, MooEditable.UI, MooEditable.Actio
 
 (function(){
 	
-var blockEls = /^(H[1-6]|HR|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD)$/i;
+var blockEls = /^(H[1-6]|HR|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD|SCRIPT)$/i;
 var urlRegex = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i;
 
 this.MooEditable = new Class({
@@ -772,7 +772,7 @@ this.MooEditable = new Class({
 			});
 
 			// Put quotes around unquoted attributes
-			source = source.replace(/<[^>]*>/g, function(match){
+			source = source.replace(/<[^!][^>]*>/g, function(match){
 				   match = match.replace(/( [^=]+=)([^"][^ >]*)/g, "$1\"$2\"");
 				   return match;
 			});
