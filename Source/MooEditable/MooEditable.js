@@ -1347,7 +1347,7 @@ MooEditable.Actions = new Hash({
 						.replace(/<\/em>/gi, '</i>');
 					if (value != newValue){
 						this.textarea.set('value', newValue);
-						this.setContent(s);
+						this.setContent(newValue);
 					}
 				}
 			}
