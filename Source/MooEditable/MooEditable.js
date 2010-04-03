@@ -41,9 +41,10 @@ provides: [MooEditable, MooEditable.Selection, MooEditable.UI, MooEditable.Actio
 */
 
 (function(){
-	
-var blockEls = /^(H[1-6]|HR|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD|SCRIPT)$/i;
+
+var blockEls = /^(H[1-6]|HR|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD|SCRIPT|NOSCRIPT|STYLE)$/i;
 var urlRegex = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i;
+var protectRegex = /<(script|noscript|style)[\u0000-\uFFFF]*?<\/(script|noscript|style)>/g;
 
 this.MooEditable = new Class({
 
@@ -62,7 +63,7 @@ this.MooEditable = new Class({
 		baseCSS: 'html{ height: 100%; cursor: text; } body{ font-family: sans-serif; }',
 		extraCSS: '',
 		externalCSS: '',
-		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body>{CONTENT}</body></html>',
+		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body></body></html>',
 		rootElement: 'p'
 	},
 
@@ -73,6 +74,7 @@ this.MooEditable = new Class({
 		this.actions = this.options.actions.clean().split(' ');
 		this.keys = {};
 		this.dialogs = {};
+		this.protectedElements = [];
 		this.actions.each(function(action){
 			var act = MooEditable.Actions[action];
 			if (!act) return;
@@ -203,8 +205,7 @@ this.MooEditable = new Class({
 		var docHTML = this.options.html.substitute({
 			BASECSS: this.options.baseCSS,
 			EXTRACSS: this.options.extraCSS,
-			EXTERNALCSS: (this.options.externalCSS) ? '<link rel="stylesheet" href="' + this.options.externalCSS + '">': '',
-			CONTENT: this.cleanup(this.textarea.get('value'))
+			EXTERNALCSS: (this.options.externalCSS) ? '<link rel="stylesheet" href="' + this.options.externalCSS + '">': ''
 		});
 		this.doc.open();
 		this.doc.write(docHTML);
@@ -218,6 +219,8 @@ this.MooEditable = new Class({
 		if (!this.win.$family) new Window(this.win);
 		if (!this.doc.$family) new Document(this.doc);
 		document.id(this.doc.body);
+		
+		this.setContent(this.textarea.get('value'));
 
 		// Bind all events
 		this.doc.addEvents({
@@ -572,11 +575,20 @@ this.MooEditable = new Class({
 	},
 
 	getContent: function(){
-		return this.cleanup(this.ensureRootElement(this.doc.body.get('html')));
+		var protect = this.protectedElements;
+		var html = this.doc.body.get('html').replace(/<!-- mooeditable:protect:([0-9]+) -->/g, function(a, b){
+			return protect[parseInt(b)];
+		});
+		return this.cleanup(this.ensureRootElement(html));
 	},
 
-	setContent: function(newContent){
-		this.doc.body.set('html', this.ensureRootElement(newContent));
+	setContent: function(content){
+		var protect = this.protectedElements;
+		content = content.replace(protectRegex, function(a){
+			protect.push(a);
+			return '<!-- mooeditable:protect:' + (protect.length-1) + ' -->';
+		});
+		this.doc.body.set('html', this.ensureRootElement(content));
 		return this;
 	},
 
@@ -922,7 +934,7 @@ MooEditable.Selection = new Class({
 
 			return document.id(el);
 		}
-
+		
 		return document.id(r.item ? r.item(0) : r.parentElement());
 	},
 
@@ -1288,19 +1300,19 @@ MooEditable.Actions = new Hash({
 		events: {
 			beforeToggleView: function(){
 				if(Browser.Engine.gecko){
-					var s = this.textarea.get('value')
-					.replace(/<strong([^>]*)>/gi, '<b$1>')
-					.replace(/<\/strong>/gi, '</b>')
-					this.textarea.set('value',s);
+					var value = this.textarea.get('value');
+					var newValue = value.replace(/<strong([^>]*)>/gi, '<b$1>').replace(/<\/strong>/gi, '</b>');
+					if (value != newValue) this.textarea.set('value', newValue);
 				}
 			},
 			attach: function(){
 				if(Browser.Engine.gecko){
-					var s = this.textarea.get('value')
-					.replace(/<strong([^>]*)>/gi, '<b$1>')
-					.replace(/<\/strong>/gi, '</b>')
-					this.textarea.set('value',s);
-					this.setContent(s);
+					var value = this.textarea.get('value');
+					var newValue = value.replace(/<strong([^>]*)>/gi, '<b$1>').replace(/<\/strong>/gi, '</b>');
+					if (value != newValue){
+						this.textarea.set('value', newValue);
+						this.setContent(newValue);
+					}
 				}
 			}
 		}
@@ -1318,23 +1330,25 @@ MooEditable.Actions = new Hash({
 		events: {
 			beforeToggleView: function(){
 				if (Browser.Engine.gecko){
-					var s = this.textarea.get('value')
-						.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
+					var value = this.textarea.get('value');
+					var newValue = value.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
 						.replace(/<em([^>]*)>/gi, '<i$1>')
 						.replace(/<tmpembed([^>]*)>/gi, '<embed$1>')
 						.replace(/<\/em>/gi, '</i>');
-					this.textarea.set('value', s);
+					if (value != newValue) this.textarea.set('value', newValue);
 				}
 			},
 			attach: function(){
 				if (Browser.Engine.gecko){
-					var s = this.textarea.get('value')
-						.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
+					var value = this.textarea.get('value');
+					var newValue = value.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
 						.replace(/<em([^>]*)>/gi, '<i$1>')
 						.replace(/<tmpembed([^>]*)>/gi, '<embed$1>')
 						.replace(/<\/em>/gi, '</i>');
-					this.textarea.set('value', s);
-					this.setContent(s);
+					if (value != newValue){
+						this.textarea.set('value', newValue);
+						this.setContent(s);
+					}
 				}
 			}
 		}
