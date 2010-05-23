@@ -385,6 +385,7 @@ this.MooEditable = new Class({
 			var el = e.target;
 			if (el.get('tag') == 'img'){
 				this.selection.selectNode(el);
+				this.checkStates();
 			}
 		}
 		
