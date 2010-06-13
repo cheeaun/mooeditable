@@ -15,7 +15,7 @@ requires:
 - more:1.2.4.2/Lang
 
 provides: [MooEditable.English.US]
- 
+
 ...
 */
 
