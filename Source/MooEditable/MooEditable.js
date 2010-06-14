@@ -63,8 +63,9 @@ this.MooEditable = new Class({
 		baseCSS: 'html{ height: 100%; cursor: text; } body{ font-family: sans-serif; }',
 		extraCSS: '',
 		externalCSS: '',
-		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body></body></html>',
-		rootElement: 'p'
+		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">{BASEHREF}<style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body></body></html>',
+		rootElement: 'p',
+		baseURL: ''
 	},
 
 	initialize: function(el, options){
@@ -205,7 +206,8 @@ this.MooEditable = new Class({
 		var docHTML = this.options.html.substitute({
 			BASECSS: this.options.baseCSS,
 			EXTRACSS: this.options.extraCSS,
-			EXTERNALCSS: (this.options.externalCSS) ? '<link rel="stylesheet" href="' + this.options.externalCSS + '">': ''
+			EXTERNALCSS: (this.options.externalCSS) ? '<link rel="stylesheet" href="' + this.options.externalCSS + '">': '',
+			BASEHREF: (this.options.baseURL) ? '<base href="' + this.options.baseURL + '" />': '',
 		});
 		this.doc.open();
 		this.doc.write(docHTML);
@@ -704,6 +706,11 @@ this.MooEditable = new Class({
 		
 		do {
 			var oSource = source;
+			
+			// replace base URL references: ie localize links
+			if (this.options.baseURL){
+				source = source.replace('="' + this.options.baseURL, '="');	
+			}
 
 			// Webkit cleanup
 			source = source.replace(/<br class\="webkit-block-placeholder">/gi, "<br />");
