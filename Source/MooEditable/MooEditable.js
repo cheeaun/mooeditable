@@ -386,6 +386,14 @@ this.MooEditable = new Class({
 		if (Browser.Engine.webkit){
 			var el = e.target;
 			if (el.get('tag') == 'img'){
+			
+				// safari doesnt like dragging locally linked images
+				if (this.options.baseURL){
+					if (el.getProperty('src').indexOf('http://') == -1){
+						el.setProperty('src', this.options.baseURL + el.getProperty('src'));
+					}
+				}
+			
 				this.selection.selectNode(el);
 				this.checkStates();
 			}
