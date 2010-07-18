@@ -65,7 +65,8 @@ this.MooEditable = new Class({
 		externalCSS: '',
 		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">{BASEHREF}<style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body></body></html>',
 		rootElement: 'p',
-		baseURL: ''
+		baseURL: '',
+		dimensions: null
 	},
 
 	initialize: function(el, options){
@@ -108,7 +109,7 @@ this.MooEditable = new Class({
 		var self = this;
 		
 		// Dimensions
-		var dimensions = this.textarea.getSize();
+		var dimensions = this.options.dimensions || this.textarea.getSize();
 		
 		// Build the container
 		this.container = new Element('div', {

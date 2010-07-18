@@ -49,6 +49,8 @@ MooEditable Method: constructor {#MooEditable:constructor}
 		<body>{CONTENT}</body>
 		</html>
 * rootElement   - (*string*: defaults to 'p') A string indicating the root element of the editor content.
+* baseURL       - (*string*: defaults to null) A string indicating the editor content's base URL for resolving relative URLs.
+* dimensions    - (*object*: defaults to null) An object with x/y values indicating the width and height of the editor. Useful when the editor is not displayed when initialized.
 
 ### Events:
 
