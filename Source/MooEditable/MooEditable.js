@@ -208,7 +208,7 @@ this.MooEditable = new Class({
 			BASECSS: this.options.baseCSS,
 			EXTRACSS: this.options.extraCSS,
 			EXTERNALCSS: (this.options.externalCSS) ? '<link rel="stylesheet" href="' + this.options.externalCSS + '">': '',
-			BASEHREF: (this.options.baseURL) ? '<base href="' + this.options.baseURL + '" />': '',
+			BASEHREF: (this.options.baseURL) ? '<base href="' + this.options.baseURL + '" />': ''
 		});
 		this.doc.open();
 		this.doc.write(docHTML);
