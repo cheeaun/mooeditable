@@ -62,7 +62,7 @@ MooEditable.Group.Item = new Class({
 		this.parent(textarea, options);
 		this.addEvent('attach', function(){
 			var focus = function(){
-				self.group.activeEditor = self;
+				if (this == self.win) self.group.activeEditor = self;
 			};
 			self.textarea.addEvent('focus', focus);
 			self.win.addEvent('focus', focus);

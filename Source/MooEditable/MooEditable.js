@@ -264,6 +264,10 @@ this.MooEditable = new Class({
 		if (Browser.firefox2) this.doc.addEvent('focus', function(){
 			self.win.fireEvent('focus').focus();
 		});
+		// IE9 is also not firing focus event
+		this.doc.addEventListener('focus', function(){
+			self.win.fireEvent('focus');
+		}, true);
 
 		// styleWithCSS, not supported in IE and Opera
 		if (!Browser.ie && !Browser.opera){
@@ -942,7 +946,7 @@ MooEditable.Selection = new Class({
 	getNode: function(){
 		var r = this.getRange();
 
-		if (!Browser.ie){
+		if (!Browser.ie || Browser.version >= 9){
 			var el = null;
 
 			if (r){
@@ -967,9 +971,23 @@ MooEditable.Selection = new Class({
 	insertContent: function(content){
 		if (Browser.ie){
 			var r = this.getRange();
-			r.pasteHTML(content);
-			r.collapse(false);
-			r.select();
+			if (r.pasteHTML){
+				r.pasteHTML(content);
+				r.collapse(false);
+				r.select();
+			} else if (r.insertNode){
+				r.deleteContents();
+				if (r.createContextualFragment){
+					 r.insertNode(r.createContextualFragment(content));
+				} else {
+					var doc = this.win.document;
+					var fragment = doc.createDocumentFragment();
+					var temp = doc.createElement('div');
+					fragment.appendChild(temp);
+					temp.outerHTML = content;
+					r.insertNode(fragment);
+				}
+			}
 		} else {
 			this.win.document.execCommand('insertHTML', false, content);
 		}
