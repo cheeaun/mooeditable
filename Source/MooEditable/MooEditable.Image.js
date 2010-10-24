@@ -83,19 +83,20 @@ MooEditable.UI.ImageDialog = function(editor){
 				this.close();
 			} else if (button.hasClass('dialog-ok-button')){
 				this.close();
+				var dialogAlignSelect = this.el.getElement('.dialog-align');
 				var node = editor.selection.getNode();
 				if (node.get('tag') == 'img'){
 					node.set('src', this.el.getElement('.dialog-url').get('value').trim());
 					node.set('alt', this.el.getElement('.dialog-alt').get('value').trim());
 					node.className = this.el.getElement('.dialog-class').get('value').trim();
-					node.set('align', this.el.getElement('.dialog-align').get('value'));
+					node.set('align', $(dialogAlignSelect.options[dialogAlignSelect.selectedIndex]).get('value'));
 				} else {
 					var div = new Element('div');
 					new Element('img', {
 						src: this.el.getElement('.dialog-url').get('value').trim(),
 						alt: this.el.getElement('.dialog-alt').get('value').trim(),
 						'class': this.el.getElement('.dialog-class').get('value').trim(),
-						align: this.el.getElement('.dialog-align').get('value')
+						align: $(dialogAlignSelect.options[dialogAlignSelect.selectedIndex]).get('value')
 					}).inject(div);
 					editor.selection.insertContent(div.get('html'));
 				}
@@ -104,21 +105,17 @@ MooEditable.UI.ImageDialog = function(editor){
 	});
 };
 
-MooEditable.Actions.extend({
-	
-	image: {
-		title: MooEditable.lang.get('addEditImage'),
-		options: {
-			shortcut: 'm'
-		},
-		dialogs: {
-			prompt: function(editor){
-				return MooEditable.UI.ImageDialog(editor);
-			}
-		},
-		command: function(){
-			this.dialogs.image.prompt.open();
+MooEditable.Actions.image = {
+	title: MooEditable.lang.get('addEditImage'),
+	options: {
+		shortcut: 'm'
+	},
+	dialogs: {
+		prompt: function(editor){
+			return MooEditable.UI.ImageDialog(editor);
 		}
+	},
+	command: function(){
+		this.dialogs.image.prompt.open();
 	}
-	
-});
+};

@@ -72,20 +72,24 @@ MooEditable.Actions.smiley = {
 	},
 	events: {
 		attach: function(editor){
-			if (Browser.Engine.trident){
+			if (Browser.ie){
 				// addListener instead of addEvent, because controlselect is a native event in IE
 				editor.doc.addListener('controlselect', function(e){
-					var el = e.target;
+					var el = e.target || e.srcElement;
 					if (el.tagName.toLowerCase() != 'img') return;
-					if (!$(el).hasClass('smiley')) return;
-					e.preventDefault();
+					if (!document.id(el).hasClass('smiley')) return;
+					if (e.preventDefault){
+						e.preventDefault();
+					} else {
+						e.returnValue = false;
+					}
 				});
 			}
 		},
 		editorMouseDown: function(e, editor){
 			var el = e.target;
 			var isSmiley = (el.tagName.toLowerCase() == 'img') && $(el).hasClass('smiley');
-			$try(function(){
+			Function.attempt(function(){
 				editor.doc.execCommand('enableObjectResizing', false, !isSmiley);
 			});
 		}

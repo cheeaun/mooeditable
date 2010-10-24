@@ -25,7 +25,7 @@ MooEditable.UI.MenuList = new Class({
 
 	options: {
 		/*
-		onAction: $empty,
+		onAction: function(){},
 		*/
 		title: '',
 		name: '',
@@ -62,7 +62,7 @@ MooEditable.UI.MenuList = new Class({
 		this.disabled = false;
 
 		// add hover effect for IE
-		if (Browser.Engine.trident) this.el.addEvents({
+		if (Browser.ie) this.el.addEvents({
 			mouseenter: function(e){ this.addClass('hover'); },
 			mouseleave: function(e){ this.removeClass('hover'); }
 		});
@@ -78,7 +78,7 @@ MooEditable.UI.MenuList = new Class({
 	},
 	
 	action: function(){
-		this.fireEvent('action', [this].concat($A(arguments)));
+		this.fireEvent('action', [this].concat(Array.from(arguments)));
 	},
 	
 	enable: function(){

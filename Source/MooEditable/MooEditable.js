@@ -63,7 +63,7 @@ this.MooEditable = new Class({
 		baseCSS: 'html{ height: 100%; cursor: text; } body{ font-family: sans-serif; }',
 		extraCSS: '',
 		externalCSS: '',
-		html: '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">{BASEHREF}<style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body></body></html>',
+		html: '<!DOCTYPE html><html><head><meta charset="UTF-8">{BASEHREF}<style>{BASECSS} {EXTRACSS}</style>{EXTERNALCSS}</head><body></body></html>',
 		rootElement: 'p',
 		baseURL: '',
 		dimensions: null
@@ -85,15 +85,15 @@ this.MooEditable = new Class({
 				if (key) this.keys[key] = action;
 			}
 			if (act.dialogs){
-				$each(act.dialogs, function(dialog, name){
+				Object.each(act.dialogs, function(dialog, name){
 					dialog = dialog.attempt(this);
 					dialog.name = action + ':' + name;
-					if ($type(this.dialogs[action]) != 'object') this.dialogs[action] = {};
+					if (typeOf(this.dialogs[action]) != 'object') this.dialogs[action] = {};
 					this.dialogs[action][name] = dialog;
 				}, this);
 			}
 			if (act.events){
-				$each(act.events, function(fn, event){
+				Object.each(act.events, function(fn, event){
 					this.addEvent(event, fn);
 				}, this);
 			}
@@ -135,7 +135,7 @@ this.MooEditable = new Class({
 		
 		this.toolbar = new MooEditable.UI.Toolbar({
 			onItemAction: function(){
-				var args = $splat(arguments);
+				var args = Array.from(arguments);
 				var item = args[0];
 				self.action(item.name, args);
 			}
@@ -177,8 +177,8 @@ this.MooEditable = new Class({
 		
 		this.iframe.setStyle('display', '').inject(this.textarea, 'before');
 		
-		$each(this.dialogs, function(action, name){
-			$each(action, function(dialog){
+		Object.each(this.dialogs, function(action, name){
+			Object.each(action, function(dialog){
 				document.id(dialog).inject(self.iframe, 'before');
 				var range;
 				dialog.addEvents({
@@ -216,12 +216,21 @@ this.MooEditable = new Class({
 
 		// Turn on Design Mode
 		// IE fired load event twice if designMode is set
-		(Browser.Engine.trident) ? this.doc.body.contentEditable = true : this.doc.designMode = 'On';
+		(Browser.ie) ? this.doc.body.contentEditable = true : this.doc.designMode = 'On';
 
 		// Mootoolize window, document and body
-		if (!this.win.$family) new Window(this.win);
-		if (!this.doc.$family) new Document(this.doc);
-		document.id(this.doc.body);
+		Object.append(this.win, new Window);
+		Object.append(this.doc, new Document);
+		if (Browser.Element){
+			var winElement = this.win.Element.prototype;
+			for (var method in Element){ // methods from Element generics
+				if (!method.test(/^[A-Z]|\$|prototype|mooEditable/)){
+					winElement[method] = Element.prototype[method];
+				}
+			}
+		} else {
+			document.id(this.doc.body);
+		}
 		
 		this.setContent(this.textarea.get('value'));
 
@@ -252,12 +261,12 @@ this.MooEditable = new Class({
 		this.textarea.addEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener', this.keyListener.bind(this)));
 		
 		// Fix window focus event not firing on Firefox 2
-		if (Browser.Engine.gecko && Browser.Engine.version == 18) this.doc.addEvent('focus', function(){
+		if (Browser.firefox2) this.doc.addEvent('focus', function(){
 			self.win.fireEvent('focus').focus();
 		});
 
 		// styleWithCSS, not supported in IE and Opera
-		if (!(/trident|presto/i).test(Browser.Engine.name)){
+		if (!Browser.ie && !Browser.opera){
 			var styleCSS = function(){
 				self.execute('styleWithCSS', false, false);
 				self.doc.removeEvent('focus', styleCSS);
@@ -384,9 +393,9 @@ this.MooEditable = new Class({
 	
 	editorClick: function(e){
 		// make images selectable and draggable in Safari
-		if (Browser.Engine.webkit){
+		if (Browser.safari || Browser.chrome){
 			var el = e.target;
-			if (el.get('tag') == 'img'){
+			if (Element.get(el, 'tag') == 'img'){
 			
 				// safari doesnt like dragging locally linked images
 				if (this.options.baseURL){
@@ -427,8 +436,8 @@ this.MooEditable = new Class({
 		var c = e.code;
 		// 33-36 = pageup, pagedown, end, home; 45 = insert
 		if (this.options.toolbar && (/^enter|left|up|right|down|delete|backspace$/i.test(e.key) || (c >= 33 && c <= 36) || c == 45 || e.meta || e.control)){
-			if (Browser.Engines.trident4){ // Delay for less cpu usage when you are typing
-				$clear(this.checkStatesDelay);
+			if (Browser.ie6){ // Delay for less cpu usage when you are typing
+				clearTimeout(this.checkStatesDelay);
 				this.checkStatesDelay = this.checkStates.delay(500, this);
 			} else {
 				this.checkStates();
@@ -446,7 +455,7 @@ this.MooEditable = new Class({
 		
 		if (e.key == 'enter'){
 			if (this.options.paragraphise){
-				if (e.shift && Browser.Engine.webkit){
+				if (e.shift && (Browser.safari || Browser.chrome)){
 					var s = this.selection;
 					var r = s.getRange();
 					
@@ -473,15 +482,15 @@ this.MooEditable = new Class({
 					this.win.scrollTo(0, Element.getOffsets(s.getRange().startContainer).y);
 					
 					e.preventDefault();
-				} else if (Browser.Engine.gecko || Browser.Engine.webkit){
+				} else if (Browser.firefox || Browser.safari || Browser.chrome){
 					var node = this.selection.getNode();
-					var isBlock = node.getParents().include(node).some(function(el){
+					var isBlock = Element.getParents(node).include(node).some(function(el){
 						return el.nodeName.test(blockEls);
 					});
 					if (!isBlock) this.execute('insertparagraph');
 				}
 			} else {
-				if (Browser.Engine.trident){
+				if (Browser.ie){
 					var r = this.selection.getRange();
 					var node = this.selection.getNode();
 					if (r && node.get('tag') != 'li'){
@@ -493,7 +502,7 @@ this.MooEditable = new Class({
 			}
 		}
 		
-		if (Browser.Engine.presto){
+		if (Browser.opera){
 			var ctrlmeta = e.control || e.meta;
 			if (ctrlmeta && e.key == 'x'){
 				this.fireEvent('editorCut', [e, this]);
@@ -550,8 +559,8 @@ this.MooEditable = new Class({
 
 	action: function(command, args){
 		var action = MooEditable.Actions[command];
-		if (action.command && $type(action.command) == 'function'){
-			action.command.run(args, this);
+		if (action.command && typeOf(action.command) == 'function'){
+			action.command.apply(this, args);
 		} else {
 			this.focus();
 			this.execute(command, false, args);
@@ -657,7 +666,7 @@ this.MooEditable = new Class({
 	checkStates: function(){
 		var element = this.selection.getNode();
 		if (!element) return;
-		if ($type(element) != 'element') return;
+		if (typeOf(element) != 'element') return;
 		
 		this.actions.each(function(action){
 			var item = this.toolbar.getItem(action);
@@ -668,7 +677,7 @@ this.MooEditable = new Class({
 			if (!states) return;
 			
 			// custom checkState
-			if ($type(states) == 'function'){
+			if (typeOf(states) == 'function'){
 				states.attempt([document.id(element), item], this);
 				return;
 			}
@@ -698,7 +707,7 @@ this.MooEditable = new Class({
 					var found = false;
 					for (var prop in states.css){
 						var css = states.css[prop];
-						if (Element.getStyle(el, prop).contains(css)){
+						if (el.style[prop.camelCase()].contains(css)){
 							item.activate(css);
 							found = true;
 						}
@@ -741,17 +750,17 @@ this.MooEditable = new Class({
 
 			if (this.options.semantics){
 				//remove divs from <li>
-				if (Browser.Engine.trident){
+				if (Browser.ie){
 					source = source.replace(/<li>\s*<div>(.+?)<\/div><\/li>/g, '<li>$1</li>');
 				}
 				//remove stupid apple divs
-				if (Browser.Engine.webkit){
+				if (Browser.safari || Browser.chrome){
 					source = source.replace(/^([\w\s]+.*?)<div>/i, '<p>$1</p><div>');
 					source = source.replace(/<div>(.+?)<\/div>/ig, '<p>$1</p>');
 				}
 
 				//<p> tags around a list will get moved to after the list
-				if (['gecko', 'presto', 'webkit'].contains(Browser.Engine.name)){
+				if (!Browser.ie){
 					//not working properly in safari?
 					source = source.replace(/<p>[\s\n]*(<(?:ul|ol)>.*?<\/(?:ul|ol)>)(.*?)<\/p>/ig, '$1<p>$2</p>');
 					source = source.replace(/<\/(ol|ul)>\s*(?!<(?:p|ol|ul|img).*?>)((?:<[^>]*>)?\w.*)$/g, '</$1><p>$2</p>');
@@ -856,7 +865,7 @@ MooEditable.Selection = new Class({
 
 	setRange: function(range){
 		if (range.select){
-			$try(function(){
+			Function.attempt(function(){
 				range.select();
 			});
 		} else {
@@ -873,7 +882,7 @@ MooEditable.Selection = new Class({
 		var s = this.getSelection();
 
 		if (r.moveToElementText){
-			$try(function(){
+			Function.attempt(function(){
 				r.moveToElementText(node);
 				r.select();
 			});
@@ -914,7 +923,7 @@ MooEditable.Selection = new Class({
 
 		if (r.cloneContents){
 			body.appendChild(r.cloneContents());
-		} else if ($defined(r.item) || $defined(r.htmlText)){
+		} else if (r.item != undefined || r.htmlText != undefined){
 			body.set('html', r.item ? r.item(0).outerHTML : r.htmlText);
 		} else {
 			body.set('html', r.toString());
@@ -933,7 +942,7 @@ MooEditable.Selection = new Class({
 	getNode: function(){
 		var r = this.getRange();
 
-		if (!Browser.Engine.trident){
+		if (!Browser.ie){
 			var el = null;
 
 			if (r){
@@ -946,7 +955,7 @@ MooEditable.Selection = new Class({
 							if (r.startContainer.hasChildNodes())
 								el = r.startContainer.childNodes[r.startOffset];
 
-				while ($type(el) != 'element') el = el.parentNode;
+				while (typeOf(el) != 'element') el = el.parentNode;
 			}
 
 			return document.id(el);
@@ -956,7 +965,7 @@ MooEditable.Selection = new Class({
 	},
 
 	insertContent: function(content){
-		if (Browser.Engine.trident){
+		if (Browser.ie){
 			var r = this.getRange();
 			r.pasteHTML(content);
 			r.collapse(false);
@@ -975,7 +984,7 @@ MooEditable.lang = {
 	
 	set: function(members){
 		if (MooTools.lang) MooTools.lang.set('en-US', 'MooEditable', members);
-		$extend(phrases, members);
+		Object.append(phrases, members);
 	},
 	
 	get: function(key){
@@ -1015,7 +1024,7 @@ MooEditable.UI.Toolbar= new Class({
 
 	options: {
 		/*
-		onItemAction: $empty,
+		onItemAction: function(){},
 		*/
 		'class': ''
 	},
@@ -1048,7 +1057,7 @@ MooEditable.UI.Toolbar= new Class({
 		if (!act) return;
 		var type = act.type || 'button';
 		var options = act.options || {};
-		var item = new MooEditable.UI[type.camelCase().capitalize()]($extend(options, {
+		var item = new MooEditable.UI[type.camelCase().capitalize()](Object.append(options, {
 			name: action,
 			'class': action + '-item toolbar-item',
 			title: act.title,
@@ -1072,14 +1081,14 @@ MooEditable.UI.Toolbar= new Class({
 	},
 
 	disable: function(except){
-		$each(this.items, function(item){
+		Object.each(this.items, function(item){
 			(item.name == except) ? item.activate() : item.deactivate().disable();
 		});
 		return this;
 	},
 
 	enable: function(){
-		$each(this.items, function(item){
+		Object.each(this.items, function(item){
 			item.enable();
 		});
 		return this;
@@ -1103,7 +1112,7 @@ MooEditable.UI.Button = new Class({
 
 	options: {
 		/*
-		onAction: $empty,
+		onAction: function(){},
 		*/
 		title: '',
 		name: '',
@@ -1144,7 +1153,7 @@ MooEditable.UI.Button = new Class({
 		this.disabled = false;
 
 		// add hover effect for IE
-		if (Browser.Engine.trident) this.el.addEvents({
+		if (Browser.ie) this.el.addEvents({
 			mouseenter: function(e){ this.addClass('hover'); },
 			mouseleave: function(e){ this.removeClass('hover'); }
 		});
@@ -1159,7 +1168,7 @@ MooEditable.UI.Button = new Class({
 	},
 	
 	action: function(){
-		this.fireEvent('action', [this].concat($A(arguments)));
+		this.fireEvent('action', [this].concat(Array.from(arguments)));
 	},
 	
 	enable: function(){
@@ -1204,8 +1213,8 @@ MooEditable.UI.Dialog = new Class({
 
 	options:{
 		/*
-		onOpen: $empty,
-		onClose: $empty,
+		onOpen: function(){},
+		onClose: function(){},
 		*/
 		'class': '',
 		contentClass: ''
@@ -1303,7 +1312,7 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 	});
 };
 
-MooEditable.Actions = new Hash({
+MooEditable.Actions = {
 
 	bold: {
 		title: MooEditable.lang.get('bold'),
@@ -1316,14 +1325,14 @@ MooEditable.Actions = new Hash({
 		},
 		events: {
 			beforeToggleView: function(){
-				if(Browser.Engine.gecko){
+				if(Browser.firefox){
 					var value = this.textarea.get('value');
 					var newValue = value.replace(/<strong([^>]*)>/gi, '<b$1>').replace(/<\/strong>/gi, '</b>');
 					if (value != newValue) this.textarea.set('value', newValue);
 				}
 			},
 			attach: function(){
-				if(Browser.Engine.gecko){
+				if(Browser.firefox){
 					var value = this.textarea.get('value');
 					var newValue = value.replace(/<strong([^>]*)>/gi, '<b$1>').replace(/<\/strong>/gi, '</b>');
 					if (value != newValue){
@@ -1346,7 +1355,7 @@ MooEditable.Actions = new Hash({
 		},
 		events: {
 			beforeToggleView: function(){
-				if (Browser.Engine.gecko){
+				if (Browser.firefox){
 					var value = this.textarea.get('value');
 					var newValue = value.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
 						.replace(/<em([^>]*)>/gi, '<i$1>')
@@ -1356,7 +1365,7 @@ MooEditable.Actions = new Hash({
 				}
 			},
 			attach: function(){
-				if (Browser.Engine.gecko){
+				if (Browser.firefox){
 					var value = this.textarea.get('value');
 					var newValue = value.replace(/<embed([^>]*)>/gi, '<tmpembed$1>')
 						.replace(/<em([^>]*)>/gi, '<i$1>')
@@ -1499,21 +1508,13 @@ MooEditable.Actions = new Hash({
 		}
 	}
 
-});
+};
 
 MooEditable.Actions.Settings = {};
 
 Element.Properties.mooeditable = {
 
-	set: function(options){
-		return this.eliminate('mooeditable').store('mooeditable:options', options);
-	},
-
-	get: function(options){
-		if (options || !this.retrieve('mooeditable')){
-			if (options || !this.retrieve('mooeditable:options')) this.set('mooeditable', options);
-			this.store('mooeditable', new MooEditable(this, this.retrieve('mooeditable:options')));
-		}
+	get: function(){
 		return this.retrieve('mooeditable');
 	}
 
@@ -1522,7 +1523,12 @@ Element.Properties.mooeditable = {
 Element.implement({
 
 	mooEditable: function(options){
-		return this.get('mooeditable', options);
+		var mooeditable = this.get('mooeditable');
+		if (!mooeditable){
+			mooeditable = new MooEditable(this, options);
+			this.store('mooeditable', mooeditable);
+		}
+		return mooeditable;
 	}
 
 });

@@ -76,4 +76,3 @@ MooEditable.Actions.forecolor = {
 		this.focus();
 	}
 };
-

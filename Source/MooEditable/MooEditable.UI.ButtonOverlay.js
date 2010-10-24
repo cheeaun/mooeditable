@@ -25,8 +25,8 @@ MooEditable.UI.ButtonOverlay = new Class({
 
 	options: {
 		/*
-		onOpenOverlay: $empty,
-		onCloseOverlay: $empty,
+		onOpenOverlay: function(){},
+		onCloseOverlay: function(){},
 		*/
 		overlayHTML: '',
 		overlayClass: '',

@@ -34,7 +34,7 @@ MooEditable.Group = new Class({
 		var self = this;
 		this.toolbar = new MooEditable.UI.Toolbar({
 			onItemAction: function(){
-				var args = $splat(arguments);
+				var args = Array.from(arguments);
 				var item = args[0];
 				if (!self.activeEditor) return;
 				self.activeEditor.focus();
@@ -46,7 +46,7 @@ MooEditable.Group = new Class({
 	},
 
 	add: function(textarea, options){
-		return this.activeEditor = new MooEditable.Group.Item(textarea, this, $merge({toolbar: false}, this.options, options));
+		return this.activeEditor = new MooEditable.Group.Item(textarea, this, Object.merge({toolbar: false}, this.options, options));
 	}
 	
 });

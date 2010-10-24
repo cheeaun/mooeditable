@@ -42,7 +42,7 @@ MooEditable.lang.set({
 	insertHorizontalRule: 'Insert Horizontal Rule'
 });
 
-MooEditable.Actions.extend({
+Object.append(MooEditable.Actions, {
 
 	formatBlock: {
 		title: MooEditable.lang.get('blockFormatting'),

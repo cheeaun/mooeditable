@@ -196,7 +196,7 @@ MooEditable.UI.TableDialog = function(editor, dialog){
 	});
 };
 
-MooEditable.Actions.extend({
+Object.append(MooEditable.Actions, {
 
 	tableadd:{
 		title: MooEditable.lang.get('addTable'),

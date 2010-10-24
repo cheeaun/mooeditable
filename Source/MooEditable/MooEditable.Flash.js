@@ -69,18 +69,14 @@ MooEditable.UI.FlashDialog = function(editor){
 	});
 };
 
-MooEditable.Actions.extend({
-	
-	flash: {
-		title: MooEditable.lang.get('flashEmbed'),
-		dialogs: {
-			prompt: function(editor){
-				return MooEditable.UI.FlashDialog(editor);
-			}
-		},
-		command: function(){
-			this.dialogs.flash.prompt.open();
+MooEditable.Actions.flash = {
+	title: MooEditable.lang.get('flashEmbed'),
+	dialogs: {
+		prompt: function(editor){
+			return MooEditable.UI.FlashDialog(editor);
 		}
+	},
+	command: function(){
+		this.dialogs.flash.prompt.open();
 	}
-	
-});
+};
