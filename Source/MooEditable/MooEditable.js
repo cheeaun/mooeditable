@@ -202,6 +202,9 @@ this.MooEditable = new Class({
 		// contentWindow and document references
 		this.win = this.iframe.contentWindow;
 		this.doc = this.win.document;
+		
+		// Deal with weird quirks on Gecko
+		if (Browser.firefox) this.doc.designMode = 'On';
 
 		// Build the content of iframe
 		var docHTML = this.options.html.substitute({
