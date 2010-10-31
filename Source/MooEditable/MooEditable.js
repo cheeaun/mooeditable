@@ -605,7 +605,7 @@ this.MooEditable = new Class({
 	getContent: function(){
 		var protect = this.protectedElements;
 		var html = this.doc.body.get('html').replace(/<!-- mooeditable:protect:([0-9]+) -->/g, function(a, b){
-			return protect[parseInt(b)];
+			return protect[b.toInt()];
 		});
 		return this.cleanup(this.ensureRootElement(html));
 	},
