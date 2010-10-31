@@ -247,7 +247,7 @@ this.MooEditable = new Class({
 			mouseleave: this.editorMouseLeave.bind(this),
 			contextmenu: this.editorContextMenu.bind(this),
 			click: this.editorClick.bind(this),
-			dbllick: this.editorDoubleClick.bind(this),
+			dblclick: this.editorDoubleClick.bind(this),
 			keypress: this.editorKeyPress.bind(this),
 			keyup: this.editorKeyUp.bind(this),
 			keydown: this.editorKeyDown.bind(this),
