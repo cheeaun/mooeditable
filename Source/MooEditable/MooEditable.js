@@ -1536,7 +1536,7 @@ MooEditable.Actions.Settings = {};
 Element.Properties.mooeditable = {
 
 	get: function(){
-		return this.retrieve('mooeditable');
+		return this.retrieve('MooEditable');
 	}
 
 };
@@ -1545,10 +1545,7 @@ Element.implement({
 
 	mooEditable: function(options){
 		var mooeditable = this.get('mooeditable');
-		if (!mooeditable){
-			mooeditable = new MooEditable(this, options);
-			this.store('mooeditable', mooeditable);
-		}
+		if (!mooeditable) mooeditable = new MooEditable(this, options);
 		return mooeditable;
 	}
 
