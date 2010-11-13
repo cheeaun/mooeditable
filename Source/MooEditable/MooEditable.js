@@ -28,8 +28,6 @@ inspiration:
 - Some code from Juan M Martinez's [jwysiwyg](http://jwysiwyg.googlecode.com/)
 - Some reference from MoxieForge's [PunyMCE](http://punymce.googlecode.com/)
 - IE support referring Robert Bredlau's [Rich Text Editing](http://www.rbredlau.com/drupal/node/6)
-- Tango icons from the [Tango Desktop Project](http://tango.freedesktop.org/)
-- Additional Tango icons from Jimmacs' [Tango OpenOffice](http://www.gnome-look.org/content/show.php/Tango+OpenOffice?content=54799)
 
 provides: [MooEditable, MooEditable.Selection, MooEditable.UI, MooEditable.Actions]
 
