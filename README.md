@@ -12,8 +12,7 @@ Features
 * Customizable buttons
 * Tango icons
 * Lightweight
-* Fully degradable when Javascript disabled
-* Works in Internet Explorer 6/7/8, Firefox 2/3, Opera 9/10 and Safari 3/4
+* Works in [A-graded desktop web browsers](http://developer.yahoo.com/yui/articles/gbs/)
 
 How to Use
 ----------
@@ -23,7 +22,7 @@ There are two ways. Note that `textarea-1` is the `id` of a `textarea` element. 
 	#JS
 	$('textarea-1').mooEditable();
 
-And this is the classic one:
+And this is the Classic one:
 
 	#JS
 	new MooEditable('textarea-1');
