@@ -1,25 +1,25 @@
 /*
 ---
- 
-script: MooEditable.French.FR.js
- 
-description: MooEditable messages for FR French.
- 
+
+name: Locale.fr-FR.MooEditable
+
+description: MooEditable messages for French.
+
 license: MIT-style license
- 
+
 authors:
 - Roparz
- 
+
 requires:
 - MooEditable
-- more:1.2.4.2/Lang
+- more:1.3/Locale
 
-provides: [MooEditable.French.FR]
+provides: [Locale.fr-FR.MooEditable]
 
 ...
 */
 
-MooTools.lang.set('fr-FR', 'MooEditable', {
+Locale.define('fr-FR', 'MooEditable', {
 	
 	// MooEditable
 	ok: 'OK',

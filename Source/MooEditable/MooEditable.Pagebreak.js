@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.Pagebreak.js
+name: MooEditable.Pagebreak
 
 description: Extends MooEditable with pagebreak plugin
 
@@ -41,12 +41,10 @@ MooEditable.Actions.Settings.pagebreak = {
 	imageFile: '../../Assets/MooEditable/Other/pagebreak.gif'
 };
 
-MooEditable.lang.set({
-	pageBreak: 'Page break'
-});
+MooEditable.Locale.define('pageBreak', 'Page break');
 
 MooEditable.Actions.pagebreak = {
-	title: MooEditable.lang.get('pageBreak'),
+	title: MooEditable.Locale.get('pageBreak'),
 	command: function(){
 		this.selection.insertContent('<img class="mooeditable-visual-aid mooeditable-pagebreak">');
 	},

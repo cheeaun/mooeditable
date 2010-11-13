@@ -1,25 +1,25 @@
 /*
 ---
- 
-script: MooEditable.English.US.js
- 
+
+name: Locale.en-US.MooEditable
+
 description: MooEditable messages for US English.
- 
+
 license: MIT-style license
- 
+
 authors:
 - Lim Chee Aun
- 
+
 requires:
 - MooEditable
-- more:1.2.4.2/Lang
+- more:1.3/Locale
 
-provides: [MooEditable.English.US]
+provides: [Locale.en-US.MooEditable]
 
 ...
 */
 
-MooTools.lang.set('en-US', 'MooEditable', {
+Locale.define('en-US', 'MooEditable', {
 	
 	// MooEditable
 	ok: 'OK',

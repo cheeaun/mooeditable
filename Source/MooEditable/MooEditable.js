@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.js
+name: MooEditable
 
 description: Class for creating a WYSIWYG editor, for contentEditable-capable browsers.
 
@@ -15,13 +15,9 @@ authors:
 - T.J. Leahy
 
 requires:
-  core/1.2.4:
-  - Events
-  - Options
-  - Element.Event
-  - Element.Style
-  - Element.Dimensions
-  - Selectors
+- Core/Class.Extras
+- Core/Element.Event
+- Core/Element.Dimensions
 
 inspiration:
 - Code inspired by Stefan's work [Safari Supports Content Editing!](http://www.xs4all.nl/~hhijdra/stefan/ContentEditable.html) from [safari gets contentEditable](http://walkah.net/blog/walkah/safari-gets-contenteditable)
@@ -998,24 +994,25 @@ MooEditable.Selection = new Class({
 
 });
 
-// Avoiding MooTools.lang dependency
+// Avoiding Locale dependency
 // Wrapper functions to be used internally and for plugins, defaults to en-US
 var phrases = {};
-MooEditable.lang = {
+MooEditable.Locale = {
 	
-	set: function(members){
-		if (MooTools.lang) MooTools.lang.set('en-US', 'MooEditable', members);
-		Object.append(phrases, members);
+	define: function(key, value){
+		if (Locale) return Locale.define('en-US', 'MooEditable', key, value);
+		if (typeOf(key) == 'object') Object.merge(phrases, members);
+		else phrases[key] = value;
 	},
 	
 	get: function(key){
-		if (MooTools.lang) return MooTools.lang.get('MooEditable', key);
+		if (Locale) return Locale.get('MooEditable.' + key);
 		return key ? phrases[key] : '';
 	}
 	
 };
 
-MooEditable.lang.set({
+MooEditable.Locale.define({
 	ok: 'OK',
 	cancel: 'Cancel',
 	bold: 'Bold',
@@ -1283,7 +1280,7 @@ MooEditable.UI.Dialog = new Class({
 
 MooEditable.UI.AlertDialog = function(alertText){
 	if (!alertText) return;
-	var html = alertText + ' <button class="dialog-ok-button">' + MooEditable.lang.get('ok') + '</button>';
+	var html = alertText + ' <button class="dialog-ok-button">' + MooEditable.Locale.get('ok') + '</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-alert-dialog',
 		onOpen: function(){
@@ -1304,8 +1301,8 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 	if (!questionText) return;
 	var html = '<label class="dialog-label">' + questionText
 		+ ' <input type="text" class="text dialog-input" value="' + answerText + '">'
-		+ '</label> <button class="dialog-button dialog-ok-button">' + MooEditable.lang.get('ok') + '</button>'
-		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.lang.get('cancel') + '</button>';
+		+ '</label> <button class="dialog-button dialog-ok-button">' + MooEditable.Locale.get('ok') + '</button>'
+		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.Locale.get('cancel') + '</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-prompt-dialog',
 		onOpen: function(){
@@ -1336,7 +1333,7 @@ MooEditable.UI.PromptDialog = function(questionText, answerText, fn){
 MooEditable.Actions = {
 
 	bold: {
-		title: MooEditable.lang.get('bold'),
+		title: MooEditable.Locale.get('bold'),
 		options: {
 			shortcut: 'b'
 		},
@@ -1366,7 +1363,7 @@ MooEditable.Actions = {
 	},
 	
 	italic: {
-		title: MooEditable.lang.get('italic'),
+		title: MooEditable.Locale.get('italic'),
 		options: {
 			shortcut: 'i'
 		},
@@ -1402,7 +1399,7 @@ MooEditable.Actions = {
 	},
 	
 	underline: {
-		title: MooEditable.lang.get('underline'),
+		title: MooEditable.Locale.get('underline'),
 		options: {
 			shortcut: 'u'
 		},
@@ -1413,7 +1410,7 @@ MooEditable.Actions = {
 	},
 	
 	strikethrough: {
-		title: MooEditable.lang.get('strikethrough'),
+		title: MooEditable.Locale.get('strikethrough'),
 		options: {
 			shortcut: 's'
 		},
@@ -1424,50 +1421,50 @@ MooEditable.Actions = {
 	},
 	
 	insertunorderedlist: {
-		title: MooEditable.lang.get('unorderedList'),
+		title: MooEditable.Locale.get('unorderedList'),
 		states: {
 			tags: ['ul']
 		}
 	},
 	
 	insertorderedlist: {
-		title: MooEditable.lang.get('orderedList'),
+		title: MooEditable.Locale.get('orderedList'),
 		states: {
 			tags: ['ol']
 		}
 	},
 	
 	indent: {
-		title: MooEditable.lang.get('indent'),
+		title: MooEditable.Locale.get('indent'),
 		states: {
 			tags: ['blockquote']
 		}
 	},
 	
 	outdent: {
-		title: MooEditable.lang.get('outdent')
+		title: MooEditable.Locale.get('outdent')
 	},
 	
 	undo: {
-		title: MooEditable.lang.get('undo'),
+		title: MooEditable.Locale.get('undo'),
 		options: {
 			shortcut: 'z'
 		}
 	},
 	
 	redo: {
-		title: MooEditable.lang.get('redo'),
+		title: MooEditable.Locale.get('redo'),
 		options: {
 			shortcut: 'y'
 		}
 	},
 	
 	unlink: {
-		title: MooEditable.lang.get('removeHyperlink')
+		title: MooEditable.Locale.get('removeHyperlink')
 	},
 
 	createlink: {
-		title: MooEditable.lang.get('addHyperlink'),
+		title: MooEditable.Locale.get('addHyperlink'),
 		options: {
 			shortcut: 'l'
 		},
@@ -1475,9 +1472,9 @@ MooEditable.Actions = {
 			tags: ['a']
 		},
 		dialogs: {
-			alert: MooEditable.UI.AlertDialog.pass(MooEditable.lang.get('selectTextHyperlink')),
+			alert: MooEditable.UI.AlertDialog.pass(MooEditable.Locale.get('selectTextHyperlink')),
 			prompt: function(editor){
-				return MooEditable.UI.PromptDialog(MooEditable.lang.get('enterURL'), 'http://', function(url){
+				return MooEditable.UI.PromptDialog(MooEditable.Locale.get('enterURL'), 'http://', function(url){
 					editor.execute('createlink', false, url.trim());
 				});
 			}
@@ -1505,13 +1502,13 @@ MooEditable.Actions = {
 	},
 
 	urlimage: {
-		title: MooEditable.lang.get('addImage'),
+		title: MooEditable.Locale.get('addImage'),
 		options: {
 			shortcut: 'm'
 		},
 		dialogs: {
 			prompt: function(editor){
-				return MooEditable.UI.PromptDialog(MooEditable.lang.get('enterImageURL'), 'http://', function(url){
+				return MooEditable.UI.PromptDialog(MooEditable.Locale.get('enterImageURL'), 'http://', function(url){
 					editor.execute('insertimage', false, url.trim());
 				});
 			}
@@ -1522,7 +1519,7 @@ MooEditable.Actions = {
 	},
 
 	toggleview: {
-		title: MooEditable.lang.get('toggleView'),
+		title: MooEditable.Locale.get('toggleView'),
 		command: function(){
 			(this.mode == 'textarea') ? this.toolbar.enable() : this.toolbar.disable('toggleview');
 			this.toggleView();

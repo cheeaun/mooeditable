@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.Charmap.js
+name: MooEditable.Charmap
 
 description: Extends MooEditable with a characters map
 
@@ -286,20 +286,20 @@ MooEditable.Actions.Settings.charmap = {
 	]
 };
 
-MooEditable.lang.set({
+MooEditable.Locale.define({
 	insertCustomCharacter: 'Insert custom character',
 	insertCharacter: 'Insert character'
 });
 
 MooEditable.UI.CharacterDialog = function(editor){
-	var html = MooEditable.lang.get('insertCharacter') + ' <select class="char">';
+	var html = MooEditable.Locale.get('insertCharacter') + ' <select class="char">';
 	var chars = MooEditable.Actions.Settings.charmap.chars;
 	for (var i=0, len=chars.length; i<len; i++) {
 		html += '<option data-code="' + chars[i][0] + '">' + chars[i][1] + '</option>';
 	}
 	html += '</select>'
-		+ '<button class="dialog-button dialog-ok-button">' + MooEditable.lang.get('ok') + '</button>'
-		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.lang.get('cancel') + '</button>';
+		+ '<button class="dialog-button dialog-ok-button">' + MooEditable.Locale.get('ok') + '</button>'
+		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.Locale.get('cancel') + '</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-charmap-dialog',
 		onClick: function(e){
@@ -318,7 +318,7 @@ MooEditable.UI.CharacterDialog = function(editor){
 };
 
 MooEditable.Actions.charmap = {
-	title: MooEditable.lang.get('insertCustomCharacter'),
+	title: MooEditable.Locale.get('insertCustomCharacter'),
 	dialogs: {
 		prompt: function(editor){
 			return MooEditable.UI.CharacterDialog(editor);

@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.Table.js
+name: MooEditable.Table
 
 description: Extends MooEditable to insert table with manipulation options.
 
@@ -50,7 +50,7 @@ usage: |
 ...
 */
 
-MooEditable.lang.set({
+MooEditable.Locale.define({
 	tableColumns: 'columns',
 	tableRows: 'rows',
 	tableWidth: 'width',
@@ -83,32 +83,32 @@ MooEditable.lang.set({
 
 MooEditable.UI.TableDialog = function(editor, dialog){
 	var html = {
-		tableadd: MooEditable.lang.get('tableColumns') + ' <input type="text" class="table-c" value="" size="4"> '
-			+ MooEditable.lang.get('tableRows') + ' <input type="text" class="table-r" value="" size="4"> ',
-		tableedit: MooEditable.lang.get('tableWidth') + ' <input type="text" class="table-w" value="" size="4"> '
-			+ MooEditable.lang.get('tableClass') + ' <input type="text" class="table-c" value="" size="15"> ',
-		tablerowedit: MooEditable.lang.get('tableClass') + ' <input type="text" class="table-c" value="" size="15"> '
-			+ MooEditable.lang.get('tableType') + ' <select class="table-c-type">'
-				+ '<option value="th">' + MooEditable.lang.get('tableHeader') + '</option>'
-				+ '<option value="td">' + MooEditable.lang.get('tableCell') + '</option>'
+		tableadd: MooEditable.Locale.get('tableColumns') + ' <input type="text" class="table-c" value="" size="4"> '
+			+ MooEditable.Locale.get('tableRows') + ' <input type="text" class="table-r" value="" size="4"> ',
+		tableedit: MooEditable.Locale.get('tableWidth') + ' <input type="text" class="table-w" value="" size="4"> '
+			+ MooEditable.Locale.get('tableClass') + ' <input type="text" class="table-c" value="" size="15"> ',
+		tablerowedit: MooEditable.Locale.get('tableClass') + ' <input type="text" class="table-c" value="" size="15"> '
+			+ MooEditable.Locale.get('tableType') + ' <select class="table-c-type">'
+				+ '<option value="th">' + MooEditable.Locale.get('tableHeader') + '</option>'
+				+ '<option value="td">' + MooEditable.Locale.get('tableCell') + '</option>'
 			+ '</select> ',
-		tablecoledit: MooEditable.lang.get('tableWidth') + ' <input type="text" class="table-w" value="" size="4"> '
-			+ MooEditable.lang.get('tableClass') + ' <input type="text" class="table-c" value="" size="15"> '
-			+ MooEditable.lang.get('tableAlign') + ' <select class="table-a">'
-				+ '<option>' + MooEditable.lang.get('tableAlignNone') + '</option>'
-				+ '<option>' + MooEditable.lang.get('tableAlignLeft') + '</option>'
-				+ '<option>' + MooEditable.lang.get('tableAlignCenter') + '</option>'
-				+ '<option>' + MooEditable.lang.get('tableAlignRight') + '</option>'
+		tablecoledit: MooEditable.Locale.get('tableWidth') + ' <input type="text" class="table-w" value="" size="4"> '
+			+ MooEditable.Locale.get('tableClass') + ' <input type="text" class="table-c" value="" size="15"> '
+			+ MooEditable.Locale.get('tableAlign') + ' <select class="table-a">'
+				+ '<option>' + MooEditable.Locale.get('tableAlignNone') + '</option>'
+				+ '<option>' + MooEditable.Locale.get('tableAlignLeft') + '</option>'
+				+ '<option>' + MooEditable.Locale.get('tableAlignCenter') + '</option>'
+				+ '<option>' + MooEditable.Locale.get('tableAlignRight') + '</option>'
 			+ '</select> '
-			+ MooEditable.lang.get('tableValign') + ' <select class="table-va">'
-				+ '<option>' + MooEditable.lang.get('tableValignNone') + '</option>'
-				+ '<option>' + MooEditable.lang.get('tableValignTop') + '</option>'
-				+ '<option>' + MooEditable.lang.get('tableValignMiddle') + '</option>'
-				+ '<option>' + MooEditable.lang.get('tableValignBottom') + '</option>'
+			+ MooEditable.Locale.get('tableValign') + ' <select class="table-va">'
+				+ '<option>' + MooEditable.Locale.get('tableValignNone') + '</option>'
+				+ '<option>' + MooEditable.Locale.get('tableValignTop') + '</option>'
+				+ '<option>' + MooEditable.Locale.get('tableValignMiddle') + '</option>'
+				+ '<option>' + MooEditable.Locale.get('tableValignBottom') + '</option>'
 			+ '</select> '
 	};
-	html[dialog] += '<button class="dialog-button dialog-ok-button">' + MooEditable.lang.get('ok') + '</button>'
-		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.lang.get('cancel') + '</button>';
+	html[dialog] += '<button class="dialog-button dialog-ok-button">' + MooEditable.Locale.get('ok') + '</button>'
+		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.Locale.get('cancel') + '</button>';
 		
 	var action = {
 		tableadd: {
@@ -199,7 +199,7 @@ MooEditable.UI.TableDialog = function(editor, dialog){
 Object.append(MooEditable.Actions, {
 
 	tableadd:{
-		title: MooEditable.lang.get('addTable'),
+		title: MooEditable.Locale.get('addTable'),
 		dialogs: {
 			prompt: function(editor){
 				return MooEditable.UI.TableDialog(editor, 'tableadd');
@@ -211,7 +211,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tableedit:{
-		title: MooEditable.lang.get('editTable'),
+		title: MooEditable.Locale.get('editTable'),
 		dialogs: {
 			prompt: function(editor){
 				return MooEditable.UI.TableDialog(editor, 'tableedit');
@@ -231,7 +231,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tablerowedit:{
-		title: MooEditable.lang.get('editTableRow'),
+		title: MooEditable.Locale.get('editTableRow'),
 		dialogs: {
 			prompt: function(editor){
 				return MooEditable.UI.TableDialog(editor, 'tablerowedit');
@@ -243,7 +243,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tablerowspan:{
-		title: MooEditable.lang.get('mergeTableRow'),
+		title: MooEditable.Locale.get('mergeTableRow'),
 		command: function(){
 			var node = this.selection.getNode();
 			if (node.get('tag') != 'td') node = node.getParent('td');
@@ -259,7 +259,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tablerowsplit:{
-		title: MooEditable.lang.get('splitTableRow'),
+		title: MooEditable.Locale.get('splitTableRow'),
 		command: function(){
 			var node = this.selection.getNode();
 			if (node.get('tag') != 'td') node = node.getParent('td');
@@ -286,7 +286,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tablerowdelete:{
-		title: MooEditable.lang.get('deleteTableRow'),
+		title: MooEditable.Locale.get('deleteTableRow'),
 		command: function(){
 			var node = this.selection.getNode().getParent('tr');
 			if (node) node.getParent().deleteRow(node.rowIndex);
@@ -294,7 +294,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tablecoladd:{
-		title: MooEditable.lang.get('addTableCol'),
+		title: MooEditable.Locale.get('addTableCol'),
 		command: function(){
 			var node = this.selection.getNode();
 			if (node.get('tag') != 'td') node = node.getParent('td');
@@ -310,7 +310,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tablecoledit:{
-		title: MooEditable.lang.get('editTableCol'),
+		title: MooEditable.Locale.get('editTableCol'),
 		dialogs: {
 			prompt: function(editor){
 				return MooEditable.UI.TableDialog(editor, 'tablecoledit');
@@ -322,7 +322,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tablecolspan:{
-		title: MooEditable.lang.get('mergeTableCell'),
+		title: MooEditable.Locale.get('mergeTableCell'),
 		command: function(){
 			var node = this.selection.getNode();
 			if (node.get('tag')!='td') node = node.getParent('td');
@@ -337,7 +337,7 @@ Object.append(MooEditable.Actions, {
 	},
 		
 	tablecolsplit:{
-		title: MooEditable.lang.get('splitTableCell'),
+		title: MooEditable.Locale.get('splitTableCell'),
 		command: function(){
 			var node = this.selection.getNode();
 			if (node.get('tag')!='td') node = node.getParent('td');
@@ -363,7 +363,7 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	tablecoldelete:{
-		title: MooEditable.lang.get('deleteTableCol'),
+		title: MooEditable.Locale.get('deleteTableCol'),
 		command: function(){
 			var node = this.selection.getNode();
 			if (node.get('tag') != 'td') node = node.getParent('td');

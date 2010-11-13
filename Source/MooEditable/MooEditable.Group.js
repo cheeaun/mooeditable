@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.Group.js
+name: MooEditable.Group
 
 description: Extends MooEditable to have multiple instances on a page controlled by one toolbar.
 

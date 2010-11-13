@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.Flash.js
+name: MooEditable.Flash
 
 description: Extends MooEditable to embed Flash.
 
@@ -37,15 +37,15 @@ usage: |
 ...
 */
 
-MooEditable.lang.set({
+MooEditable.Locale.define({
 	embed: 'Enter embed code',
 	flashEmbed: 'Flash Embed'
 });
 
 MooEditable.UI.FlashDialog = function(editor){
-	var html = MooEditable.lang.get('embed') + ' <textarea class="dialog-f" value="" rows="2" cols="40"></textarea> '
-		+ '<button class="dialog-button dialog-ok-button">' + MooEditable.lang.get('ok') + '</button> '
-		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.lang.get('cancel') + '</button>';
+	var html = MooEditable.Locale.get('embed') + ' <textarea class="dialog-f" value="" rows="2" cols="40"></textarea> '
+		+ '<button class="dialog-button dialog-ok-button">' + MooEditable.Locale.get('ok') + '</button> '
+		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.Locale.get('cancel') + '</button>';
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-flash-dialog',
 		onOpen: function(){
@@ -70,7 +70,7 @@ MooEditable.UI.FlashDialog = function(editor){
 };
 
 MooEditable.Actions.flash = {
-	title: MooEditable.lang.get('flashEmbed'),
+	title: MooEditable.Locale.get('flashEmbed'),
 	dialogs: {
 		prompt: function(editor){
 			return MooEditable.UI.FlashDialog(editor);

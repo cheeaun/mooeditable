@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.Extras.js
+name: MooEditable.Extras
 
 description: Extends MooEditable to include more (simple) toolbar buttons.
 
@@ -28,7 +28,7 @@ provides:
 ...
 */
 
-MooEditable.lang.set({
+MooEditable.Locale.define({
 	blockFormatting: 'Block Formatting',
 	paragraph: 'Paragraph',
 	heading1: 'Heading 1',
@@ -45,14 +45,14 @@ MooEditable.lang.set({
 Object.append(MooEditable.Actions, {
 
 	formatBlock: {
-		title: MooEditable.lang.get('blockFormatting'),
+		title: MooEditable.Locale.get('blockFormatting'),
 		type: 'menu-list',
 		options: {
 			list: [
-				{text: MooEditable.lang.get('paragraph'), value: 'p'},
-				{text: MooEditable.lang.get('heading1'), value: 'h1', style: 'font-size:24px; font-weight:bold;'},
-				{text: MooEditable.lang.get('heading2'), value: 'h2', style: 'font-size:18px; font-weight:bold;'},
-				{text: MooEditable.lang.get('heading3'), value: 'h3', style: 'font-size:14px; font-weight:bold;'}
+				{text: MooEditable.Locale.get('paragraph'), value: 'p'},
+				{text: MooEditable.Locale.get('heading1'), value: 'h1', style: 'font-size:24px; font-weight:bold;'},
+				{text: MooEditable.Locale.get('heading2'), value: 'h2', style: 'font-size:18px; font-weight:bold;'},
+				{text: MooEditable.Locale.get('heading3'), value: 'h3', style: 'font-size:14px; font-weight:bold;'}
 			]
 		},
 		states: {
@@ -66,21 +66,21 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	justifyleft:{
-		title: MooEditable.lang.get('alignLeft'),
+		title: MooEditable.Locale.get('alignLeft'),
 		states: {
 			css: {'text-align': 'left'}
 		}
 	},
 	
 	justifyright:{
-		title: MooEditable.lang.get('alignRight'),
+		title: MooEditable.Locale.get('alignRight'),
 		states: {
 			css: {'text-align': 'right'}
 		}
 	},
 	
 	justifycenter:{
-		title: MooEditable.lang.get('alignCenter'),
+		title: MooEditable.Locale.get('alignCenter'),
 		states: {
 			tags: ['center'],
 			css: {'text-align': 'center'}
@@ -88,18 +88,18 @@ Object.append(MooEditable.Actions, {
 	},
 	
 	justifyfull:{
-		title: MooEditable.lang.get('alignJustify'),
+		title: MooEditable.Locale.get('alignJustify'),
 		states: {
 			css: {'text-align': 'justify'}
 		}
 	},
 	
 	removeformat: {
-		title: MooEditable.lang.get('removeFormatting')
+		title: MooEditable.Locale.get('removeFormatting')
 	},
 	
 	insertHorizontalRule: {
-		title: MooEditable.lang.get('insertHorizontalRule'),
+		title: MooEditable.Locale.get('insertHorizontalRule'),
 		states: {
 			tags: ['hr']
 		},

@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.Forecolor.js
+name: MooEditable.Forecolor
 
 description: Extends MooEditable to change the color of the text from a list a predefined colors.
 
@@ -48,13 +48,11 @@ MooEditable.Actions.Settings.forecolor = {
 	]
 };
 
-MooEditable.lang.set({
-	changeColor: 'Change Color'
-});
+MooEditable.Locale.define('changeColor', 'Change Color');
 
 MooEditable.Actions.forecolor = {
 	type: 'button-overlay',
-	title: MooEditable.lang.get('changeColor'),
+	title: MooEditable.Locale.get('changeColor'),
 	options: {
 		overlaySize: {x: 'auto'},
 		overlayHTML: (function(){

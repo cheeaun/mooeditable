@@ -1,7 +1,7 @@
 /*
 ---
 
-script: MooEditable.Image.js
+name: MooEditable.Image
 
 description: Extends MooEditable to insert image with manipulation options.
 
@@ -36,7 +36,7 @@ usage: |
 ...
 */
 
-MooEditable.lang.set({
+MooEditable.Locale.define({
 	imageAlt: 'alt',
 	imageClass: 'class',
 	imageAlign: 'align',
@@ -48,17 +48,17 @@ MooEditable.lang.set({
 });
 
 MooEditable.UI.ImageDialog = function(editor){
-	var html = MooEditable.lang.get('enterImageURL') + ' <input type="text" class="dialog-url" value="" size="15"> '
-		+ MooEditable.lang.get('imageAlt') + ' <input type="text" class="dialog-alt" value="" size="8"> '
-		+ MooEditable.lang.get('imageClass') + ' <input type="text" class="dialog-class" value="" size="8"> '
-		+ MooEditable.lang.get('imageAlign') + ' <select class="dialog-align">'
-			+ '<option>' + MooEditable.lang.get('imageAlignNone') + '</option>'
-			+ '<option>' + MooEditable.lang.get('imageAlignLeft') + '</option>'
-			+ '<option>' + MooEditable.lang.get('imageAlignCenter') + '</option>'
-			+ '<option>' + MooEditable.lang.get('imageAlignRight') + '</option>'
+	var html = MooEditable.Locale.get('enterImageURL') + ' <input type="text" class="dialog-url" value="" size="15"> '
+		+ MooEditable.Locale.get('imageAlt') + ' <input type="text" class="dialog-alt" value="" size="8"> '
+		+ MooEditable.Locale.get('imageClass') + ' <input type="text" class="dialog-class" value="" size="8"> '
+		+ MooEditable.Locale.get('imageAlign') + ' <select class="dialog-align">'
+			+ '<option>' + MooEditable.Locale.get('imageAlignNone') + '</option>'
+			+ '<option>' + MooEditable.Locale.get('imageAlignLeft') + '</option>'
+			+ '<option>' + MooEditable.Locale.get('imageAlignCenter') + '</option>'
+			+ '<option>' + MooEditable.Locale.get('imageAlignRight') + '</option>'
 		+ '</select> '
-		+ '<button class="dialog-button dialog-ok-button">' + MooEditable.lang.get('ok') + '</button> '
-		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.lang.get('cancel') + '</button>';
+		+ '<button class="dialog-button dialog-ok-button">' + MooEditable.Locale.get('ok') + '</button> '
+		+ '<button class="dialog-button dialog-cancel-button">' + MooEditable.Locale.get('cancel') + '</button>';
 		
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-image-dialog',
@@ -106,7 +106,7 @@ MooEditable.UI.ImageDialog = function(editor){
 };
 
 MooEditable.Actions.image = {
-	title: MooEditable.lang.get('addEditImage'),
+	title: MooEditable.Locale.get('addEditImage'),
 	options: {
 		shortcut: 'm'
 	},
