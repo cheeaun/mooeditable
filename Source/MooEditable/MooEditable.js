@@ -262,7 +262,7 @@ this.MooEditable = new Class({
 			self.win.fireEvent('focus').focus();
 		});
 		// IE9 is also not firing focus event
-		this.doc.addEventListener('focus', function(){
+		if (this.doc.addEventListener) this.doc.addEventListener('focus', function(){
 			self.win.fireEvent('focus');
 		}, true);
 
