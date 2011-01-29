@@ -110,6 +110,15 @@ Locale.define('en-US', 'MooEditable', {
 	editTableCol: 'Edit Table Column',
 	mergeTableCell: 'Merge Table Cell',
 	splitTableCell: 'Split Table Cell',
-	deleteTableCol: 'Delete Table Column'
-	
+	deleteTableCol: 'Delete Table Column',
+    
+    // MooEditable.UI.ExtendedLinksDialog
+    protocoll: 'protocoll',
+    link: 'link',
+    email: 'e-Mail',
+    urlWithoutHttp: 'URL (without http://)',
+    window: 'window',
+    sameWindow: 'same window',
+    newWindow: 'new window'
+    
 });

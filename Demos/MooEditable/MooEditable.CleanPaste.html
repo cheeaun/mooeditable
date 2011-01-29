@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>MooEditable clean paste (aka "paste from Word") example</title>
+
+		<style type="text/css">
+			body {
+				font-family: sans-serif;
+				font-size: .9em;
+			}
+			#textarea-1 {
+				width: 700px;
+				height: 200px;
+				padding: 10px;
+				border: 2px solid #ddd;
+			}
+            #sample-text {
+                width: 700px;
+                padding: 10px;
+                border: 2px solid #ddd;
+                margin: 0 0 15px 0;
+            }
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../../Assets/MooEditable/MooEditable.css">
+        <script type="text/javascript" src="../assets/mootools.js"></script>
+        <script type="text/javascript" src="../assets/mootools-more.js"></script>
+        <script type="text/javascript" src="../../Source/MooEditable/MooEditable.js"></script>
+        <script type="text/javascript" src="../../Source/MooEditable/MooEditable.CleanPaste.js"></script>
+
+		<script type="text/javascript">
+			window.addEvent('domready', function(){
+				$('textarea-1').mooEditable();
+
+				// Post submit
+				$('theForm').addEvent('submit', function(e){
+					alert($('textarea-1').value);
+					return true;
+				});
+			});
+		</script>
+
+	</head>
+	<body>
+
+		<h1>MooEditable clean paste (aka "paste from Word") example</h1>
+
+		<form id="theForm" method="post" action="http://form-data.appspot.com/">
+            
+            <label>Sample Text (copy it!)</label>
+            <div id="sample-text">
+                <h3 style="color:red">Lorem ipsum dolor sit amet</h3>
+                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, <span style="color:blue">sed diam nonumy</span> eirmod tempor invidunt <strong>ut labore et</strong> dolore magna <u>aliquyam erat</u>, sed diam voluptua.</p>
+            </div>
+            
+			<label for="textarea-1">Textarea 1 (try paste copied text!)</label>
+			<textarea id="textarea-1" name="editable1"></textarea>
+
+			<input type="submit">
+
+		</form>
+
+		<div id="data"></div>
+
+	</body>
+</html>
