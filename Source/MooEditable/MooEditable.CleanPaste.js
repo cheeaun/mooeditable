@@ -53,7 +53,7 @@ provides: [MooEditable.CleanPaste]
                 false;
             if(!!txtPastet) {
                 this.selection.insertContent(this.cleanHtml(txtPastet));
-                e.preventDefault();
+                new Event(e).stop();
             }
             else { // no clipboard data available
                 this.selection.insertContent('<span id="INSERTION_MARKER">&nbsp;</span>');

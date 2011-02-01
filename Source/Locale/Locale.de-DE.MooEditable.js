@@ -113,7 +113,7 @@ Locale.define('de-DE', 'MooEditable', {
 	deleteTableCol: 'Tabellenspalten löschen',
     
     // MooEditable.UI.ExtendedLinksDialog
-    protocoll: 'Protokoll',
+    protocol: 'Protokoll',
     link: 'Link',
     email: 'E-Mail',
     urlWithoutHttp: 'URL (ohne http://)',

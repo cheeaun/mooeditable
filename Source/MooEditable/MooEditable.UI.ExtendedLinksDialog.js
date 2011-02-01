@@ -24,7 +24,7 @@ provides: [MooEditable.UI.ExtendedLinksDialog]
 (function(){
     
 MooEditable.Locale.define({
-    protocoll: 'protocoll',
+    protocol: 'protocol',
     link: 'link',
     email: 'e-Mail',
     urlWithoutHttp: 'URL (without http://)',
@@ -45,7 +45,7 @@ var urlRegex = /^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z
 
 MooEditable.UI.ExtendedLinksDialog = function(editor){
     var html = '<div class="dialog-column"><label class="dialog-label">' 
-        + MooEditable.Locale.get('protocoll').camelCaseFirst()+ '<br/><select class="dialog-input-protocoll">'
+        + MooEditable.Locale.get('protocol').camelCaseFirst()+ '<br/><select class="dialog-input-protocol">'
         + '<option value="http">' + MooEditable.Locale.get('link') + '</option>'
         + '<option value="mailto">' + MooEditable.Locale.get('email') + '</option>'
         + '</select></label></div>'
@@ -62,7 +62,7 @@ MooEditable.UI.ExtendedLinksDialog = function(editor){
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-prompt-dialog',
 		onOpen: function(){
-			var protocoll_input = this.el.getElement('.dialog-input-protocoll');
+			var protocoll_input = this.el.getElement('.dialog-input-protocol');
 			var url_input = this.el.getElement('.dialog-input-url');
 			var target_input = this.el.getElement('.dialog-input-target');
 			var text = editor.selection.getText();
@@ -92,7 +92,7 @@ MooEditable.UI.ExtendedLinksDialog = function(editor){
 			e.preventDefault();
 			if (e.target.tagName.toLowerCase() != 'button') return;
 			var button = document.id(e.target);
-			var protocoll_input = this.el.getElement('.dialog-input-protocoll');
+			var protocoll_input = this.el.getElement('.dialog-input-protocol');
 			var url_input = this.el.getElement('.dialog-input-url');
 			var target_input = this.el.getElement('.dialog-input-target');
 			if (button.hasClass('dialog-cancel-button')){

@@ -113,7 +113,7 @@ Locale.define('en-US', 'MooEditable', {
 	deleteTableCol: 'Delete Table Column',
     
     // MooEditable.UI.ExtendedLinksDialog
-    protocoll: 'protocoll',
+    protocol: 'protocol',
     link: 'link',
     email: 'e-Mail',
     urlWithoutHttp: 'URL (without http://)',
