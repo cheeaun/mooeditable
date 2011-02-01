@@ -62,14 +62,14 @@ MooEditable.UI.ExtendedLinksDialog = function(editor){
 	return new MooEditable.UI.Dialog(html, {
 		'class': 'mooeditable-prompt-dialog',
 		onOpen: function(){
-			var protocoll_input = this.el.getElement('.dialog-input-protocol');
+			var protocol_input = this.el.getElement('.dialog-input-protocol');
 			var url_input = this.el.getElement('.dialog-input-url');
 			var target_input = this.el.getElement('.dialog-input-target');
 			var text = editor.selection.getText();
 			var node = editor.selection.getNode();
 			if(node.get('tag') == 'a'){
 				var uri = new URI(node.href);
-				protocoll_input.set('value', uri.get('scheme'));
+				protocol_input.set('value', uri.get('scheme'));
 				if(uri.get('scheme') == 'mailto'){
 					url_input.set('value', node.href.replace('mailto:', ''));
 				}
@@ -80,7 +80,7 @@ MooEditable.UI.ExtendedLinksDialog = function(editor){
 			}
 			else if(urlRegex.test(text)) {
 				var uri = new URI(text);
-				protocoll_input.set('value', uri.get('scheme'));
+				protocol_input.set('value', uri.get('scheme'));
 				url_input.set('value', uri.get('host'));
 			}
 			(function(){
@@ -92,18 +92,18 @@ MooEditable.UI.ExtendedLinksDialog = function(editor){
 			e.preventDefault();
 			if (e.target.tagName.toLowerCase() != 'button') return;
 			var button = document.id(e.target);
-			var protocoll_input = this.el.getElement('.dialog-input-protocol');
+			var protocol_input = this.el.getElement('.dialog-input-protocol');
 			var url_input = this.el.getElement('.dialog-input-url');
 			var target_input = this.el.getElement('.dialog-input-target');
 			if (button.hasClass('dialog-cancel-button')){
 				this.close();
 			}
             else if (button.hasClass('dialog-ok-button')){
-				if(protocoll_input.get('value') == 'mailto'){
+				if(protocol_input.get('value') == 'mailto'){
 					editor.selection.insertContent('<a href="mailto:' + url_input.get('value') + '" target="' + target_input.get('value') + '">' + editor.selection.getText() + '</a>');
 				}
                 else {
-					editor.selection.insertContent('<a href="' + protocoll_input.get('value') + '://' + url_input.get('value') + '" target="' + target_input.get('value') + '">' + editor.selection.getText() + '</a>');
+					editor.selection.insertContent('<a href="' + protocol_input.get('value') + '://' + url_input.get('value') + '" target="' + target_input.get('value') + '">' + editor.selection.getText() + '</a>');
 				}
 				this.close();
 			}
