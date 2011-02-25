@@ -108,7 +108,7 @@ provides: [MooEditable.CleanPaste]
             html = html.replace(/<(\w[^>]*) class=([^ |>]*)([^>]*)/gi, "<$1$3");
             
             // remove styles.
-            html = html.replace(/<(\w[^>]*) style="([^\"]*)"([^>]*)/gi, "< $1$3");
+            html = html.replace(/<(\w[^>]*) style="([^\"]*)"([^>]*)/gi, "<$1$3");
             
             // remove style, meta and link tags
             html = html.replace(/<STYLE[^>]*>[\s\S]*?<\/STYLE[^>]*>/gi, '');
@@ -148,11 +148,11 @@ provides: [MooEditable.CleanPaste]
             html = html.replace(/<(\w+)[^>]*\sstyle="[^"]*DISPLAY\s?:\s?none[\s \S]*?<\/\1>/ig, '');
             
             // remove language tags
-            html = html.replace(/<(\w[^>]*) language=([^ |>]*)([^>]*)/gi, "< $1$3");
+            html = html.replace(/<(\w[^>]*) language=([^ |>]*)([^>]*)/gi, "<$1$3");
             
             // remove onmouseover and onmouseout events (from MS word comments effect)
-            html = html.replace(/<(\w[^>]*) onmouseover="([^\"]*)"([^>]*)/gi, "< $1$3");
-            html = html.replace(/<(\w[^>]*) onmouseout="([^\"]*)"([^>]*)/gi, "< $1$3");
+            html = html.replace(/<(\w[^>]*) onmouseover="([^\"]*)"([^>]*)/gi, "<$1$3");
+            html = html.replace(/<(\w[^>]*) onmouseout="([^\"]*)"([^>]*)/gi, "<$1$3");
             
             // the original <Hn> tag send from word is something like this: <Hn style="margin-top:0px;margin-bottom:0px">
             html = html.replace(/<H(\d)([^>]*)>/gi, '<h$1>');
