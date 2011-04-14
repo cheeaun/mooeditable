@@ -64,6 +64,12 @@ this.MooEditable = new Class({
 	},
 
 	initialize: function(el, options){
+	
+		// check for content editable and design mode support
+		if (!("contentEditable" in document.body) && !("designMode" in document)){
+			return;
+		}
+	
 		this.setOptions(options);
 		this.textarea = document.id(el);
 		this.textarea.store('MooEditable', this);
