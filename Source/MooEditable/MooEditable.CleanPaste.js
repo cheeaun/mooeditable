@@ -101,8 +101,6 @@ provides: [MooEditable.CleanPaste]
               html = html.replace(/\n/g, "<\/p><p>");
               html = html.replace(/<p>\s<\/p>/gi, '');
             }
-            
-            alert(html);
           }
           else {
             // @FIXED: Safari pastes in styles with ' not " - fixed to not be broken in safari
