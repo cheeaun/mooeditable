@@ -1067,7 +1067,13 @@ MooEditable.UI.Toolbar= new Class({
 			this.el.adopt(this.content);
 		} else {
 			this.content = actions.map(function(action){
-				return (action == '|') ? this.addSeparator() : this.addItem(action);
+				if (action == '|') {
+					return this.addSeparator();
+				}
+				else if (action == '/') {
+					return this.addLineSeparator();
+				}
+				return this.addItem(action);
 			}.bind(this));
 		}
 		return this;
@@ -1095,9 +1101,13 @@ MooEditable.UI.Toolbar= new Class({
 	},
 	
 	addSeparator: function(){
-		return new Element('span', {'class': 'toolbar-separator'}).inject(this.el);
+		return new Element('span.toolbar-separator').inject(this.el);
 	},
-	
+
+	addLineSeparator: function(){
+		return new Element('div.toolbar-line-separator').inject(this.el);
+	},
+
 	itemAction: function(){
 		this.fireEvent('itemAction', arguments);
 	},
