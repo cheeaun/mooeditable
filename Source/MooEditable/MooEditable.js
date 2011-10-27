@@ -1420,6 +1420,25 @@ MooEditable.Actions = {
 		states: {
 			tags: ['u'],
 			css: {'text-decoration': 'underline'}
+		},
+		events: {
+			beforeToggleView: function(){
+				if(Browser.firefox || Browser.ie){
+					var value = this.textarea.get('value');
+					var newValue = value.replace(/<span style="text-decoration: underline;"([^>]*)>/gi, '<u$1>').replace(/<\/span>/gi, '</u>');
+					if (value != newValue) this.textarea.set('value', newValue);
+				}
+			},
+			attach: function(){
+				if(Browser.firefox || Browser.ie){
+					var value = this.textarea.get('value');
+					var newValue = value.replace(/<span style="text-decoration: underline;"([^>]*)>/gi, '<u$1>').replace(/<\/span>/gi, '</u>');
+					if (value != newValue){
+						this.textarea.set('value', newValue);
+						this.setContent(newValue);
+					}
+				}
+			}
 		}
 	},
 	
