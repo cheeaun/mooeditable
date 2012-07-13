@@ -152,10 +152,11 @@ this.MooEditable = new Class({
 		// Update & cleanup content before submit
 		if (this.options.handleSubmit){
 			this.form = this.textarea.getParent('form');
-			if (!this.form) return;
-			this.form.addEvent('submit', function(){
-				if (self.mode == 'iframe') self.saveContent();
-			});
+			if (this.form) {
+				this.form.addEvent('submit', function(){
+					if (self.mode == 'iframe') self.saveContent();
+				});
+			}
 		}
 		
 		this.fireEvent('render', this);
