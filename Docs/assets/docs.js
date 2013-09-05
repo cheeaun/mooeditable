@@ -8,16 +8,15 @@ var Docs = {
 	],
 	remote: false,
 	githubAPI: {
-		branches: 'http://github.com/api/v2/json/repos/show/cheeaun/mooeditable/branches',
-		blob: 'http://github.com/api/v2/json/blob/show/cheeaun/mooeditable/{sha}/Docs/{path}'
+		blob: 'https://api.github.com/repos/cheeaun/mooeditable/contents/Docs/{path}'
 	},
-	
+
 	start: function(){
 		Docs.generateMenu();
-		
+
 		var href = window.location.hash.slice(1);
 		if (href && /(\.md)/.test(href)) Docs.getContent(href, Docs.parse);
-		
+
 		document.addEvent('click', function(e){
 			if (e.target.tagName.toLowerCase() != 'a') return;
 			var hrefsplit = e.target.href.split('#');
@@ -31,7 +30,7 @@ var Docs = {
 			}, 1000);
 		});
 	},
-	
+
 	generateMenu: function(){
 		var html = '<ul>';
 		Docs.urls.each(function(url){
@@ -39,10 +38,10 @@ var Docs = {
 			html += '<li><a href="#' + url + '">' + file + '</a></li>';
 		});
 		html += '</ul>';
-		
+
 		$('menu').set('html', html);
 	},
-	
+
 	// inspired by http://cssgallery.info/mootools-ajax-request-for-local-files/
 	getContent: function(url, fn){
 		if (!Docs.contentCache) Docs.contentCache = {};
@@ -50,7 +49,7 @@ var Docs = {
 			fn(url, Docs.contentCache[url]);
 			return;
 		}
-		
+
 		if (document.location.protocol == 'file:'){
 			var mdIFrame = new IFrame({
 				'class': 'md-iframe',
@@ -71,33 +70,17 @@ var Docs = {
 				}
 			}).inject(document.body);
 		} else if (Docs.remote){
-			var run = function(){
-				new Request.JSONP({
-					url: Docs.githubAPI.blob.substitute({
-						sha: Docs.masterTree,
-						path: url
-					}),
-					onSuccess: function(doc){
-						var data = doc.blob.data;
-						Docs.contentCache[url] = data;
-						fn(url, data);
-					}
-				}).send();
-			}
-			
-			if (Docs.masterTree){
-				run();
-			} else {
-				// get master tree SHA
-				new Request.JSONP({
-					url: Docs.githubAPI.branches,
-					onSuccess: function(data){
-						if (!data || !data.branches || !data.branches.master) return;
-						Docs.masterTree = data.branches.master;
-						run();
-					}
-				}).send();
-			}
+			new Request.JSONP({
+				url: Docs.githubAPI.blob.substitute({
+					path: url
+				}),
+				onSuccess: function(doc){
+					var data = doc.data.content.replace(/\n/ig, '');
+					data = atob(data);
+					Docs.contentCache[url] = data;
+					fn(url, data);
+				}
+			}).send();
 		} else {
 			new Request({
 				url: url,
@@ -109,11 +92,11 @@ var Docs = {
 			}).send();
 		}
 	},
-	
+
 	parse: function(url, doc){
 		var html = new Showdown.converter().makeHtml(doc);
 		var sd = $('docs').set('html', html);
-		
+
 		// anchorize the headings
 		var anchor = (/\{#(.*)\}/);
 		sd.getElements('h1, h2, h3, h4, h5, h6').each(function(h){
@@ -121,11 +104,11 @@ var Docs = {
 			if (matches) h.set('id', matches[1]);
 			h.innerHTML = h.innerHTML.replace(anchor, '');
 		});
-		
+
 		// hash methods list
 		var headings = sd.getElements('h1');
 		var methods = sd.getElements('h2');
-		
+
 		var html = '<ul>';
 		headings.each(function(heading){
 			var href = heading.get('id');
@@ -141,7 +124,7 @@ var Docs = {
 		});
 		html += '</ul>';
 		$('methods').set('html', html);
-		
+
 		// hack some links
 		sd.getElements('a[href^=/]').each(function(a){
 			var href = Docs.remote ? a.get('href').slice(1) : a.href;
@@ -151,21 +134,21 @@ var Docs = {
 			if (hrefsplit.length>1) href += '#' + hrefsplit[1];
 			a.href = href;
 		});
-		
+
 		// prettify code
 		sd.getElements('pre').addClass('prettyprint');
 		prettyPrint();
-		
+
 		// scroll to top
 		window.scrollTo(0, 0);
 	},
-	
+
 	disposeIframes: function(){
 		setTimeout(function(){
 			$$('.md-iframe').dispose();
 		}, 100);
 	},
-	
+
 };
 
 window.addEvent('domready', Docs.start);
