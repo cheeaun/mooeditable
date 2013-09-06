@@ -1,3 +1,5 @@
+**Note**: This project is current **on hiatus**. [Watch out for the forks](https://github.com/cheeaun/mooeditable/network) instead.
+
 MooEditable
 ===========
 
